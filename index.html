@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Smart Restaurant</title>
+  
+  <title>快適食堂 | Smart Restaurant</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Sans+JP:wght@500;700&display=swap" rel="stylesheet">
@@ -52,16 +53,39 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 4px 0;
+      padding: 8px 0; /* 少し広げました */
     }
     
     .brand {
-      font-weight: 800;
-      font-size: 1.2rem;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px; /* アイコンと文字の間隔 */
     }
+
+    .brand-icon {
+      font-size: 2rem; /* アイコン少し大きく */
+      color: var(--primary);
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
+
+    .brand-main {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .brand-sub {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-sub);
+      letter-spacing: 0.02em;
+    }
+
     .live-badge {
       font-size: 0.7rem;
       background: #fee2e2;
@@ -289,8 +313,11 @@
   <div class="container">
     <header>
       <div class="brand">
-        <span class="material-icons-round">restaurant</span>
-        Smart Shokudo
+        <span class="material-icons-round brand-icon">restaurant_menu</span>
+        <div class="brand-text">
+          <span class="brand-main">快適食堂</span>
+          <span class="brand-sub">Smart Restaurant</span>
+        </div>
       </div>
       <div class="live-badge">
         <div class="live-dot"></div> LIVE
@@ -317,7 +344,7 @@
 
     <div class="graph-section">
       <div class="graph-header">
-        <h2 class="section-title">混み具合の傾向 (13:00-18:00)</h2>
+        <h2 class="section-title">混雑トレンド (13:00-18:00)</h2>
         <select id="daySelector" class="day-select">
           <option value="0">日曜日</option>
           <option value="1">月曜日</option>
@@ -464,7 +491,7 @@
 
     function renderVisualQueue(count) {
       visualQueueEl.innerHTML = "";
-      const maxIcons = 10; // アイコン上限数
+      const maxIcons = 10;
       const displayCount = Math.min(count, maxIcons);
       
       for(let i=0; i<displayCount; i++){
@@ -501,7 +528,6 @@
 
       const selectedDay = parseInt(daySelector.value);
       
-      // 1. 選択された曜日のデータ抽出
       let filtered = Object.values(allHistoryData).filter(v => {
         const d = new Date(v.timestamp * 1000);
         return d.getDay() === selectedDay;
@@ -516,7 +542,6 @@
         return;
       }
 
-      // 2. 最新日付のデータのみに絞る
       const dates = filtered.map(v => new Date(v.timestamp * 1000).toDateString());
       const uniqueDates = [...new Set(dates)];
       const targetDateStr = uniqueDates[uniqueDates.length - 1]; 
@@ -525,10 +550,7 @@
          return new Date(v.timestamp * 1000).toDateString() === targetDateStr;
       });
 
-      // ▼▼▼ 集計処理: 分ごとの平均値を計算 ▼▼▼
-      
-      // 分ごとにデータをまとめるバケツを用意
-      // 例: { "13:00": [2, 4, 3], "13:01": [5, 5] }
+      // 平均値計算
       const minuteBuckets = {};
 
       targetData.forEach(v => {
@@ -536,7 +558,7 @@
         const h = t.getHours();
         const m = t.getMinutes();
 
-        // 時間フィルタ (13:00〜18:59)
+        // 13:00-18:00
         if (h >= 13 && h <= 18) {
           const timeLabel = `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`;
           
@@ -547,19 +569,13 @@
         }
       });
 
-      // 平均値を計算してグラフ用配列にする
-      // 時間順に並び替え
       const sortedLabels = Object.keys(minuteBuckets).sort();
       const averageValues = sortedLabels.map(time => {
         const counts = minuteBuckets[time];
-        // 合計 ÷ 個数
         const sum = counts.reduce((a, b) => a + b, 0);
         const avg = sum / counts.length;
-        // 小数点第1位で四捨五入 (例: 4.333 -> 4.3)
         return Math.round(avg * 10) / 10;
       });
-
-      // ▲▲▲ 集計処理終わり ▲▲▲
 
       if (chart) {
         chart.data.labels = sortedLabels;
