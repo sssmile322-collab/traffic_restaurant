@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Smart Shokudo</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Sans+JP:wght@500;700&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #2563eb;
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --text: #1e293b;
+      --text-sub: #64748b;
+      --accent-free: #10b981;
+      --accent-busy: #ef4444;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', 'Noto Sans JP', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      -webkit-tap-highlight-color: transparent;
+      padding-bottom: 100px;
+    }
+
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* === ヘッダー === */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 0;
+    }
+    
+    .brand {
+      font-weight: 800;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .live-badge {
+      font-size: 0.7rem;
+      background: #fee2e2;
+      color: #ef4444;
+      padding: 4px 8px;
+      border-radius: 99px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      background: currentColor;
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse { 0% {opacity: 1;} 50% {opacity: 0.4;} 100% {opacity: 1;} }
+
+    /* === メインステータスカード === */
+    .status-card {
+      background: var(--surface);
+      border-radius: 24px;
+      padding: 32px 24px;
+      text-align: center;
+      box-shadow: 0 10px 40px -10px rgba(0,0,0,0.08);
+      transition: all 0.3s ease;
+    }
+
+    .status-text {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+    .status-sub {
+      color: var(--text-sub);
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .status-card.busy .status-text { color: var(--accent-busy); }
+    .status-card.free .status-text { color: var(--accent-free); }
+
+    /* ピクトグラム可視化 */
+    .visual-queue {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 24px 0;
+      min-height: 40px;
+    }
+    .person-icon {
+      font-family: 'Material Icons Round';
+      font-size: 32px;
+      color: var(--text-sub);
+      opacity: 0;
+      transform: scale(0.5);
+      animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+    .person-icon.active { color: var(--primary); }
+    @keyframes popIn { to { opacity: 1; transform: scale(1); } }
+
+    /* データ表示 */
+    .metrics {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid #f1f5f9;
+    }
+    .metric-item { display: flex; flex-direction: column; gap: 4px; }
+    .metric-val { font-size: 1.4rem; font-weight: 800; }
+    .metric-label { font-size: 0.75rem; color: var(--text-sub); font-weight: 600; }
+
+    /* === グラフ === */
+    .graph-section {
+      background: var(--surface);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    }
+    .section-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      margin: 0 0 16px 0;
+      color: var(--text-sub);
+    }
+
+    /* === メニューボタン (Floating) === */
+    .menu-fab {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--text);
+      color: white;
+      padding: 16px 24px;
+      border-radius: 99px;
+      font-weight: 700;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      z-index: 100;
+      transition: transform 0.2s;
+    }
+    .menu-fab:active { transform: scale(0.95); }
+
+    /* === 共通モーダル/オーバーレイ === */
+    .overlay-base {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      display: flex;
+    }
+    .overlay-base.open { opacity: 1; pointer-events: auto; }
+
+    /* メニュー用：下から出るシートスタイル */
+    #menuModal { justify-content: center; align-items: flex-end; }
+    .menu-sheet {
+      background: var(--bg);
+      width: 100%;
+      max-width: 500px;
+      height: 85vh;
+      border-radius: 24px 24px 0 0;
+      padding: 24px;
+      transform: translateY(100%);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex; flex-direction: column;
+    }
+    #menuModal.open .menu-sheet { transform: translateY(0); }
+
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .close-btn { background: #e2e8f0; border: none; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; cursor: pointer; }
+    .menu-viewer { flex: 1; background: #fff; border-radius: 16px; overflow-y: auto; padding: 10px; display: flex; justify-content: center; align-items: start; }
+    .menu-viewer img { width: 100%; height: auto; display: block; }
+
+    /* 通知許可モーダル用：中央配置スタイル */
+    #notifyModal { justify-content: center; align-items: center; }
+    .notify-dialog {
+      background: var(--surface);
+      width: 85%;
+      max-width: 320px;
+      padding: 24px;
+      border-radius: 20px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    }
+    .notify-dialog h2 { margin: 0 0 12px; font-size: 1.1rem; }
+    .notify-dialog p { font-size: 0.9rem; color: var(--text-sub); margin-bottom: 20px; line-height: 1.5; }
+    
+    .btn-group { display: flex; gap: 12px; }
+    .btn { flex: 1; padding: 12px; border: none; border-radius: 12px; font-weight: 700; font-size: 0.9rem; cursor: pointer; }
+    .btn-primary { background: var(--text); color: white; }
+    .btn-secondary { background: #f1f5f9; color: var(--text); }
+
+    /* === トースト通知 === */
+    .toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-150%);
+      background: white;
+      padding: 16px 24px;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 1000;
+      transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+      min-width: 280px;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+    .toast-icon { font-size: 1.5rem; }
+    .toast-content div:first-child { font-weight: 700; font-size: 0.9rem; color: var(--text); }
+    .toast-content div:last-child { font-size: 0.8rem; color: var(--text-sub); }
+
+  </style>
+</head>
+<body>
+
+  <div id="pseudoNotify" class="toast">
+    <div class="toast-icon">✨</div>
+    <div class="toast-content">
+      <div>空いてきました！</div>
+      <div>今がチャンスです</div>
+    </div>
+  </div>
+
+  <div id="notifyModal" class="overlay-base">
+    <div class="notify-dialog">
+      <h2>通知をオンにしますか？</h2>
+      <p>行列が解消されたタイミングで<br>お知らせを受け取れます。</p>
+      <div class="btn-group">
+        <button class="btn btn-secondary" id="notifyNo">あとで</button>
+        <button class="btn btn-primary" id="notifyYes">許可する</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <header>
+      <div class="brand">
+        <span class="material-icons-round">restaurant</span>
+        Smart Shokudo
+      </div>
+      <div class="live-badge">
+        <div class="live-dot"></div> LIVE
+      </div>
+    </header>
+
+    <div id="mainCard" class="status-card">
+      <div id="statusText" class="status-text">読み込み中...</div>
+      <div id="waitMessage" class="status-sub">少々お待ちください</div>
+
+      <div id="visualQueue" class="visual-queue"></div>
+
+      <div class="metrics">
+        <div class="metric-item">
+          <span class="metric-val"><span id="count">--</span><span style="font-size:0.9rem">人</span></span>
+          <span class="metric-label">現在の行列</span>
+        </div>
+        <div class="metric-item">
+          <span class="metric-val">~<span id="waitTime">--</span><span style="font-size:0.9rem">分</span></span>
+          <span class="metric-label">推定待ち時間</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="graph-section">
+      <h2 class="section-title">混雑トレンド (11:30 - 13:30)</h2>
+      <div style="height: 180px;">
+        <canvas id="lunchChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="menu-fab" id="menuBtn">
+    <span class="material-icons-round">menu_book</span>
+    本日のメニュー
+  </div>
+
+  <div class="overlay-base" id="menuModal">
+    <div class="menu-sheet">
+      <div class="modal-header">
+        <h2 style="margin:0; font-size:1.1rem;">メニュー表</h2>
+        <button class="close-btn" id="closeMenu">
+          <span class="material-icons-round">close</span>
+        </button>
+      </div>
+      <div class="menu-viewer">
+        <img src="menu_img.png" alt="本日のメニュー" onerror="this.style.display='none';this.parentElement.innerHTML='<p style=\'text-align:center;color:#888;margin-top:20px\'>メニュー画像が見つかりません</p>'" />
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+    /* ========= 設定 ========= */
+    const firebaseConfig = {
+      databaseURL: "https://traffic-restaurant-default-rtdb.firebaseio.com/"
+    };
+    const MINUTES_PER_PERSON = 2; // 待ち時間計算用
+    const isIphone = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    /* ========= DOM ========= */
+    const countEl = document.getElementById("count");
+    const waitTimeEl = document.getElementById("waitTime");
+    const statusTextEl = document.getElementById("statusText");
+    const waitMessageEl = document.getElementById("waitMessage");
+    const visualQueueEl = document.getElementById("visualQueue");
+    const mainCard = document.getElementById("mainCard");
+
+    // メニュー関連
+    const menuBtn = document.getElementById("menuBtn");
+    const menuModal = document.getElementById("menuModal");
+    const closeMenu = document.getElementById("closeMenu");
+
+    // 通知関連
+    const notifyModal = document.getElementById("notifyModal");
+    const notifyYes = document.getElementById("notifyYes");
+    const notifyNo = document.getElementById("notifyNo");
+    const pseudoNotify = document.getElementById("pseudoNotify");
+
+    /* ========= イベントリスナー ========= */
+    
+    // メニュー
+    menuBtn.onclick = () => menuModal.classList.add("open");
+    closeMenu.onclick = () => menuModal.classList.remove("open");
+    menuModal.onclick = (e) => {
+      if(e.target === menuModal) menuModal.classList.remove("open");
+    };
+
+    // 通知許可モーダルの制御
+    if (!isIphone && "Notification" in window) {
+      // まだ許可/拒否を選んでいない場合のみ表示
+      if (Notification.permission === "default") {
+        setTimeout(() => {
+          notifyModal.classList.add("open");
+        }, 1000); // 1秒後にふわっと出す
+      }
+
+      notifyYes.onclick = async () => {
+        await Notification.requestPermission();
+        notifyModal.classList.remove("open");
+      };
+      notifyNo.onclick = () => {
+        notifyModal.classList.remove("open");
+      };
+    }
+
+    /* ========= ロジック ========= */
+    
+    // 状態判定
+    function getStatus(n) {
+      if (n <= 1) return "free";
+      if (n <= 4) return "normal";
+      return "busy";
+    }
+
+    let lastStatus = null; // 前回の状態を保存（通知トリガー用）
+
+    // 通知実行関数
+    function triggerNotification() {
+      // 1. アプリ内トースト（全ユーザー向け）
+      pseudoNotify.classList.add("show");
+      setTimeout(() => {
+        pseudoNotify.classList.remove("show");
+      }, 4000);
+
+      // 2. ブラウザ通知（許可済みPC/Android向け）
+      if (!isIphone && "Notification" in window && Notification.permission === "granted") {
+        new Notification("学食が空いてきました！", {
+          body: "今なら並ばずに行けそうです 🍽",
+          icon: "/favicon.ico" // アイコンがあれば設定
+        });
+      }
+    }
+
+    // UI更新 & 通知チェック
+    function updateUI(people) {
+      // 数値更新
+      countEl.textContent = people;
+      waitTimeEl.textContent = people * MINUTES_PER_PERSON;
+      renderVisualQueue(people);
+      
+      const current = getStatus(people);
+
+      // 混雑 -> 空き/普通 に変化した瞬間に通知
+      if (lastStatus === "busy" && current !== "busy") {
+        triggerNotification();
+      }
+      lastStatus = current;
+      
+      // テキスト・色更新
+      mainCard.classList.remove("free", "busy");
+      if (current === "free") {
+        statusTextEl.textContent = "空いています";
+        waitMessageEl.textContent = "今がチャンスです！";
+        mainCard.classList.add("free");
+      } else if (current === "normal") {
+        statusTextEl.textContent = "ふつう";
+        waitMessageEl.textContent = "少し並ぶかもしれません";
+      } else {
+        statusTextEl.textContent = "混雑中";
+        waitMessageEl.textContent = "時間に余裕を持って行きましょう";
+        mainCard.classList.add("busy");
+      }
+    }
+
+    // ピクトグラム描画
+    function renderVisualQueue(count) {
+      visualQueueEl.innerHTML = "";
+      const maxIcons = 15;
+      const displayCount = Math.min(count, maxIcons);
+      
+      for(let i=0; i<displayCount; i++){
+        const icon = document.createElement("span");
+        icon.className = "material-icons-round person-icon";
+        icon.textContent = "person";
+        icon.style.animationDelay = `${i * 0.05}s`;
+        visualQueueEl.appendChild(icon);
+      }
+      
+      if(count > maxIcons) {
+        const more = document.createElement("span");
+        more.style.fontSize = "0.8rem";
+        more.style.color = "#999";
+        more.style.alignSelf = "center";
+        more.textContent = `+${count - maxIcons}`;
+        visualQueueEl.appendChild(more);
+      }
+    }
+
+    /* ========= Firebase 監視 ========= */
+    onValue(ref(db, "line_status"), snap => {
+      const d = snap.val();
+      if (!d) return;
+      updateUI(d.people);
+    });
+
+    /* ========= グラフ ========= */
+    const ctx = document.getElementById("lunchChart").getContext("2d");
+    let chart;
+
+    onValue(ref(db, "line_history"), snap => {
+      const data = snap.val();
+      if (!data) return;
+
+      const labels = [];
+      const values = [];
+
+      Object.values(data).forEach(v => {
+        const t = new Date(v.timestamp * 1000);
+        const h = t.getHours();
+        const m = t.getMinutes();
+        labels.push(`${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`);
+        values.push(v.people);
+      });
+
+      if (chart) chart.destroy();
+
+      chart = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels,
+          datasets: [{
+            label: "行列人数",
+            data: values,
+            borderColor: "#2563eb",
+            backgroundColor: (context) => {
+              const ctx = context.chart.ctx;
+              const gradient = ctx.createLinearGradient(0, 0, 0, 200);
+              gradient.addColorStop(0, "rgba(37,99,235,0.2)");
+              gradient.addColorStop(1, "rgba(37,99,235,0)");
+              return gradient;
+            },
+            borderWidth: 2,
+            pointRadius: 0,
+            fill: true,
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { intersect: false, mode: 'index' },
+          scales: {
+            x: { grid: { display: false }, ticks: { maxTicksLimit: 5, color: "#94a3b8" } },
+            y: { display: false, beginAtZero: true }
+          },
+          plugins: { legend: { display: false } }
+        }
+      });
+    });
+  </script>
+</body>
+</html>
