@@ -25,6 +25,7 @@
       --text-sub: #64748b;
       --accent-free: #10b981;
       --accent-busy: #ef4444;
+      --offline: #94a3b8; /* オフライン用のグレー */
     }
 
     * { box-sizing: border-box; }
@@ -53,17 +54,17 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 8px 0; /* 少し広げました */
+      padding: 8px 0;
     }
     
     .brand {
       display: flex;
       align-items: center;
-      gap: 10px; /* アイコンと文字の間隔 */
+      gap: 10px;
     }
 
     .brand-icon {
-      font-size: 2rem; /* アイコン少し大きく */
+      font-size: 2rem;
       color: var(--primary);
     }
 
@@ -86,16 +87,22 @@
       letter-spacing: 0.02em;
     }
 
+    /* LIVEバッジのスタイル */
     .live-badge {
       font-size: 0.7rem;
-      background: #fee2e2;
-      color: #ef4444;
-      padding: 4px 8px;
+      padding: 6px 10px;
       border-radius: 99px;
       font-weight: 700;
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 6px;
+      transition: all 0.3s ease;
+    }
+
+    /* オンライン時 (赤・点滅) */
+    .live-badge.online {
+      background: #fee2e2;
+      color: #ef4444;
     }
     .live-dot {
       width: 6px;
@@ -104,6 +111,13 @@
       border-radius: 50%;
       animation: pulse 1.5s infinite;
     }
+
+    /* オフライン時 (グレー・停止) */
+    .live-badge.offline {
+      background: #e2e8f0;
+      color: var(--text-sub);
+    }
+
     @keyframes pulse { 0% {opacity: 1;} 50% {opacity: 0.4;} 100% {opacity: 1;} }
 
     /* === メインステータスカード === */
@@ -161,6 +175,15 @@
     .metric-item { display: flex; flex-direction: column; gap: 4px; }
     .metric-val { font-size: 1.4rem; font-weight: 800; }
     .metric-label { font-size: 0.75rem; color: var(--text-sub); font-weight: 600; }
+
+    /* 最終更新時刻表示 */
+    .last-update {
+      margin-top: 16px;
+      font-size: 0.7rem;
+      color: var(--text-sub);
+      text-align: right;
+      opacity: 0.8;
+    }
 
     /* === グラフ === */
     .graph-section {
@@ -319,8 +342,8 @@
           <span class="brand-sub">Smart Restaurant</span>
         </div>
       </div>
-      <div class="live-badge">
-        <div class="live-dot"></div> LIVE
+      <div id="liveBadge" class="live-badge offline">
+        <span class="material-icons-round" style="font-size: 1rem;">cloud_off</span> OFFLINE
       </div>
     </header>
 
@@ -340,6 +363,8 @@
           <span class="metric-label">推定待ち時間</span>
         </div>
       </div>
+
+      <div id="lastUpdateText" class="last-update">最終更新: --/-- --:--</div>
     </div>
 
     <div class="graph-section">
@@ -403,6 +428,9 @@
     const visualQueueEl = document.getElementById("visualQueue");
     const mainCard = document.getElementById("mainCard");
     const daySelector = document.getElementById("daySelector");
+    
+    const liveBadgeEl = document.getElementById("liveBadge");
+    const lastUpdateTextEl = document.getElementById("lastUpdateText");
 
     // 初期値を「今日の曜日」に設定
     daySelector.value = new Date().getDay();
@@ -446,6 +474,7 @@
     }
 
     let lastStatus = null; 
+    let lastDataTimestamp = 0; 
 
     function triggerNotification() {
       pseudoNotify.classList.add("show");
@@ -461,7 +490,10 @@
       }
     }
 
-    function updateUI(people) {
+    function updateUI(people, timestamp) {
+      lastDataTimestamp = timestamp * 1000;
+      
+      // 数値更新
       countEl.textContent = people;
       waitTimeEl.textContent = people * MINUTES_PER_PERSON;
       renderVisualQueue(people);
@@ -487,7 +519,35 @@
         waitMessageEl.textContent = "時間に余裕を持って行きましょう";
         mainCard.classList.add("busy");
       }
+
+      // ▼▼▼ 日付表示を追加しました ▼▼▼
+      const date = new Date(lastDataTimestamp);
+      const month = date.getMonth() + 1;
+      const day = date.getDate();
+      const h = String(date.getHours()).padStart(2, '0');
+      const m = String(date.getMinutes()).padStart(2, '0');
+      
+      lastUpdateTextEl.textContent = `最終更新: ${month}/${day} ${h}:${m}`;
+      
+      checkLiveStatus();
     }
+
+    function checkLiveStatus() {
+      const now = Date.now();
+      const diff = now - lastDataTimestamp;
+
+      // 60秒以上更新なしでオフライン
+      if (diff > 60000) {
+        liveBadgeEl.className = "live-badge offline";
+        liveBadgeEl.innerHTML = '<span class="material-icons-round" style="font-size: 1rem;">cloud_off</span> OFFLINE';
+      } else {
+        liveBadgeEl.className = "live-badge online";
+        liveBadgeEl.innerHTML = '<div class="live-dot"></div> LIVE';
+      }
+    }
+
+    setInterval(checkLiveStatus, 5000);
+
 
     function renderVisualQueue(count) {
       visualQueueEl.innerHTML = "";
@@ -512,13 +572,14 @@
       }
     }
 
+    /* ========= Firebase 監視 ========= */
     onValue(ref(db, "line_status"), snap => {
       const d = snap.val();
       if (!d) return;
-      updateUI(d.people);
+      updateUI(d.people, d.timestamp);
     });
 
-    /* ========= グラフ (平均値プロット) ========= */
+    /* ========= グラフ ========= */
     const ctx = document.getElementById("lunchChart").getContext("2d");
     let chart;
     let allHistoryData = null;
@@ -550,7 +611,6 @@
          return new Date(v.timestamp * 1000).toDateString() === targetDateStr;
       });
 
-      // 平均値計算
       const minuteBuckets = {};
 
       targetData.forEach(v => {
@@ -558,7 +618,6 @@
         const h = t.getHours();
         const m = t.getMinutes();
 
-        // 13:00-18:00
         if (h >= 13 && h <= 18) {
           const timeLabel = `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`;
           
