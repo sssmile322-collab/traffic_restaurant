@@ -141,11 +141,30 @@
       padding: 20px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.03);
     }
+    .graph-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
     .section-title {
       font-size: 0.9rem;
       font-weight: 700;
-      margin: 0 0 16px 0;
+      margin: 0;
       color: var(--text-sub);
+    }
+    
+    /* 曜日選択プルダウン */
+    .day-select {
+      background: #f1f5f9;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: var(--text);
+      font-weight: 600;
+      cursor: pointer;
+      outline: none;
     }
 
     /* === メニューボタン (Floating) === */
@@ -296,7 +315,20 @@
     </div>
 
     <div class="graph-section">
-      <h2 class="section-title">混雑トレンド (11:30 - 13:30)</h2>
+      <div class="graph-header">
+        <h2 class="section-title">混雑トレンド (13:00-18:00)</h2>
+        
+        <select id="daySelector" class="day-select">
+          <option value="0">日曜日</option>
+          <option value="1">月曜日</option>
+          <option value="2">火曜日</option>
+          <option value="3">水曜日</option>
+          <option value="4">木曜日</option>
+          <option value="5">金曜日</option>
+          <option value="6">土曜日</option>
+        </select>
+      </div>
+      
       <div style="height: 180px;">
         <canvas id="lunchChart"></canvas>
       </div>
@@ -343,6 +375,10 @@
     const waitMessageEl = document.getElementById("waitMessage");
     const visualQueueEl = document.getElementById("visualQueue");
     const mainCard = document.getElementById("mainCard");
+    const daySelector = document.getElementById("daySelector");
+
+    // 初期値を「今日の曜日」に設定
+    daySelector.value = new Date().getDay();
 
     // メニュー関連
     const menuBtn = document.getElementById("menuBtn");
@@ -357,21 +393,18 @@
 
     /* ========= イベントリスナー ========= */
     
-    // メニュー
     menuBtn.onclick = () => menuModal.classList.add("open");
     closeMenu.onclick = () => menuModal.classList.remove("open");
     menuModal.onclick = (e) => {
       if(e.target === menuModal) menuModal.classList.remove("open");
     };
 
-    // 通知許可モーダルの制御
     if (!isIphone && "Notification" in window) {
       if (Notification.permission === "default") {
         setTimeout(() => {
           notifyModal.classList.add("open");
         }, 1000); 
       }
-
       notifyYes.onclick = async () => {
         await Notification.requestPermission();
         notifyModal.classList.remove("open");
@@ -383,10 +416,8 @@
 
     /* ========= ロジック ========= */
     
-    // 【変更点】テスト用判定ロジック
-    // 0人: free
-    // 1人: normal
-    // 2人以上: busy
+    // 【テスト用】閾値
+    // 0: free, 1: normal, >=2: busy
     function getStatus(n) {
       if (n <= 0) return "free";
       if (n <= 1) return "normal";
@@ -395,15 +426,12 @@
 
     let lastStatus = null; 
 
-    // 通知実行関数
     function triggerNotification() {
-      // 1. アプリ内トースト（全ユーザー向け）
       pseudoNotify.classList.add("show");
       setTimeout(() => {
         pseudoNotify.classList.remove("show");
       }, 4000);
 
-      // 2. ブラウザ通知（許可済みPC/Android向け）
       if (!isIphone && "Notification" in window && Notification.permission === "granted") {
         new Notification("学食が空いてきました！", {
           body: "今なら並ばずに行けそうです 🍽",
@@ -412,22 +440,19 @@
       }
     }
 
-    // UI更新 & 通知チェック
     function updateUI(people) {
-      // 数値更新
       countEl.textContent = people;
       waitTimeEl.textContent = people * MINUTES_PER_PERSON;
       renderVisualQueue(people);
       
       const current = getStatus(people);
 
-      // 【変更点】普通/混雑 -> 空き になった時に通知
+      // 【空き】になった時に通知
       if (lastStatus !== "free" && current === "free") {
         triggerNotification();
       }
       lastStatus = current;
       
-      // テキスト・色更新
       mainCard.classList.remove("free", "busy");
       
       if (current === "free") {
@@ -444,7 +469,6 @@
       }
     }
 
-    // ピクトグラム描画
     function renderVisualQueue(count) {
       visualQueueEl.innerHTML = "";
       const maxIcons = 15;
@@ -478,57 +502,105 @@
     /* ========= グラフ ========= */
     const ctx = document.getElementById("lunchChart").getContext("2d");
     let chart;
+    let allHistoryData = null; // データを保持しておく
 
-    onValue(ref(db, "line_history"), snap => {
-      const data = snap.val();
-      if (!data) return;
+    // グラフ更新関数
+    function updateChart() {
+      if (!allHistoryData) return;
 
+      const selectedDay = parseInt(daySelector.value); // 0=Sun, 1=Mon...
+      
+      // 1. 選択された曜日のデータだけ抽出
+      let filtered = Object.values(allHistoryData).filter(v => {
+        const d = new Date(v.timestamp * 1000);
+        return d.getDay() === selectedDay;
+      });
+
+      if (filtered.length === 0) {
+        // データがない場合
+        if (chart) {
+            chart.data.labels = [];
+            chart.data.datasets[0].data = [];
+            chart.update();
+        }
+        return;
+      }
+
+      // 2. 最新日付のデータだけにする
+      const dates = filtered.map(v => new Date(v.timestamp * 1000).toDateString());
+      const uniqueDates = [...new Set(dates)];
+      const targetDateStr = uniqueDates[uniqueDates.length - 1]; 
+
+      const targetData = filtered.filter(v => {
+         return new Date(v.timestamp * 1000).toDateString() === targetDateStr;
+      });
+
+      // 3. ラベルとデータ作成（13:00~18:00のみ）
       const labels = [];
       const values = [];
 
-      Object.values(data).forEach(v => {
+      targetData.forEach(v => {
         const t = new Date(v.timestamp * 1000);
         const h = t.getHours();
         const m = t.getMinutes();
-        labels.push(`${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`);
-        values.push(v.people);
-      });
 
-      if (chart) chart.destroy();
-
-      chart = new Chart(ctx, {
-        type: "line",
-        data: {
-          labels,
-          datasets: [{
-            label: "行列人数",
-            data: values,
-            borderColor: "#2563eb",
-            backgroundColor: (context) => {
-              const ctx = context.chart.ctx;
-              const gradient = ctx.createLinearGradient(0, 0, 0, 200);
-              gradient.addColorStop(0, "rgba(37,99,235,0.2)");
-              gradient.addColorStop(1, "rgba(37,99,235,0)");
-              return gradient;
-            },
-            borderWidth: 2,
-            pointRadius: 0,
-            fill: true,
-            tension: 0.4
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          interaction: { intersect: false, mode: 'index' },
-          scales: {
-            x: { grid: { display: false }, ticks: { maxTicksLimit: 5, color: "#94a3b8" } },
-            y: { display: false, beginAtZero: true }
-          },
-          plugins: { legend: { display: false } }
+        // ★★★ 時間フィルタ (13:00〜18:59) ★★★
+        if (h >= 13 && h <= 18) {
+          labels.push(`${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`);
+          values.push(v.people);
         }
       });
+
+      // 4. チャート描画
+      if (chart) {
+        chart.data.labels = labels;
+        chart.data.datasets[0].data = values;
+        chart.update();
+      } else {
+        chart = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels,
+            datasets: [{
+              label: "行列人数",
+              data: values,
+              borderColor: "#2563eb",
+              backgroundColor: (context) => {
+                const ctx = context.chart.ctx;
+                const gradient = ctx.createLinearGradient(0, 0, 0, 200);
+                gradient.addColorStop(0, "rgba(37,99,235,0.2)");
+                gradient.addColorStop(1, "rgba(37,99,235,0)");
+                return gradient;
+              },
+              borderWidth: 2,
+              pointRadius: 0,
+              fill: true,
+              tension: 0.4
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { intersect: false, mode: 'index' },
+            scales: {
+              x: { grid: { display: false }, ticks: { maxTicksLimit: 5, color: "#94a3b8" } },
+              y: { display: false, beginAtZero: true }
+            },
+            plugins: { legend: { display: false } }
+          }
+        });
+      }
+    }
+
+    // 曜日変更イベント
+    daySelector.addEventListener("change", updateChart);
+
+    // Firebaseデータ取得
+    onValue(ref(db, "line_history"), snap => {
+      allHistoryData = snap.val();
+      updateChart(); // データ取得時にも描画
     });
+
   </script>
 </body>
 </html>
