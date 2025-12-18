@@ -366,11 +366,10 @@
 
     // 通知許可モーダルの制御
     if (!isIphone && "Notification" in window) {
-      // まだ許可/拒否を選んでいない場合のみ表示
       if (Notification.permission === "default") {
         setTimeout(() => {
           notifyModal.classList.add("open");
-        }, 1000); // 1秒後にふわっと出す
+        }, 1000); 
       }
 
       notifyYes.onclick = async () => {
@@ -384,14 +383,17 @@
 
     /* ========= ロジック ========= */
     
-    // 状態判定
+    // 【変更点】テスト用判定ロジック
+    // 0人: free
+    // 1人: normal
+    // 2人以上: busy
     function getStatus(n) {
-      if (n <= 1) return "free";
-      if (n <= 4) return "normal";
+      if (n <= 0) return "free";
+      if (n <= 1) return "normal";
       return "busy";
     }
 
-    let lastStatus = null; // 前回の状態を保存（通知トリガー用）
+    let lastStatus = null; 
 
     // 通知実行関数
     function triggerNotification() {
@@ -405,7 +407,7 @@
       if (!isIphone && "Notification" in window && Notification.permission === "granted") {
         new Notification("学食が空いてきました！", {
           body: "今なら並ばずに行けそうです 🍽",
-          icon: "/favicon.ico" // アイコンがあれば設定
+          icon: "/favicon.ico"
         });
       }
     }
@@ -419,14 +421,15 @@
       
       const current = getStatus(people);
 
-      // 混雑 -> 空き/普通 に変化した瞬間に通知
-      if (lastStatus === "busy" && current !== "busy") {
+      // 【変更点】普通/混雑 -> 空き になった時に通知
+      if (lastStatus !== "free" && current === "free") {
         triggerNotification();
       }
       lastStatus = current;
       
       // テキスト・色更新
       mainCard.classList.remove("free", "busy");
+      
       if (current === "free") {
         statusTextEl.textContent = "空いています";
         waitMessageEl.textContent = "今がチャンスです！";
