@@ -1,0 +1,285 @@
+[2025-12-19 12:12:55] --- 実行開始 ---
+[2025-12-19 12:12:55] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20251215_ryoushoku.pdf
+[2025-12-19 12:12:57] PDFダウンロード成功: 20251215_menu.pdf
+[2025-12-19 12:12:58] 画像変換成功: 20251215_menu.png
+[2025-12-19 12:12:58] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20251222_ryoushoku.pdf
+[2025-12-19 12:13:00] PDFダウンロード成功: 20251222_menu.pdf
+[2025-12-19 12:13:02] 画像変換成功: 20251222_menu.png
+[2025-12-19 12:13:02] --- 実行終了 ---
+[2025-12-19 12:14:28] --- 実行開始 ---
+[2025-12-19 12:14:28] --- 実行終了 ---
+[2025-12-19 12:16:16] --- 実行開始 ---
+[2025-12-19 12:16:16] --- 実行終了 ---
+[2025-12-19 12:16:35] --- 実行開始 ---
+[2025-12-19 12:16:35] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20251215_ryoushoku.pdf
+[2025-12-19 12:16:37] PDFダウンロード成功: 20251215_menu.pdf
+[2025-12-19 12:16:39] 画像変換成功: 20251215_menu.png
+[2025-12-19 12:16:39] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20251222_ryoushoku.pdf
+[2025-12-19 12:16:41] PDFダウンロード成功: 20251222_menu.pdf
+[2025-12-19 12:16:42] 画像変換成功: 20251222_menu.png
+[2025-12-19 12:16:42] --- 実行終了 ---
+[2025-12-19 12:25:20] --- 実行開始 ---
+[2025-12-19 12:25:20] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20251215_ryoushoku.pdf
+[2025-12-19 12:25:22] PDFダウンロード成功: 20251215_menu.pdf
+[2025-12-19 12:25:23] 画像変換成功: 20251215_menu.png
+[2025-12-19 12:25:23] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20251222_ryoushoku.pdf
+[2025-12-19 12:25:25] PDFダウンロード成功: 20251222_menu.pdf
+[2025-12-19 12:25:26] 画像変換成功: 20251222_menu.png
+[2025-12-19 12:25:26] --- 実行終了 ---
+[2025-12-19 13:08:49] --- 実行開始 ---
+[2025-12-19 13:08:49] --- 実行終了 ---
+[2025-12-21 21:09:47] --- 実行開始 ---
+[2025-12-21 21:09:47] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20251215_ryoushoku.pdf
+[2025-12-21 21:10:08] 通信エラー: HTTPSConnectionPool(host='www.okinawa-ct.ac.jp', port=443): Max retries exceeded with url: /userfiles/files/10ryoumu_kakari/20251215_ryoushoku.pdf (Caused by ConnectTimeoutError(<HTTPSConnection(host='www.okinawa-ct.ac.jp', port=443) at 0x2d514e1ab40>, 'Connection to www.okinawa-ct.ac.jp timed out. (connect timeout=30)'))
+[2025-12-21 21:10:08] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20251222_ryoushoku.pdf
+[2025-12-21 21:10:29] 通信エラー: HTTPSConnectionPool(host='www.okinawa-ct.ac.jp', port=443): Max retries exceeded with url: /userfiles/files/10ryoumu_kakari/20251222_ryoushoku.pdf (Caused by ConnectTimeoutError(<HTTPSConnection(host='www.okinawa-ct.ac.jp', port=443) at 0x2d515045fa0>, 'Connection to www.okinawa-ct.ac.jp timed out. (connect timeout=30)'))
+[2025-12-21 21:10:30] --- 実行終了 ---
+[2025-12-21 21:12:33] --- 実行開始 ---
+[2025-12-21 21:12:33] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20251215_ryoushoku.pdf
+[2025-12-21 21:12:35] PDFダウンロード成功: 20251215_menu.pdf
+[2025-12-21 21:12:37] 画像変換成功: 20251215_menu.png
+[2025-12-21 21:12:37] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20251222_ryoushoku.pdf
+[2025-12-21 21:12:39] PDFダウンロード成功: 20251222_menu.pdf
+[2025-12-21 21:12:40] 画像変換成功: 20251222_menu.png
+[2025-12-21 21:12:40] --- 実行終了 ---
+[2025-12-21 21:29:30] --- 実行開始 ---
+[2025-12-21 21:29:30] 最新画像を更新しました: 20251222_menu.png -> menu_img.png
+[2025-12-21 21:29:30] --- 実行終了 ---
+[2025-12-21 21:32:35] --- 実行開始 ---
+[2025-12-21 21:32:35] 表示画像を「今週分」に更新しました: 20251215_menu.png
+[2025-12-21 21:32:35] --- 実行終了 ---
+[2025-12-22 09:01:03] --- 実行開始 ---
+[2025-12-22 09:01:03] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20251229_ryoushoku.pdf
+[2025-12-22 09:01:03] 表示画像を「今週分」に更新しました: 20251222_menu.png
+[2025-12-22 09:01:03] --- 実行終了 ---
+[2025-12-22 09:10:22] --- 実行開始 ---
+[2025-12-22 09:10:22] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20251229_ryoushoku.pdf
+[2025-12-22 09:10:23] 表示画像を「今週分」に更新しました: 20251222_menu.png
+[2025-12-22 09:10:23] --- 実行終了 ---
+[2025-12-22 09:11:16] --- 実行開始 ---
+[2025-12-22 09:11:16] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20251229_ryoushoku.pdf
+[2025-12-22 09:11:17] 表示画像を「今週分」に更新しました: 20251222_menu.png
+[2025-12-22 09:11:17] --- 実行終了 ---
+[2025-12-22 09:20:07] --- 実行開始 ---
+[2025-12-22 09:20:07] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20251229_ryoushoku.pdf
+[2025-12-22 09:20:08] 表示画像を「今週分」に更新しました: 20251222_menu.png
+[2025-12-22 09:20:08] --- Firebaseへのデプロイを開始します ---
+[2025-12-22 09:20:24] デプロイ成功！
+[2025-12-22 09:20:24] --- 実行終了 ---
+[2025-12-22 09:23:50] --- 実行開始 ---
+[2025-12-22 09:23:50] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20251222_ryoushoku.pdf
+[2025-12-22 09:23:51] PDFダウンロード成功: 20251222_menu.pdf
+[2025-12-22 09:23:52] 画像変換成功: 20251222_menu.png
+[2025-12-22 09:23:52] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20251229_ryoushoku.pdf
+[2025-12-22 09:23:53] 表示画像を「今週分」に更新しました: 20251222_menu.png
+[2025-12-22 09:23:53] --- Firebaseへのデプロイを開始します ---
+[2025-12-22 09:26:26] --- 実行開始 ---
+[2025-12-22 09:26:26] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20251229_ryoushoku.pdf
+[2025-12-22 09:26:27] 表示画像を「今週分」に更新しました: 20251222_menu.png
+[2025-12-22 09:26:27] --- Firebaseへのデプロイを開始します ---
+[2025-12-22 09:26:38] デプロイ成功！
+[2025-12-22 09:26:38] --- 不要なファイルの削除を開始します ---
+[2025-12-22 09:26:38] クリーンアップ完了: 2 個のファイルを削除しました
+[2025-12-22 09:26:38] --- 実行終了 ---
+[2025-12-22 09:37:31] --- 実行開始 ---
+[2025-12-22 09:37:31] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20251222_ryoushoku.pdf
+[2025-12-22 09:37:32] PDFダウンロード成功: 20251222_menu.pdf
+[2025-12-22 09:37:33] 画像変換成功: 20251222_menu.png
+[2025-12-22 09:37:33] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20251229_ryoushoku.pdf
+[2025-12-22 09:37:33] 表示画像を「今週分」に更新しました: 20251222_menu.png
+[2025-12-22 09:37:33] --- Firebaseへのデプロイを開始します ---
+[2025-12-22 09:37:46] デプロイ成功！
+[2025-12-22 09:37:46] --- 不要なファイルの削除を開始します ---
+[2025-12-22 09:37:46] クリーンアップ完了: 2 個のファイルを削除しました
+[2025-12-22 09:37:46] --- 実行終了 ---
+[2025-12-22 09:59:56] --- 実行開始 ---
+[2025-12-22 09:59:56] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20251222_ryoushoku.pdf
+[2025-12-22 09:59:58] PDFダウンロード成功: 20251222_menu.pdf
+[2025-12-22 09:59:58] 画像変換成功: 20251222_menu.png
+[2025-12-22 09:59:58] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20251229_ryoushoku.pdf
+[2025-12-22 09:59:59] 表示画像を「今週分」に更新しました: 20251222_menu.png
+[2025-12-22 09:59:59] --- Firebaseへのデプロイを開始します ---
+[2025-12-22 10:00:21] デプロイ成功！
+[2025-12-22 10:00:21] --- 不要なファイルの削除を開始します ---
+[2025-12-22 10:00:21] クリーンアップ完了: 2 個のファイルを削除しました
+[2025-12-22 10:00:21] --- 実行終了 ---
+[2025-12-22 10:05:51] --- 実行開始 ---
+[2025-12-22 10:05:51] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20251222_ryoushoku.pdf
+[2025-12-22 10:05:52] PDFダウンロード成功: 20251222_menu.pdf
+[2025-12-22 10:05:53] 画像変換成功: 20251222_menu.png
+[2025-12-22 10:05:53] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20251229_ryoushoku.pdf
+[2025-12-22 10:05:53] 表示画像を「今週分」に更新しました: 20251222_menu.png
+[2025-12-22 10:05:53] --- Firebaseへのデプロイを開始します ---
+[2025-12-22 10:06:28] デプロイ成功！
+[2025-12-22 10:06:28] --- 不要なファイルの削除を開始します ---
+[2025-12-22 10:06:28] クリーンアップ完了: 2 個のファイルを削除しました
+[2025-12-22 10:06:28] --- 実行終了 ---
+[2025-12-22 10:19:09] --- 実行開始 ---
+[2025-12-22 10:19:09] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20251222_ryoushoku.pdf
+[2025-12-22 10:19:11] PDFダウンロード成功: 20251222_menu.pdf
+[2025-12-22 10:19:12] 画像変換成功: 20251222_menu.png
+[2025-12-22 10:19:12] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20251229_ryoushoku.pdf
+[2025-12-22 10:19:13] 表示画像を「今週分」に更新しました: 20251222_menu.png
+[2025-12-22 10:19:13] --- Firebaseへのデプロイを開始します ---
+[2025-12-23 10:42:24] --- 実行開始 ---
+[2025-12-23 10:42:24] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20251229_ryoushoku.pdf
+[2025-12-23 10:42:25] 表示画像を「今週分」に更新しました: 20251222_menu.png
+[2025-12-23 10:42:25] --- Firebaseへのデプロイを開始します ---
+[2025-12-24 11:00:32] --- 実行開始 ---
+[2025-12-24 11:00:32] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20251229_ryoushoku.pdf
+[2025-12-24 11:00:33] 表示画像を「今週分」に更新しました: 20251222_menu.png
+[2025-12-24 11:00:33] --- Firebaseへのデプロイを開始します ---
+[2025-12-24 11:01:00] デプロイ成功！
+[2025-12-24 11:01:00] --- 不要なファイルの削除を開始します ---
+[2025-12-24 11:01:00] クリーンアップ完了: 2 個のファイルを削除しました
+[2025-12-24 11:01:00] --- 実行終了 ---
+[2025-12-24 13:09:37] --- 実行開始 ---
+[2025-12-24 13:09:37] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20251222_ryoushoku.pdf
+[2025-12-24 13:09:59] 通信エラー: HTTPSConnectionPool(host='www.okinawa-ct.ac.jp', port=443): Max retries exceeded with url: /userfiles/files/10ryoumu_kakari/20251222_ryoushoku.pdf (Caused by ConnectTimeoutError(<HTTPSConnection(host='www.okinawa-ct.ac.jp', port=443) at 0x18d547069f0>, 'Connection to www.okinawa-ct.ac.jp timed out. (connect timeout=30)'))
+[2025-12-24 13:09:59] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20251229_ryoushoku.pdf
+[2025-12-24 13:10:20] 通信エラー: HTTPSConnectionPool(host='www.okinawa-ct.ac.jp', port=443): Max retries exceeded with url: /userfiles/files/10ryoumu_kakari/20251229_ryoushoku.pdf (Caused by ConnectTimeoutError(<HTTPSConnection(host='www.okinawa-ct.ac.jp', port=443) at 0x18d55754320>, 'Connection to www.okinawa-ct.ac.jp timed out. (connect timeout=30)'))
+[2025-12-24 13:10:20] 表示可能なメニュー画像がありません。
+[2025-12-24 13:10:20] --- Firebaseへのデプロイを開始します ---
+[2025-12-24 13:11:44] デプロイ失敗:
+
+[2025-12-24 13:11:44] --- 不要なファイルの削除を開始します ---
+[2025-12-24 13:11:44] クリーンアップ完了: 0 個のファイルを削除しました
+[2025-12-24 13:11:44] --- 実行終了 ---
+[2025-12-24 13:14:38] --- 実行開始 ---
+[2025-12-24 13:14:38] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20251222_ryoushoku.pdf
+[2025-12-24 13:14:43] --- 実行開始 ---
+[2025-12-24 13:14:43] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20251222_ryoushoku.pdf
+[2025-12-24 13:15:04] 通信エラー: HTTPSConnectionPool(host='www.okinawa-ct.ac.jp', port=443): Max retries exceeded with url: /userfiles/files/10ryoumu_kakari/20251222_ryoushoku.pdf (Caused by ConnectTimeoutError(<HTTPSConnection(host='www.okinawa-ct.ac.jp', port=443) at 0x273b3b07d70>, 'Connection to www.okinawa-ct.ac.jp timed out. (connect timeout=30)'))
+[2025-12-24 13:15:04] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20251229_ryoushoku.pdf
+[2025-12-24 13:15:25] 通信エラー: HTTPSConnectionPool(host='www.okinawa-ct.ac.jp', port=443): Max retries exceeded with url: /userfiles/files/10ryoumu_kakari/20251229_ryoushoku.pdf (Caused by ConnectTimeoutError(<HTTPSConnection(host='www.okinawa-ct.ac.jp', port=443) at 0x273b3b30410>, 'Connection to www.okinawa-ct.ac.jp timed out. (connect timeout=30)'))
+[2025-12-24 13:15:25] 表示可能なメニュー画像がありません。
+[2025-12-24 13:15:25] --- Firebaseへのデプロイを開始します ---
+[2025-12-24 13:16:08] デプロイ失敗:
+
+[2025-12-24 13:16:08] --- 不要なファイルの削除を開始します ---
+[2025-12-24 13:16:08] クリーンアップ完了: 0 個のファイルを削除しました
+[2025-12-24 13:16:08] --- 実行終了 ---
+[2025-12-24 13:16:23] --- 実行開始 ---
+[2025-12-24 13:16:23] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20251222_ryoushoku.pdf
+[2025-12-24 13:16:24] PDFダウンロード成功: 20251222_menu.pdf
+[2025-12-24 13:16:26] 画像変換成功: 20251222_menu.png
+[2025-12-24 13:16:27] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20251229_ryoushoku.pdf
+[2025-12-24 13:16:28] 表示画像を「今週分」に更新しました: 20251222_menu.png
+[2025-12-24 13:16:28] --- Firebaseへのデプロイを開始します ---
+[2025-12-24 13:16:49] デプロイ成功！
+[2025-12-24 13:16:49] --- 不要なファイルの削除を開始します ---
+[2025-12-24 13:16:49] クリーンアップ完了: 2 個のファイルを削除しました
+[2025-12-24 13:16:49] --- 実行終了 ---
+[2025-12-24 13:18:26] --- 実行開始 ---
+[2025-12-24 13:18:26] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20251222_ryoushoku.pdf
+[2025-12-24 13:18:28] PDFダウンロード成功: 20251222_menu.pdf
+[2025-12-24 13:18:30] 画像変換成功: 20251222_menu.png
+[2025-12-24 13:18:30] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20251229_ryoushoku.pdf
+[2025-12-24 13:18:31] 表示画像を「今週分」に更新しました: 20251222_menu.png
+[2025-12-24 13:18:32] --- Firebaseへのデプロイを開始します ---
+[2025-12-24 13:18:50] デプロイ成功！
+[2025-12-24 13:18:50] --- 不要なファイルの削除を開始します ---
+[2025-12-24 13:18:50] クリーンアップ完了: 2 個のファイルを削除しました
+[2025-12-24 13:18:50] --- 実行終了 ---
+[2025-12-25 09:24:56] --- 実行開始 ---
+[2025-12-25 09:24:56] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20251222_ryoushoku.pdf
+[2025-12-25 09:25:17] 通信エラー: HTTPSConnectionPool(host='www.okinawa-ct.ac.jp', port=443): Max retries exceeded with url: /userfiles/files/10ryoumu_kakari/20251222_ryoushoku.pdf (Caused by ConnectTimeoutError(<HTTPSConnection(host='www.okinawa-ct.ac.jp', port=443) at 0x1bebc6a7bc0>, 'Connection to www.okinawa-ct.ac.jp timed out. (connect timeout=30)'))
+[2025-12-25 09:25:17] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20251229_ryoushoku.pdf
+[2025-12-25 09:25:38] 通信エラー: HTTPSConnectionPool(host='www.okinawa-ct.ac.jp', port=443): Max retries exceeded with url: /userfiles/files/10ryoumu_kakari/20251229_ryoushoku.pdf (Caused by ConnectTimeoutError(<HTTPSConnection(host='www.okinawa-ct.ac.jp', port=443) at 0x1bebc6d42c0>, 'Connection to www.okinawa-ct.ac.jp timed out. (connect timeout=30)'))
+[2025-12-25 09:25:38] 表示可能なメニュー画像がありません。
+[2025-12-25 09:25:38] --- Firebaseへのデプロイを開始します ---
+[2025-12-25 09:27:01] デプロイ失敗:
+
+[2025-12-25 09:27:01] --- 不要なファイルの削除を開始します ---
+[2025-12-25 09:27:02] クリーンアップ完了: 0 個のファイルを削除しました
+[2025-12-25 09:27:02] --- 実行終了 ---
+[2025-12-26 10:31:19] --- 実行開始 ---
+[2025-12-26 10:31:19] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20251222_ryoushoku.pdf
+[2025-12-26 10:31:40] 通信エラー: HTTPSConnectionPool(host='www.okinawa-ct.ac.jp', port=443): Max retries exceeded with url: /userfiles/files/10ryoumu_kakari/20251222_ryoushoku.pdf (Caused by ConnectTimeoutError(<HTTPSConnection(host='www.okinawa-ct.ac.jp', port=443) at 0x1cd5c6636e0>, 'Connection to www.okinawa-ct.ac.jp timed out. (connect timeout=30)'))
+[2025-12-26 10:31:40] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20251229_ryoushoku.pdf
+[2025-12-26 10:32:01] 通信エラー: HTTPSConnectionPool(host='www.okinawa-ct.ac.jp', port=443): Max retries exceeded with url: /userfiles/files/10ryoumu_kakari/20251229_ryoushoku.pdf (Caused by ConnectTimeoutError(<HTTPSConnection(host='www.okinawa-ct.ac.jp', port=443) at 0x1cd5c690530>, 'Connection to www.okinawa-ct.ac.jp timed out. (connect timeout=30)'))
+[2025-12-26 10:32:01] 表示可能なメニュー画像がありません。
+[2025-12-26 10:32:01] --- Firebaseへのデプロイを開始します ---
+[2025-12-26 10:32:43] デプロイ成功！
+[2025-12-26 10:32:43] --- 不要なファイルの削除を開始します ---
+[2025-12-26 10:32:43] クリーンアップ完了: 0 個のファイルを削除しました
+[2025-12-26 10:32:43] --- 実行終了 ---
+[2025-12-27 09:01:04] --- 実行開始 ---
+[2025-12-27 09:01:04] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20251222_ryoushoku.pdf
+[2025-12-27 09:01:06] PDFダウンロード成功: 20251222_menu.pdf
+[2025-12-27 09:01:09] 画像変換成功: 20251222_menu.png
+[2025-12-27 09:01:09] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20251229_ryoushoku.pdf
+[2025-12-27 09:01:11] 表示画像を「今週分」に更新しました: 20251222_menu.png
+[2025-12-27 09:01:11] --- Firebaseへのデプロイを開始します ---
+[2025-12-27 09:02:00] デプロイ成功！
+[2025-12-27 09:02:00] --- 不要なファイルの削除を開始します ---
+[2025-12-27 09:02:00] クリーンアップ完了: 2 個のファイルを削除しました
+[2025-12-27 09:02:00] --- 実行終了 ---
+[2026-01-05 09:01:04] --- 実行開始 ---
+[2026-01-05 09:01:04] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20260105_ryoushoku.pdf
+[2026-01-05 09:01:25] 通信エラー: HTTPSConnectionPool(host='www.okinawa-ct.ac.jp', port=443): Max retries exceeded with url: /userfiles/files/10ryoumu_kakari/20260105_ryoushoku.pdf (Caused by ConnectTimeoutError(<HTTPSConnection(host='www.okinawa-ct.ac.jp', port=443) at 0x2284414f2c0>, 'Connection to www.okinawa-ct.ac.jp timed out. (connect timeout=30)'))
+[2026-01-05 09:01:25] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20260112_ryoushoku.pdf
+[2026-01-05 09:01:46] 通信エラー: HTTPSConnectionPool(host='www.okinawa-ct.ac.jp', port=443): Max retries exceeded with url: /userfiles/files/10ryoumu_kakari/20260112_ryoushoku.pdf (Caused by ConnectTimeoutError(<HTTPSConnection(host='www.okinawa-ct.ac.jp', port=443) at 0x228445f4230>, 'Connection to www.okinawa-ct.ac.jp timed out. (connect timeout=30)'))
+[2026-01-05 09:01:46] 表示可能なメニュー画像がありません。
+[2026-01-05 09:01:46] --- Firebaseへのデプロイを開始します ---
+[2026-01-05 09:03:04] デプロイ失敗:
+
+[2026-01-05 09:03:04] --- 不要なファイルの削除を開始します ---
+[2026-01-05 09:03:04] クリーンアップ完了: 0 個のファイルを削除しました
+[2026-01-05 09:03:04] --- 実行終了 ---
+[2026-01-05 13:19:10] --- 実行開始 ---
+[2026-01-05 13:19:10] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20260105_ryoushoku.pdf
+[2026-01-05 13:19:31] 通信エラー: HTTPSConnectionPool(host='www.okinawa-ct.ac.jp', port=443): Max retries exceeded with url: /userfiles/files/10ryoumu_kakari/20260105_ryoushoku.pdf (Caused by ConnectTimeoutError(<HTTPSConnection(host='www.okinawa-ct.ac.jp', port=443) at 0x22dad26fdd0>, 'Connection to www.okinawa-ct.ac.jp timed out. (connect timeout=30)'))
+[2026-01-05 13:19:31] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20260112_ryoushoku.pdf
+[2026-01-05 13:19:53] 通信エラー: HTTPSConnectionPool(host='www.okinawa-ct.ac.jp', port=443): Max retries exceeded with url: /userfiles/files/10ryoumu_kakari/20260112_ryoushoku.pdf (Caused by ConnectTimeoutError(<HTTPSConnection(host='www.okinawa-ct.ac.jp', port=443) at 0x22dad2e04a0>, 'Connection to www.okinawa-ct.ac.jp timed out. (connect timeout=30)'))
+[2026-01-05 13:19:53] 表示可能なメニュー画像がありません。
+[2026-01-05 13:19:53] --- Firebaseへのデプロイを開始します ---
+[2026-01-05 13:21:16] デプロイ失敗:
+
+[2026-01-05 13:21:16] --- 不要なファイルの削除を開始します ---
+[2026-01-05 13:21:16] クリーンアップ完了: 0 個のファイルを削除しました
+[2026-01-05 13:21:16] --- 実行終了 ---
+[2026-01-05 13:29:58] --- 実行開始 ---
+[2026-01-05 13:29:58] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20260105_ryoushoku.pdf
+[2026-01-05 13:30:01] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20260112_ryoushoku.pdf
+[2026-01-05 13:30:02] 表示可能なメニュー画像がありません。
+[2026-01-05 13:30:02] --- Firebaseへのデプロイを開始します ---
+[2026-01-05 13:31:15] デプロイ成功！
+[2026-01-05 13:31:15] --- 不要なファイルの削除を開始します ---
+[2026-01-05 13:31:15] クリーンアップ完了: 0 個のファイルを削除しました
+[2026-01-05 13:31:15] --- 実行終了 ---
+[2026-01-05 13:38:22] --- 実行開始 ---
+[2026-01-05 13:38:22] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20260105_ryoushoku.pdf
+[2026-01-05 13:38:23] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20260104_ryoushoku.pdf
+[2026-01-05 13:38:34] PDFダウンロード成功: 20260104_menu.pdf
+[2026-01-05 13:38:37] 画像変換成功: 20260104_menu.png
+[2026-01-05 13:38:37] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20260112_ryoushoku.pdf
+[2026-01-05 13:38:40] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20260111_ryoushoku.pdf
+[2026-01-05 13:38:42] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20260110_ryoushoku.pdf
+[2026-01-05 13:38:43] 表示画像を今週分(20260104_menu.png)に更新しました
+[2026-01-05 13:38:43] --- Firebaseへのデプロイを開始します ---
+[2026-01-05 13:39:20] デプロイ失敗:
+
+[2026-01-05 13:39:20] --- 不要なファイルの削除を開始します ---
+[2026-01-05 13:39:20] クリーンアップ完了: 2 個のファイルを削除しました
+[2026-01-05 13:39:20] --- 実行終了 ---
+[2026-01-06 10:07:07] --- 実行開始 ---
+[2026-01-06 10:07:07] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20260105_ryoushoku.pdf
+[2026-01-06 10:07:28] 通信エラー: HTTPSConnectionPool(host='www.okinawa-ct.ac.jp', port=443): Max retries exceeded with url: /userfiles/files/10ryoumu_kakari/20260105_ryoushoku.pdf (Caused by ConnectTimeoutError(<HTTPSConnection(host='www.okinawa-ct.ac.jp', port=443) at 0x1551375f980>, 'Connection to www.okinawa-ct.ac.jp timed out. (connect timeout=30)'))
+[2026-01-06 10:07:28] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20260104_ryoushoku.pdf
+[2026-01-06 10:07:49] 通信エラー: HTTPSConnectionPool(host='www.okinawa-ct.ac.jp', port=443): Max retries exceeded with url: /userfiles/files/10ryoumu_kakari/20260104_ryoushoku.pdf (Caused by ConnectTimeoutError(<HTTPSConnection(host='www.okinawa-ct.ac.jp', port=443) at 0x155137c4f80>, 'Connection to www.okinawa-ct.ac.jp timed out. (connect timeout=30)'))
+[2026-01-06 10:07:49] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20260103_ryoushoku.pdf
+[2026-01-06 10:08:10] 通信エラー: HTTPSConnectionPool(host='www.okinawa-ct.ac.jp', port=443): Max retries exceeded with url: /userfiles/files/10ryoumu_kakari/20260103_ryoushoku.pdf (Caused by ConnectTimeoutError(<HTTPSConnection(host='www.okinawa-ct.ac.jp', port=443) at 0x155137c5700>, 'Connection to www.okinawa-ct.ac.jp timed out. (connect timeout=30)'))
+[2026-01-06 10:08:10] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20260112_ryoushoku.pdf
+[2026-01-06 10:08:31] 通信エラー: HTTPSConnectionPool(host='www.okinawa-ct.ac.jp', port=443): Max retries exceeded with url: /userfiles/files/10ryoumu_kakari/20260112_ryoushoku.pdf (Caused by ConnectTimeoutError(<HTTPSConnection(host='www.okinawa-ct.ac.jp', port=443) at 0x155137c5e80>, 'Connection to www.okinawa-ct.ac.jp timed out. (connect timeout=30)'))
+[2026-01-06 10:08:31] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20260111_ryoushoku.pdf
+[2026-01-06 10:08:52] 通信エラー: HTTPSConnectionPool(host='www.okinawa-ct.ac.jp', port=443): Max retries exceeded with url: /userfiles/files/10ryoumu_kakari/20260111_ryoushoku.pdf (Caused by ConnectTimeoutError(<HTTPSConnection(host='www.okinawa-ct.ac.jp', port=443) at 0x155137c6600>, 'Connection to www.okinawa-ct.ac.jp timed out. (connect timeout=30)'))
+[2026-01-06 10:08:52] チェック中: https://www.okinawa-ct.ac.jp/userfiles/files/10ryoumu_kakari/20260110_ryoushoku.pdf
+[2026-01-06 10:09:14] 通信エラー: HTTPSConnectionPool(host='www.okinawa-ct.ac.jp', port=443): Max retries exceeded with url: /userfiles/files/10ryoumu_kakari/20260110_ryoushoku.pdf (Caused by ConnectTimeoutError(<HTTPSConnection(host='www.okinawa-ct.ac.jp', port=443) at 0x155137c61e0>, 'Connection to www.okinawa-ct.ac.jp timed out. (connect timeout=30)'))
+[2026-01-06 10:09:14] 表示可能なメニュー画像がありません。
+[2026-01-06 10:09:14] --- Firebaseへのデプロイを開始します ---
+[2026-01-06 10:10:34] デプロイ失敗:
+
+[2026-01-06 10:10:34] --- 不要なファイルの削除を開始します ---
+[2026-01-06 10:10:34] クリーンアップ完了: 0 個のファイルを削除しました
+[2026-01-06 10:10:34] --- 実行終了 ---
