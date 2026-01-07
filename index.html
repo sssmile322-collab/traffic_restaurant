@@ -12,7 +12,7 @@
 </script>
 <title>快適食堂 | Smart Restaurant</title>
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#2563eb">
+<meta name="theme-color" content="#ff8533">
 <link rel="apple-touch-icon" href="icon.png">
 <meta property="og:title" content="快適食堂 | Smart Restaurant">
 <meta property="og:description" content="学食の混雑状況をリアルタイムで確認！空いている時間を狙って行こう。">
@@ -27,259 +27,536 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js"></script>
 <style>
-:root{--primary:#2563eb;--bg:#f8fafc;--surface:#ffffff;--surface-sub:#f1f5f9;--text:#1e293b;--text-sub:#64748b;--border:#e2e8f0;--accent-free:#10b981;--accent-busy:#ef4444;--card-shadow:0 10px 40px -10px rgba(0,0,0,0.08);--fab-shadow:0 10px 30px rgba(0,0,0,0.2)}
-body.dark-mode{--primary:#60a5fa;--bg:#0f172a;--surface:#1e293b;--surface-sub:#334155;--text:#f1f5f9;--text-sub:#94a3b8;--border:#334155;--accent-free:#34d399;--accent-busy:#f87171;--card-shadow:0 10px 40px -10px rgba(0,0,0,0.5);--fab-shadow:0 10px 30px rgba(0,0,0,0.5)}
-*{box-sizing:border-box}
-body{margin:0;font-family:'Inter','Noto Sans JP',sans-serif;background-color:var(--bg);color:var(--text);-webkit-tap-highlight-color:transparent;padding-bottom:100px;overscroll-behavior:none;transition:background-color .3s,color .3s}
-canvas{touch-action:none}
-.container{max-width:480px;margin:0 auto;padding:20px;display:flex;flex-direction:column;gap:24px}
-header{display:flex;justify-content:space-between;align-items:center;padding:8px 0}
-.brand{display:flex;align-items:center;gap:10px;cursor:pointer}
-.brand-icon{font-size:2rem;color:var(--primary)}
-.brand-text{display:flex;flex-direction:column;line-height:1.1}
-.brand-main{font-size:1.25rem;font-weight:800;color:var(--text)}
-.brand-sub{font-size:.75rem;font-weight:600;color:var(--text-sub);letter-spacing:.02em}
-.header-controls{display:flex;align-items:center;gap:12px}
-.theme-toggle-btn{background:0 0;border:none;color:var(--text-sub);cursor:pointer;padding:4px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:background .2s,color .2s}
-.theme-toggle-btn:active{background:var(--surface-sub)}
-.theme-toggle-btn .material-icons-round{font-size:1.5rem}
-.live-badge{font-size:.7rem;padding:6px 10px;border-radius:99px;font-weight:700;display:flex;align-items:center;gap:6px;transition:all .3s ease}
-.live-badge.online{background:rgba(239,68,68,.15);color:var(--accent-busy)}
-.live-badge.offline{background:var(--surface-sub);color:var(--text-sub)}
-.live-dot{width:6px;height:6px;background:currentColor;border-radius:50%;animation:pulse 1.5s infinite}
-@keyframes pulse{0%{opacity:1}50%{opacity:.4}100%{opacity:1}}
-.status-card{background:var(--surface);border-radius:24px;padding:32px 24px;text-align:center;box-shadow:var(--card-shadow);transition:all .3s ease;border:1px solid transparent}
-.status-text{font-size:2rem;font-weight:800;margin-bottom:8px;letter-spacing:-.02em}
-.status-sub{color:var(--text-sub);font-size:.9rem;font-weight:600;min-height:1.4em}
-.status-card.busy .status-text{color:var(--accent-busy)}
-.status-card.free .status-text{color:var(--accent-free)}
-.status-card.closed{background:var(--surface-sub);box-shadow:none;border:1px solid var(--border)}
-.status-card.closed .status-text{color:var(--text-sub)}
-.status-card.closed .metric-val{color:var(--text-sub);opacity:.5}
-.status-card.closed .person-icon{color:var(--border)!important}
-.visual-queue{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin:24px 0;min-height:40px}
-.person-icon{font-family:'Material Icons Round';font-size:32px;color:var(--text-sub);opacity:0;transform:scale(.5);animation:popIn .4s cubic-bezier(.175,.885,.32,1.275) forwards}
-.person-icon.active{color:var(--primary)}
-@keyframes popIn{to{opacity:1;transform:scale(1)}}
-.metrics{display:flex;justify-content:space-around;margin-top:24px;padding-top:24px;border-top:1px solid var(--border)}
-.metric-item{display:flex;flex-direction:column;gap:4px}
-.metric-val{font-size:1.4rem;font-weight:800}
-.metric-label{font-size:.75rem;color:var(--text-sub);font-weight:600}
-.last-update{margin-top:16px;font-size:.7rem;color:var(--text-sub);text-align:right;opacity:.8}
-.graph-section{background:var(--surface);border-radius:20px;padding:20px;box-shadow:var(--card-shadow)}
-.graph-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
-.section-title{font-size:.9rem;font-weight:700;margin:0;color:var(--text-sub)}
-.day-select{background:var(--bg);border:1px solid var(--border);padding:6px 12px;border-radius:8px;font-size:.85rem;color:var(--text);font-weight:600;cursor:pointer;outline:0}
-.chart-container{position:relative;height:180px;width:100%}
-.no-data-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--surface);opacity:0;pointer-events:none;transition:opacity .3s;z-index:10}
-.no-data-overlay.visible{opacity:1;pointer-events:auto}
-.no-data-text{color:var(--text-sub);font-size:.85rem;font-weight:600;margin-top:8px}
-.no-data-icon{font-size:48px;color:var(--border)}
-.fab-btn{position:fixed;right:24px;background:var(--text);color:var(--bg);border-radius:99px;font-weight:700;box-shadow:var(--fab-shadow);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:100;transition:transform .2s}
-.fab-btn:active{transform:scale(.95)}
-.share-fab{bottom:90px;width:56px;height:56px;border-radius:50%}
-.share-fab .material-icons-round{font-size:24px}
-.feedback-fab{bottom:156px;width:56px;height:56px;border-radius:50%}
-.feedback-fab .material-icons-round{font-size:24px}
-.menu-fab{bottom:24px;padding:16px 24px;gap:8px}
-.overlay-base{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:200;opacity:0;pointer-events:none;transition:opacity .3s;display:flex}
-.overlay-base.open{opacity:1;pointer-events:auto}
-#menuModal,#feedbackModal{justify-content:center;align-items:flex-end}
-.menu-sheet{background:var(--surface);width:100%;max-width:500px;height:auto;max-height:85vh;border-radius:24px 24px 0 0;padding:24px;transform:translateY(100%);transition:transform .3s cubic-bezier(.16,1,.3,1);display:flex;flex-direction:column;border:1px solid var(--border);border-bottom:none;box-shadow:0 -10px 40px rgba(0,0,0,.2)}
-#menuModal.open .menu-sheet,#feedbackModal.open .menu-sheet{transform:translateY(0)}
-.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
-.close-btn{background:var(--surface-sub);color:var(--text);border:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;cursor:pointer}
-.menu-viewer{flex:1;overflow:auto;display:block;text-align:center;background:var(--surface-sub);border:1px solid var(--border);border-radius:16px;padding:16px;margin-top:10px;scrollbar-width:none;-ms-overflow-style:none;cursor:grab;overscroll-behavior:contain;touch-action:none;user-select:none}
-.menu-viewer::-webkit-scrollbar{display:none}
-.menu-viewer:active{cursor:grabbing}
-.menu-viewer img{width:100%;height:auto;border-radius:8px;display:block;-webkit-user-drag:none;transform-origin:top center}
-.menu-viewer img.zoomed{width:300%;max-width:none;margin:0 auto}
-.menu-viewer p{margin:10px 0}
-.form-group{margin-bottom:20px}
-.form-label{display:block;font-size:.85rem;font-weight:700;margin-bottom:8px;color:var(--text-sub)}
-.form-select,.form-textarea{width:100%;padding:12px;border-radius:12px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-family:inherit;font-size:1rem;resize:none;outline:0;transition:border-color .2s}
-.form-select:focus,.form-textarea:focus{border-color:var(--primary)}
-.form-textarea{height:120px}
-.submit-btn{width:100%;padding:16px;background:var(--text);color:var(--bg);border:none;border-radius:12px;font-weight:700;font-size:1rem;cursor:pointer;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:8px}
-.submit-btn:disabled{opacity:.5;cursor:not-allowed}
-#notifyModal{justify-content:center;align-items:center}
-.notify-dialog{background:var(--surface);width:85%;max-width:320px;padding:24px;border-radius:20px;text-align:center;box-shadow:var(--card-shadow)}
-.notify-dialog h2{margin:0 0 12px;font-size:1.1rem}
-.notify-dialog p{font-size:.9rem;color:var(--text-sub);margin-bottom:20px;line-height:1.5}
-.btn-group{display:flex;gap:12px}
-.btn{flex:1;padding:12px;border:none;border-radius:12px;font-weight:700;font-size:.9rem;cursor:pointer}
-.btn-primary{background:var(--text);color:var(--bg)}
-.btn-secondary{background:var(--surface-sub);color:var(--text)}
-.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-150%);background:var(--surface);padding:16px 24px;border-radius:16px;box-shadow:var(--card-shadow);display:flex;align-items:center;gap:12px;z-index:1000;transition:transform .5s cubic-bezier(.19,1,.22,1);min-width:280px;border:1px solid var(--border)}
-.toast.show{transform:translateX(-50%) translateY(0)}
-.toast-icon{font-size:1.5rem}
-.toast-content div:first-child{font-weight:700;font-size:.9rem;color:var(--text)}
-.toast-content div:last-child{font-size:.8rem;color:var(--text-sub)}
+  /* =========================================
+     リッチコーヒー × オレンジアクセント
+     ========================================= */
+  :root {
+    --primary: #ff8533;         
+    --primary-dark: #e67326;    
+    
+    --bg: #F9F7F2;              
+    --surface: #FFFFFF;         
+    --surface-sub: #F0EBE5;     
+    
+    /* ★新規: すりガラス用の半透明背景（白の透け） */
+    --surface-alpha: rgba(255, 255, 255, 0.75);
+
+    --text: #2c2420;            
+    --text-sub: #6d5e56;        
+    
+    --border: #e6e0d8;          
+    
+    --accent-free: #388E3C;     
+    --accent-busy: #D32F2F;     
+    
+    --card-shadow: 0 4px 20px rgba(62, 39, 35, 0.08); 
+    --fab-shadow: 0 4px 16px rgba(255, 133, 51, 0.4);
+  }
+
+  body.dark-mode {
+    --primary: #ffa366;         
+    --primary-dark: #ff8533;
+    
+    --bg: #1c1917;              
+    --surface: #38302c;         
+    --surface-sub: #4a403a;     
+    
+    /* ★新規: すりガラス用の半透明背景（チョコ色の透け） */
+    --surface-alpha: rgba(56, 48, 44, 0.75);
+
+    --text: #f5f0e6;            
+    --text-sub: #bfb5ad;        
+    
+    --border: #594f47;          
+    
+    --accent-free: #81c784;
+    --accent-busy: #e57373;
+    
+    --card-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    --fab-shadow: 0 4px 16px rgba(255, 163, 102, 0.3);
+  }
+
+  * { box-sizing: border-box; }
+  body { 
+    margin: 0; 
+    font-family: 'Inter', 'Noto Sans JP', sans-serif; 
+    background-color: var(--bg); 
+    color: var(--text); 
+    -webkit-tap-highlight-color: transparent; 
+    padding-bottom: 100px; 
+    overscroll-behavior: none; 
+    transition: background-color 0.3s, color 0.3s; 
+  }
+  canvas { touch-action: none; }
+  
+  .container { max-width: 480px; margin: 0 auto; padding: 20px; display: flex; flex-direction: column; gap: 24px; }
+  
+  header { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; }
+  .brand { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+  .brand-icon { font-size: 2rem; color: var(--primary); }
+  .brand-text { display: flex; flex-direction: column; line-height: 1.1; }
+  .brand-main { font-size: 1.25rem; font-weight: 800; color: var(--text); }
+  .brand-sub { font-size: 0.75rem; font-weight: 600; color: var(--text-sub); letter-spacing: 0.02em; }
+  
+  .header-controls { display: flex; align-items: center; gap: 12px; }
+  .theme-toggle-btn { background: none; border: none; color: var(--text-sub); cursor: pointer; padding: 4px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background 0.2s, color 0.2s; }
+  .theme-toggle-btn:active { background: var(--surface-sub); }
+  .theme-toggle-btn .material-icons-round { font-size: 1.5rem; }
+  
+  .live-badge { font-size: 0.7rem; padding: 6px 10px; border-radius: 99px; font-weight: 700; display: flex; align-items: center; gap: 6px; transition: all 0.3s ease; }
+  .live-badge.online { background: rgba(255, 107, 107, 0.15); color: var(--accent-busy); }
+  .live-badge.offline { background: var(--surface-sub); color: var(--text-sub); }
+  .live-dot { width: 6px; height: 6px; background: currentColor; border-radius: 50%; animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0% {opacity: 1;} 50% {opacity: 0.4;} 100% {opacity: 1;} }
+
+  .status-card { background: var(--surface); border-radius: 24px; padding: 32px 24px; text-align: center; box-shadow: var(--card-shadow); transition: all 0.3s ease; border: 1px solid transparent; }
+  .status-text { font-size: 2rem; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.02em; }
+  .status-sub { color: var(--text-sub); font-size: 0.9rem; font-weight: 600; min-height: 1.4em; }
+  .status-card.busy .status-text { color: var(--accent-busy); }
+  .status-card.free .status-text { color: var(--accent-free); }
+  .status-card.closed { background: var(--surface-sub); box-shadow: none; border: 1px solid var(--border); }
+  .status-card.closed .status-text { color: var(--text-sub); }
+  .status-card.closed .metric-val { color: var(--text-sub); opacity: 0.5; }
+  .status-card.closed .person-icon { color: var(--border) !important; }
+
+  .visual-queue { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin: 24px 0; min-height: 40px; }
+  .person-icon { font-family: 'Material Icons Round'; font-size: 32px; color: var(--text-sub); opacity: 0; transform: scale(0.5); animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+  .person-icon.active { color: var(--primary); }
+  @keyframes popIn { to { opacity: 1; transform: scale(1); } }
+
+  .metrics { display: flex; justify-content: space-around; margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border); }
+  .metric-item { display: flex; flex-direction: column; gap: 4px; }
+  .metric-val { font-size: 1.4rem; font-weight: 800; }
+  .metric-label { font-size: 0.75rem; color: var(--text-sub); font-weight: 600; }
+  .last-update { margin-top: 16px; font-size: 0.7rem; color: var(--text-sub); text-align: right; opacity: 0.8; }
+
+  .graph-section { background: var(--surface); border-radius: 20px; padding: 20px; box-shadow: var(--card-shadow); }
+  .graph-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .section-title { font-size: 0.9rem; font-weight: 700; margin: 0; color: var(--text-sub); }
+  .day-select { background: var(--bg); border: 1px solid var(--border); padding: 6px 12px; border-radius: 8px; font-size: 0.85rem; color: var(--text); font-weight: 600; cursor: pointer; outline: none; }
+  .chart-container { position: relative; height: 180px; width: 100%; }
+  .no-data-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--surface); opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 10; }
+  .no-data-overlay.visible { opacity: 1; pointer-events: auto; }
+  .no-data-text { color: var(--text-sub); font-size: 0.85rem; font-weight: 600; margin-top: 8px; }
+  .no-data-icon { font-size: 48px; color: var(--border); }
+
+  /* ▼▼▼ FABメニュー ▼▼▼ */
+  .fab-container {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 100;
+    display: flex;
+    flex-direction: column; 
+    align-items: flex-end;
+    gap: 16px;
+  }
+
+  .fab-main {
+    width: 64px;
+    height: 64px;
+    background: var(--primary);
+    color: #fff;
+    border-radius: 50%;
+    box-shadow: var(--fab-shadow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s;
+  }
+  /* メインボタンは押した時少し縮む */
+  .fab-main:active { transform: scale(0.9); }
+  .fab-main .material-icons-round { font-size: 32px; transition: transform 0.3s; }
+  
+  /* メニュー展開時 */
+  .fab-container.active .fab-main { transform: rotate(90deg); background: var(--primary); }
+  .fab-container.active .fab-main .material-icons-round { transform: rotate(-90deg); }
+  /* 展開時に押した時の複合変形 */
+  .fab-container.active .fab-main:active { transform: rotate(90deg) scale(0.9); }
+
+  .fab-options {
+    display: flex;
+    flex-direction: column; 
+    gap: 12px;
+    pointer-events: none;
+    margin-bottom: 10px;
+  }
+  .fab-container.active .fab-options { pointer-events: auto; }
+
+  .fab-option {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    opacity: 0;
+    transform: translateY(20px) scale(0.8);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
+  
+  .fab-container.active .fab-option { opacity: 1; transform: translateY(0) scale(1); }
+  .fab-container.active .fab-option:nth-child(4) { transition-delay: 0.05s; }
+  .fab-container.active .fab-option:nth-child(3) { transition-delay: 0.1s; } 
+  .fab-container.active .fab-option:nth-child(2) { transition-delay: 0.15s; } 
+  .fab-container.active .fab-option:nth-child(1) { transition-delay: 0.2s; } 
+
+  /* ★修正: すりガラス効果 + 半透明背景 */
+  .fab-label {
+    background: var(--surface-alpha); /* 半透明色 */
+    backdrop-filter: blur(12px);      /* すりガラス */
+    -webkit-backdrop-filter: blur(12px); /* Safari用 */
+    color: var(--text);
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    box-shadow: var(--card-shadow);
+    white-space: nowrap;
+    border: 1px solid var(--border);
+  }
+
+  /* ★修正: すりガラス効果 + 半透明背景 */
+  .fab-mini-btn {
+    width: 48px;
+    height: 48px;
+    background: var(--surface-alpha); /* 半透明色 */
+    backdrop-filter: blur(12px);      /* すりガラス */
+    -webkit-backdrop-filter: blur(12px); /* Safari用 */
+    color: var(--primary);
+    border-radius: 50%;
+    box-shadow: var(--card-shadow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
+    transition: background 0.2s;
+  }
+  /* 押した時は少し濃くする（操作感のため） */
+  .fab-mini-btn:active { background: var(--surface-sub); }
+  /* ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲ */
+
+  /* モーダル共通 */
+  .overlay-base { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 200; opacity: 0; pointer-events: none; transition: opacity 0.3s; display: flex; }
+  .overlay-base.open { opacity: 1; pointer-events: auto; }
+  #menuModal, #feedbackModal { justify-content: center; align-items: flex-end; }
+  
+  /* カードシート */
+  .menu-sheet { 
+    background: var(--surface); 
+    width: 100%; max-width: 500px; height: auto; max-height: 85vh; 
+    border-radius: 24px 24px 0 0; padding: 24px; 
+    transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.16,1,0.3,1); 
+    display: flex; flex-direction: column; 
+    border: 1px solid var(--border); border-bottom: none; 
+    box-shadow: 0 -10px 40px rgba(0,0,0,0.2); 
+  }
+  #menuModal.open .menu-sheet, #feedbackModal.open .menu-sheet { transform: translateY(0); }
+  
+  .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .close-btn { background: var(--surface-sub); color: var(--text); border: none; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; cursor: pointer; }
+
+  /* メニュー画像カード */
+  .menu-viewer {
+    flex: 1; overflow: auto; display: block; text-align: center;
+    background: var(--surface-sub); border: 1px solid var(--border); border-radius: 16px;
+    padding: 16px; margin-top: 10px;
+    scrollbar-width: none; -ms-overflow-style: none;
+    cursor: grab; overscroll-behavior: contain; touch-action: none; user-select: none;
+  }
+  .menu-viewer::-webkit-scrollbar { display: none; }
+  .menu-viewer:active { cursor: grabbing; }
+  .menu-viewer img { width: 100%; height: auto; border-radius: 8px; display: block; -webkit-user-drag: none; transform-origin: top center; }
+  .menu-viewer img.zoomed { width: 300%; max-width: none; margin: 0 auto; }
+
+  /* フォーム */
+  .form-group { margin-bottom: 20px; }
+  .form-label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; color: var(--text-sub); }
+  .form-select, .form-textarea { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-family: inherit; font-size: 1rem; resize: none; outline: none; transition: border-color 0.2s; }
+  .form-select:focus, .form-textarea:focus { border-color: var(--primary); }
+  .form-textarea { height: 120px; }
+  .submit-btn { width: 100%; padding: 16px; background: var(--primary); color: #fff; border: none; border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .submit-btn:hover { background: var(--primary-dark); }
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* 通知・トースト */
+  #notifyModal { justify-content: center; align-items: center; }
+  .notify-dialog { background: var(--surface); width: 85%; max-width: 320px; padding: 24px; border-radius: 20px; text-align: center; box-shadow: var(--card-shadow); }
+  .notify-dialog h2 { margin: 0 0 12px; font-size: 1.1rem; }
+  .notify-dialog p { font-size: 0.9rem; color: var(--text-sub); margin-bottom: 20px; line-height: 1.5; }
+  .btn-group { display: flex; gap: 12px; }
+  .btn { flex: 1; padding: 12px; border: none; border-radius: 12px; font-weight: 700; font-size: 0.9rem; cursor: pointer; }
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn-secondary { background: var(--surface-sub); color: var(--text); }
+  .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-150%); background: var(--surface); padding: 16px 24px; border-radius: 16px; box-shadow: var(--card-shadow); display: flex; align-items: center; gap: 12px; z-index: 1000; transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1); min-width: 280px; border: 1px solid var(--border); }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast-icon { font-size: 1.5rem; }
+  .toast-content div:first-child { font-weight: 700; font-size: 0.9rem; color: var(--text); }
+  .toast-content div:last-child { font-size: 0.8rem; color: var(--text-sub); }
 </style>
 </head>
 <body>
+
 <div id="pseudoNotify" class="toast">
-<div class="toast-icon">✨</div>
-<div class="toast-content">
-<div>空いてきました！</div>
-<div>今がチャンスです</div>
+  <div class="toast-icon">✨</div>
+  <div class="toast-content">
+    <div>空いてきました！</div>
+    <div>今がチャンスです</div>
+  </div>
 </div>
-</div>
+
 <div id="notifyModal" class="overlay-base">
-<div class="notify-dialog">
-<h2>通知をオンにしますか？</h2>
-<p>行列が解消されたタイミングで<br>お知らせを受け取れます。</p>
-<div class="btn-group">
-<button class="btn btn-secondary" id="notifyNo">あとで</button>
-<button class="btn btn-primary" id="notifyYes">許可する</button>
+  <div class="notify-dialog">
+    <h2>通知をオンにしますか？</h2>
+    <p>行列が解消されたタイミングで<br>お知らせを受け取れます。</p>
+    <div class="btn-group">
+      <button class="btn btn-secondary" id="notifyNo">あとで</button>
+      <button class="btn btn-primary" id="notifyYes">許可する</button>
+    </div>
+  </div>
 </div>
-</div>
-</div>
+
 <div class="container">
-<header>
-<div class="brand" onclick="window.location.reload()" style="cursor:pointer">
-<span class="material-icons-round brand-icon">restaurant_menu</span>
-<div class="brand-text">
-<span class="brand-main">快適食堂</span>
-<span class="brand-sub">Smart Restaurant</span>
+  <header>
+    <div class="brand" onclick="window.location.reload()" style="cursor:pointer">
+      <span class="material-icons-round brand-icon">restaurant_menu</span>
+      <div class="brand-text">
+        <span class="brand-main">快適食堂</span>
+        <span class="brand-sub">Smart Restaurant</span>
+      </div>
+    </div>
+    <div class="header-controls">
+      <div id="liveBadge" class="live-badge offline">
+        <span class="material-icons-round" style="font-size:1rem">cloud_off</span> OFFLINE
+      </div>
+    </div>
+  </header>
+
+  <div id="mainCard" class="status-card">
+    <div id="statusText" class="status-text">読み込み中...</div>
+    <div id="waitMessage" class="status-sub">少々お待ちください</div>
+    <div id="visualQueue" class="visual-queue"></div>
+    <div class="metrics">
+      <div class="metric-item">
+        <span class="metric-val"><span id="count">--</span><span style="font-size:0.9rem">人</span></span>
+        <span class="metric-label">現在の行列</span>
+      </div>
+      <div class="metric-item">
+        <span class="metric-val">~<span id="waitTime">--</span><span style="font-size:0.9rem">分</span></span>
+        <span class="metric-label">推定待ち時間</span>
+      </div>
+    </div>
+    <div id="lastUpdateText" class="last-update">最終更新: --/-- --:--</div>
+  </div>
+
+  <div class="graph-section">
+    <div class="graph-header">
+      <h2 class="section-title">混雑の傾向グラフ (13:00-18:00)</h2>
+      <select id="daySelector" class="day-select">
+        <option value="0">日曜日</option>
+        <option value="1">月曜日</option>
+        <option value="2">火曜日</option>
+        <option value="3">水曜日</option>
+        <option value="4">木曜日</option>
+        <option value="5">金曜日</option>
+        <option value="6">土曜日</option>
+      </select>
+    </div>
+    <div class="chart-container">
+      <canvas id="lunchChart"></canvas>
+      <div id="noDataOverlay" class="no-data-overlay">
+        <span class="material-icons-round no-data-icon">show_chart</span>
+        <div class="no-data-text">データがありません</div>
+      </div>
+    </div>
+  </div>
 </div>
-</div>
-<div class="header-controls">
-<button id="themeToggle" class="theme-toggle-btn">
-<span class="material-icons-round">dark_mode</span>
-</button>
-<div id="liveBadge" class="live-badge offline">
-<span class="material-icons-round" style="font-size:1rem">cloud_off</span> OFFLINE
-</div>
-</div>
-</header>
-<div id="mainCard" class="status-card">
-<div id="statusText" class="status-text">読み込み中...</div>
-<div id="waitMessage" class="status-sub">少々お待ちください</div>
-<div id="visualQueue" class="visual-queue"></div>
-<div class="metrics">
-<div class="metric-item">
-<span class="metric-val"><span id="count">--</span><span style="font-size:0.9rem">人</span></span>
-<span class="metric-label">現在の行列</span>
-</div>
-<div class="metric-item">
-<span class="metric-val">~<span id="waitTime">--</span><span style="font-size:0.9rem">分</span></span>
-<span class="metric-label">推定待ち時間</span>
-</div>
-</div>
-<div id="lastUpdateText" class="last-update">最終更新: --/-- --:--</div>
-</div>
-<div class="graph-section">
-<div class="graph-header">
-<h2 class="section-title">混雑の傾向グラフ (13:00-18:00)</h2>
-<select id="daySelector" class="day-select">
-<option value="0">日曜日</option>
-<option value="1">月曜日</option>
-<option value="2">火曜日</option>
-<option value="3">水曜日</option>
-<option value="4">木曜日</option>
-<option value="5">金曜日</option>
-<option value="6">土曜日</option>
-</select>
-</div>
-<div class="chart-container">
-<canvas id="lunchChart"></canvas>
-<div id="noDataOverlay" class="no-data-overlay">
-<span class="material-icons-round no-data-icon">show_chart</span>
-<div class="no-data-text">データがありません</div>
-</div>
-</div>
-</div>
-</div>
-<div class="feedback-fab fab-btn" id="feedbackBtn">
-<span class="material-icons-round">chat_bubble_outline</span>
-</div>
-<div class="share-fab fab-btn" id="shareBtn">
-<span class="material-icons-round">share</span>
-</div>
-<div class="menu-fab fab-btn" id="menuBtn">
-<span class="material-icons-round">menu_book</span>
-本日のメニュー
+
+<div class="fab-container" id="fabContainer">
+  <div class="fab-options">
+    
+    <button class="fab-option" id="themeOption">
+      <span class="fab-label">テーマ切替</span>
+      <div class="fab-mini-btn">
+        <span class="material-icons-round" id="themeIconFab">dark_mode</span>
+      </div>
+    </button>
+
+    <button class="fab-option" id="menuBtn">
+      <span class="fab-label">本日のメニュー</span>
+      <div class="fab-mini-btn">
+        <span class="material-icons-round">menu_book</span>
+      </div>
+    </button>
+    
+    <button class="fab-option" id="shareBtn">
+      <span class="fab-label">シェア</span>
+      <div class="fab-mini-btn">
+        <span class="material-icons-round">share</span>
+      </div>
+    </button>
+    
+    <button class="fab-option" id="feedbackBtn">
+      <span class="fab-label">ご意見</span>
+      <div class="fab-mini-btn">
+        <span class="material-icons-round">chat_bubble_outline</span>
+      </div>
+    </button>
+  </div>
+  
+  <button class="fab-main" id="fabToggle">
+    <span class="material-icons-round" id="fabIcon">menu</span>
+  </button>
 </div>
 <div class="overlay-base" id="feedbackModal">
-<div class="menu-sheet">
-<div class="modal-header">
-<h2 style="margin:0;font-size:1.1rem">ご意見・ご要望</h2>
-<button class="close-btn" id="closeFeedback">
-<span class="material-icons-round">close</span>
-</button>
+  <div class="menu-sheet">
+    <div class="modal-header">
+      <h2 style="margin:0;font-size:1.1rem">ご意見・ご要望</h2>
+      <button class="close-btn" id="closeFeedback">
+        <span class="material-icons-round">close</span>
+      </button>
+    </div>
+    <div style="padding-bottom:20px">
+      <div class="form-group">
+        <label class="form-label">種類</label>
+        <select id="fbCategory" class="form-select">
+          <option value="food">🍽 食事について（具体的にメニュー名など）</option>
+          <option value="service">📱 サービスについて（快適食堂）</option>
+          <option value="other">💬 その他</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">内容</label>
+        <textarea id="fbMessage" class="form-textarea" placeholder="ご自由にお書きください..."></textarea>
+      </div>
+      <button id="fbSubmit" class="submit-btn">送信する <span class="material-icons-round">send</span></button>
+    </div>
+  </div>
 </div>
-<div style="padding-bottom:20px">
-<div class="form-group">
-<label class="form-label">種類</label>
-<select id="fbCategory" class="form-select">
-<option value="food">🍽 食事について（具体的にメニュー名など）</option>
-<option value="service">📱 サービスについて（快適食堂）</option>
-<option value="other">💬 その他</option>
-</select>
-</div>
-<div class="form-group">
-<label class="form-label">内容</label>
-<textarea id="fbMessage" class="form-textarea" placeholder="ご自由にお書きください..."></textarea>
-</div>
-<button id="fbSubmit" class="submit-btn">送信する <span class="material-icons-round">send</span></button>
-</div>
-</div>
-</div>
+
 <div class="overlay-base" id="menuModal">
-<div class="menu-sheet">
-<div class="modal-header">
-<h2 style="margin:0;font-size:1.1rem">メニュー表</h2>
-<button class="close-btn" id="closeMenu">
-<span class="material-icons-round">close</span>
-</button>
+  <div class="menu-sheet">
+    <div class="modal-header">
+      <h2 style="margin:0;font-size:1.1rem">メニュー表</h2>
+      <button class="close-btn" id="closeMenu">
+        <span class="material-icons-round">close</span>
+      </button>
+    </div>
+    <p style="font-size:0.8rem;color:var(--text-sub);text-align:center;margin:0 0 10px 0">
+      <span class="material-icons-round" style="font-size:0.9rem;vertical-align:middle">touch_app</span> タップで拡大 / ドラッグで移動
+    </p>
+    <div class="menu-viewer" id="menuContainer">
+      <img id="menuImage" draggable="false" src="menu_img.png" alt="本日のメニュー" onerror="this.style.display='none';this.parentElement.innerHTML='<p style=\'text-align:center;color:#888;margin-top:20px\'>メニュー画像が見つかりません</p>'" />
+    </div>
+  </div>
 </div>
-<p style="font-size:0.8rem;color:var(--text-sub);text-align:center;margin:0 0 10px 0">
-<span class="material-icons-round" style="font-size:0.9rem;vertical-align:middle">touch_app</span> タップで拡大 / ドラッグで移動
-</p>
-<div class="menu-viewer" id="menuContainer">
-<img id="menuImage" draggable="false" src="menu_img.png" alt="本日のメニュー" onerror="this.style.display='none';this.parentElement.innerHTML='<p style=\'text-align:center;color:#888;margin-top:20px\'>メニュー画像が見つかりません</p>'">
-</div>
-</div>
-</div>
+
 <script type="module">
-import{initializeApp}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";import{getDatabase,ref,onValue,push}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-const firebaseConfig={databaseURL:"https://traffic-restaurant-default-rtdb.firebaseio.com/"};
-const MINUTES_PER_PERSON=0.3,isIphone=/iPhone|iPad|iPod/i.test(navigator.userAgent),DATA_TIMEOUT_MINUTES=1;
-const GAS_URL="https://script.google.com/macros/s/AKfycbxYAdVhS19brD2FfGizWH5jBCUXGSLFTfq60wvLCCxkjptYz7WUpQZ71ay2lFoTtEv16w/exec";
-const app=initializeApp(firebaseConfig),db=getDatabase(app);
-const countEl=document.getElementById("count"),waitTimeEl=document.getElementById("waitTime"),statusTextEl=document.getElementById("statusText"),waitMessageEl=document.getElementById("waitMessage"),visualQueueEl=document.getElementById("visualQueue"),mainCard=document.getElementById("mainCard"),daySelector=document.getElementById("daySelector"),liveBadgeEl=document.getElementById("liveBadge"),lastUpdateTextEl=document.getElementById("lastUpdateText"),themeToggle=document.getElementById("themeToggle"),noDataOverlay=document.getElementById("noDataOverlay"),menuBtn=document.getElementById("menuBtn"),menuModal=document.getElementById("menuModal"),closeMenu=document.getElementById("closeMenu"),notifyModal=document.getElementById("notifyModal"),notifyYes=document.getElementById("notifyYes"),notifyNo=document.getElementById("notifyNo"),pseudoNotify=document.getElementById("pseudoNotify"),shareBtn=document.getElementById("shareBtn"),feedbackBtn=document.getElementById("feedbackBtn"),feedbackModal=document.getElementById("feedbackModal"),closeFeedback=document.getElementById("closeFeedback"),fbSubmit=document.getElementById("fbSubmit"),fbCategory=document.getElementById("fbCategory"),fbMessage=document.getElementById("fbMessage");
-daySelector.value=new Date().getDay();
-const themeIcon=themeToggle.querySelector(".material-icons-round"),savedTheme=localStorage.getItem("theme"),systemDark=window.matchMedia("(prefers-color-scheme: dark)").matches;
-if(savedTheme==="dark"||(!savedTheme&&systemDark)){document.body.classList.add("dark-mode");themeIcon.textContent="light_mode"}else{document.body.classList.remove("dark-mode");themeIcon.textContent="dark_mode"}
-themeToggle.onclick=()=>{document.body.classList.toggle("dark-mode");const t=document.body.classList.contains("dark-mode");themeIcon.textContent=t?"light_mode":"dark_mode";localStorage.setItem("theme",t?"dark":"light");if(chart){chart.options.scales.x.ticks.color=getComputedStyle(document.body).getPropertyValue('--text-sub').trim();chart.update()}};
-menuBtn.onclick=()=>menuModal.classList.add("open");closeMenu.onclick=()=>menuModal.classList.remove("open");
-let isMenuBgDown=!1;menuModal.addEventListener('mousedown',e=>{isMenuBgDown=(e.target===menuModal)});menuModal.addEventListener('mouseup',e=>{if(isMenuBgDown&&e.target===menuModal)menuModal.classList.remove("open");isMenuBgDown=!1});
-feedbackBtn.onclick=()=>feedbackModal.classList.add("open");closeFeedback.onclick=()=>feedbackModal.classList.remove("open");feedbackModal.onclick=e=>{if(e.target===feedbackModal)feedbackModal.classList.remove("open")};
-fbSubmit.onclick=async()=>{const e=fbMessage.value.trim();if(!e){alert("内容を入力してください");return}fbSubmit.disabled=!0,fbSubmit.textContent="送信中...";try{await push(ref(db,"feedbacks"),{category:fbCategory.value,message:e,timestamp:Date.now(),userAgent:navigator.userAgent});GAS_URL&&"ここにGASのウェブアプリURLを貼り付け"!==GAS_URL&&fetch(GAS_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/json"},body:JSON.stringify({category:fbCategory.value,message:e})}).catch(e=>console.error(e));alert("ご意見ありがとうございます！送信しました。"),fbMessage.value="",feedbackModal.classList.remove("open")}catch(e){console.error(e),alert("送信に失敗しました。")}finally{fbSubmit.disabled=!1,fbSubmit.innerHTML='送信する <span class="material-icons-round">send</span>'}};
-if(!isIphone&&"Notification"in window){"default"===Notification.permission&&setTimeout(()=>{notifyModal.classList.add("open")},1e3);notifyYes.onclick=async()=>{await Notification.requestPermission(),notifyModal.classList.remove("open")};notifyNo.onclick=()=>{notifyModal.classList.remove("open")}}
-shareBtn.onclick=async()=>{let e="";e=mainCard.classList.contains("closed")||"データ受信待ち"===statusTextEl.textContent?"学食の混雑状況をチェックしよう！\n":`現在の混雑状況: ${countEl.textContent}人待ち (${statusTextEl.textContent})\n`;const t={title:'快適食堂',text:e,url:window.location.href};if(navigator.share){try{await navigator.share(t)}catch(e){}}else{alert("URLをコピーしました！友達に共有しよう！"),navigator.clipboard.writeText(window.location.href)}};
-function isBusinessOpen(){return!0}
-function getStatus(e){return e<=0?"free":e<=1?"normal":"busy"}
-let lastStatus=null,lastDataTimestamp=0,currentTrendMessage="";
-function triggerNotification(){pseudoNotify.classList.add("show"),setTimeout(()=>{pseudoNotify.classList.remove("show")},4e3),!isIphone&&"Notification"in window&&"granted"===Notification.permission&&new Notification("学食が空いてきました！",{body:"今なら並ばずに行けそうです 🍽",icon:"/favicon.ico"})}
-function updateUI(e,t){lastDataTimestamp=1e3*t;const a=new Date(lastDataTimestamp),n=String(a.getHours()).padStart(2,'0'),o=String(a.getMinutes()).padStart(2,'0');lastUpdateTextEl.textContent=`最終更新: ${a.getMonth()+1}/${a.getDate()} ${n}:${o}`,checkLiveStatus();if(!isBusinessOpen()){showClosedUI();return}if((Date.now()-lastDataTimestamp)/1e3/60>DATA_TIMEOUT_MINUTES){showStaleDataUI();return}countEl.textContent=e,waitTimeEl.textContent=Math.ceil(e*MINUTES_PER_PERSON),renderVisualQueue(e);const s=getStatus(e);"free"!==lastStatus&&"free"===s&&triggerNotification(),lastStatus=s,mainCard.className="status-card",mainCard.classList.remove("free","busy","closed"),"free"===s?(statusTextEl.textContent="空いています",mainCard.classList.add("free")):"normal"===s?statusTextEl.textContent="ふつう":(statusTextEl.textContent="混雑中",mainCard.classList.add("busy")),currentTrendMessage?waitMessageEl.textContent=currentTrendMessage:"free"===s?waitMessageEl.textContent="今がチャンスです！":"normal"===s?waitMessageEl.textContent="少し並ぶかもしれません":waitMessageEl.textContent="時間に余裕を持って行きましょう"}
-function showClosedUI(){mainCard.className="status-card closed",statusTextEl.textContent="営業時間外",waitMessageEl.textContent="本日の営業は終了しました",countEl.textContent="--",waitTimeEl.textContent="--",visualQueueEl.innerHTML='<span class="material-icons-round" style="font-size: 48px; color: #cbd5e1;">storefront</span>'}
-function showStaleDataUI(){mainCard.className="status-card closed",statusTextEl.textContent="データ受信待ち",waitMessageEl.textContent="カメラシステムが停止中です",countEl.textContent="--",waitTimeEl.textContent="--",visualQueueEl.innerHTML='<span class="material-icons-round" style="font-size: 48px; color: #cbd5e1;">cloud_off</span>'}
-function checkLiveStatus(){const e=Date.now()-lastDataTimestamp;e>6e4?(liveBadgeEl.className="live-badge offline",liveBadgeEl.innerHTML='<span class="material-icons-round" style="font-size: 1rem;">cloud_off</span> OFFLINE'):(liveBadgeEl.className="live-badge online",liveBadgeEl.innerHTML='<div class="live-dot"></div> LIVE'),isBusinessOpen()&&e>6e4*DATA_TIMEOUT_MINUTES&&showStaleDataUI()}
-setInterval(checkLiveStatus,5e3);
-function renderVisualQueue(e){visualQueueEl.innerHTML="";const t=Math.min(e,10);for(let a=0;a<t;a++){const e=document.createElement("span");e.className="material-icons-round person-icon",e.textContent="person",e.style.animationDelay=`${.05*a}s`,visualQueueEl.appendChild(e)}if(e>10){const t=document.createElement("span");t.style.fontSize="0.8rem",t.style.color="#999",t.style.alignSelf="center",t.textContent=`+${e-10}`,visualQueueEl.appendChild(t)}}
-onValue(ref(db,"line_status"),e=>{const t=e.val();t&&(updateUI(t.people,t.timestamp),analyzeTrend())});
-const ctx=document.getElementById("lunchChart").getContext("2d");let chart,allHistoryData=null;
-const currentLinePlugin={id:'currentLine',afterDatasetsDraw:e=>{const t=new Date,a=t.getDay(),n=parseInt(daySelector.value);if(a!==n)return;const o=t.getHours(),s=t.getMinutes();if(o<13||o>18)return;const i=e.ctx,r=e.scales.x,{top:l,bottom:c}=e.chartArea,d=`${String(o).padStart(2,'0')}:${String(s).padStart(2,'0')}`,u=r.getPixelForValue(d);"number"==typeof u&&!isNaN(u)&&(i.save(),i.beginPath(),i.moveTo(u,l),i.lineTo(u,c),i.lineWidth=2,i.strokeStyle='#ef4444',i.stroke(),i.fillStyle='#ef4444',i.textAlign='center',i.font='bold 10px Inter',i.fillText('NOW',u,l-5),i.restore())}};
-function updateChart(){if(!allHistoryData)return;const e=parseInt(daySelector.value),t=new Date,a=Object.values(allHistoryData).filter(a=>{const n=new Date(1e3*a.timestamp);return n.getDay()===e&&isSameDate(n,t)}),n=Object.values(allHistoryData).filter(t=>{return new Date(1e3*t.timestamp).getDay()===e});chart&&(chart.destroy(),chart=null);const o=[];for(let e=13;e<=18;e++)for(let t=0;t<60;t++)o.push(`${String(e).padStart(2,"0")}:${String(t).padStart(2,"0")}`);const s=e=>{const t={};e.forEach(e=>{const a=new Date(1e3*e.timestamp),n=a.getHours(),o=a.getMinutes();if(n>=13&&n<=18){const a=`${String(n).padStart(2,"0")}:${String(o).padStart(2,"0")}`;t[a]||(t[a]=[]),t[a].push(e.people)}});return o.map(e=>{const a=t[e];return a?Math.round(a.reduce((e,t)=>e+t,0)/a.length*10)/10:null})},i=s(a),r=s(n);window.latestAvgValues=r,window.timeLabels=o,chart=new Chart(ctx,{type:"line",data:{labels:o,datasets:[{label:"今日",data:i,borderColor:"#2563eb",backgroundColor:e=>{const t=e.chart.ctx.createLinearGradient(0,0,0,200);return t.addColorStop(0,"rgba(37,99,235,0.2)"),t.addColorStop(1,"rgba(37,99,235,0)"),t},borderWidth:2,pointRadius:3,fill:!0,tension:.4},{label:"平均",data:r,borderColor:"#94a3b8",borderWidth:1.5,pointRadius:1,pointBackgroundColor:"#94a3b8",fill:!1,tension:.4}]},options:{animation:!0,responsive:!0,maintainAspectRatio:!1,interaction:{intersect:!1,mode:'index'},scales:{x:{grid:{display:!1},ticks:{maxTicksLimit:5,color:'#64748b'}},y:{display:!1,beginAtZero:!0}},plugins:{legend:{display:!0},zoom:{pan:{enabled:!0,mode:'x'},zoom:{wheel:{enabled:!0},pinch:{enabled:!0},mode:'x'}}}},plugins:[currentLinePlugin]})}
-function analyzeTrend(){if(!countEl.textContent||isNaN(parseInt(countEl.textContent)))return;const e=parseInt(countEl.textContent),t=window.latestAvgValues,a=window.timeLabels;if(!t||!a)return;const n=new Date,o=String(n.getHours()).padStart(2,'0'),s=String(n.getMinutes()).padStart(2,'0'),i=a.indexOf(`${o}:${s}`);let r="";if(-1!==i){const a=t[i]||0;a>0&&(e<0.7*a?r="✨ 今はいつもより空いてます！":e>1.3*a&&(r="⚠️ いつもより混んでます"));const n=i+15;if(n<t.length){const e=t[n]-a;e<-3?r+=" (あと15分で空く予報 📉)":e>3&&(r+=" (これから混みそうです 📈)")}}r?(waitMessageEl.textContent=r,waitMessageEl.style.color="#ef4444",waitMessageEl.style.fontWeight="bold"):(waitMessageEl.style.color="",waitMessageEl.style.fontWeight="",r="free"===getStatus(e)?"今がチャンスです！":"normal"===getStatus(e)?"標準的な混雑具合です":"時間に余裕を持って行きましょう",waitMessageEl.textContent=r)}
-function isSameDate(e,t){return e.getFullYear()===t.getFullYear()&&e.getMonth()===t.getMonth()&&e.getDate()===t.getDate()}
-daySelector.addEventListener("change",updateChart);let lastChartUpdate=0;onValue(ref(db,"line_history"),e=>{allHistoryData=e.val();const t=Date.now();t-lastChartUpdate>6e4&&(updateChart(),lastChartUpdate=t),analyzeTrend()});
-const slider=document.getElementById('menuContainer'),menuImg=document.getElementById('menuImage');let isDown=!1,startX,startY,scrollLeft,scrollTop,isDragging=!1;
-const startDrag=(e,t,a)=>{e.target===menuImg&&(isDown=!0,isDragging=!1,slider.classList.add('active'),startX=t-slider.offsetLeft,startY=a-slider.offsetTop,scrollLeft=slider.scrollLeft,scrollTop=slider.scrollTop)},endDrag=(e,t,a)=>{isDown=!1,slider.classList.remove('active');if(!isDragging){const r=menuImg.getBoundingClientRect(),x=t||(e.changedTouches?e.changedTouches[0].clientX:e.clientX),y=a||(e.changedTouches?e.changedTouches[0].clientY:e.clientY),ratX=(x-r.left)/r.width,ratY=(y-r.top)/r.height;menuImg.classList.toggle('zoomed');if(menuImg.classList.contains('zoomed')){const nW=slider.scrollWidth,nH=slider.scrollHeight;slider.scrollLeft=(nW*ratX)-(slider.clientWidth/2),slider.scrollTop=(nH*ratY)-(slider.clientHeight/2)}}},moveDrag=(e,t,a)=>{if(!isDown)return;e.preventDefault();const n=t-slider.offsetLeft,o=a-slider.offsetTop;(Math.abs(n-startX)>5||Math.abs(o-startY)>5)&&(isDragging=!0),slider.scrollLeft=scrollLeft-(n-startX)*1.5,slider.scrollTop=scrollTop-(o-startY)*1.5};
-slider.addEventListener('mousedown',e=>{e.preventDefault(),startDrag(e,e.pageX,e.pageY)});slider.addEventListener('mouseleave',()=>{isDown=!1,slider.classList.remove('active')});slider.addEventListener('mouseup',e=>endDrag(e,e.clientX,e.clientY));slider.addEventListener('mousemove',e=>moveDrag(e,e.pageX,e.pageY));
-slider.addEventListener('touchstart',e=>startDrag(e,e.touches[0].pageX,e.touches[0].pageY));slider.addEventListener('touchend',e=>{e.cancelable&&e.preventDefault(),endDrag(e,e.changedTouches[0].clientX,e.changedTouches[0].clientY)});slider.addEventListener('touchmove',e=>moveDrag(e,e.touches[0].pageX,e.touches[0].pageY));
+  import{initializeApp}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";import{getDatabase,ref,onValue,push}from"https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+  const firebaseConfig={databaseURL:"https://traffic-restaurant-default-rtdb.firebaseio.com/"};
+  const MINUTES_PER_PERSON=0.3,isIphone=/iPhone|iPad|iPod/i.test(navigator.userAgent),DATA_TIMEOUT_MINUTES=1;
+  const GAS_URL="https://script.google.com/macros/s/AKfycbxYAdVhS19brD2FfGizWH5jBCUXGSLFTfq60wvLCCxkjptYz7WUpQZ71ay2lFoTtEv16w/exec";
+  const app=initializeApp(firebaseConfig),db=getDatabase(app);
+  const countEl=document.getElementById("count"),waitTimeEl=document.getElementById("waitTime"),statusTextEl=document.getElementById("statusText"),waitMessageEl=document.getElementById("waitMessage"),visualQueueEl=document.getElementById("visualQueue"),mainCard=document.getElementById("mainCard"),daySelector=document.getElementById("daySelector"),liveBadgeEl=document.getElementById("liveBadge"),lastUpdateTextEl=document.getElementById("lastUpdateText"),noDataOverlay=document.getElementById("noDataOverlay"),menuBtn=document.getElementById("menuBtn"),menuModal=document.getElementById("menuModal"),closeMenu=document.getElementById("closeMenu"),notifyModal=document.getElementById("notifyModal"),notifyYes=document.getElementById("notifyYes"),notifyNo=document.getElementById("notifyNo"),pseudoNotify=document.getElementById("pseudoNotify"),shareBtn=document.getElementById("shareBtn"),feedbackBtn=document.getElementById("feedbackBtn"),feedbackModal=document.getElementById("feedbackModal"),closeFeedback=document.getElementById("closeFeedback"),fbSubmit=document.getElementById("fbSubmit"),fbCategory=document.getElementById("fbCategory"),fbMessage=document.getElementById("fbMessage");
+  daySelector.value=new Date().getDay();
+  
+  /* ▼▼▼ テーマ切り替え初期化（FAB内のアイコン） ▼▼▼ */
+  const themeOption = document.getElementById("themeOption");
+  const themeIconFab = document.getElementById("themeIconFab");
+  
+  const savedTheme = localStorage.getItem("theme");
+  const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  
+  // 初期ロード時のテーマ設定
+  if (savedTheme === "dark" || (!savedTheme && systemDark)) {
+    document.body.classList.add("dark-mode");
+    themeIconFab.textContent = "light_mode"; 
+  } else {
+    document.body.classList.remove("dark-mode");
+    themeIconFab.textContent = "dark_mode";
+  }
+
+  // テーマ切り替え機能（※ここを修正しました：メニューを閉じない）
+  themeOption.onclick = () => {
+    document.body.classList.toggle("dark-mode");
+    const isDark = document.body.classList.contains("dark-mode");
+    themeIconFab.textContent = isDark ? "light_mode" : "dark_mode";
+    localStorage.setItem("theme", isDark ? "dark" : "light");
+    
+    // グラフの色更新
+    if(chart) {
+      chart.options.scales.x.ticks.color = getComputedStyle(document.body).getPropertyValue('--text-sub').trim();
+      chart.update();
+    }
+    
+    // ★メニューを閉じる処理（fabContainer.classList.remove('active')）を削除しました！
+  };
+  /* ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲ */
+
+  /* FABメニューロジック */
+  const fabToggle = document.getElementById('fabToggle');
+  const fabContainer = document.getElementById('fabContainer');
+  const fabIcon = document.getElementById('fabIcon');
+
+  // メニュー開閉
+  fabToggle.onclick = (e) => {
+    e.stopPropagation(); // 親への伝播を止める
+    fabContainer.classList.toggle('active');
+    const isActive = fabContainer.classList.contains('active');
+    fabIcon.textContent = isActive ? 'close' : 'menu'; // アイコン切り替え
+  };
+
+  // 画面のどこかをクリックしたらメニューを閉じる
+  document.addEventListener('click', (e) => {
+    if (!fabContainer.contains(e.target)) {
+      fabContainer.classList.remove('active');
+      fabIcon.textContent = 'menu';
+    }
+  });
+
+  // 各ボタンをクリックしたらメニューを閉じて、本来の動作を実行
+  menuBtn.onclick = () => { fabContainer.classList.remove('active'); fabIcon.textContent = 'menu'; menuModal.classList.add("open"); };
+  shareBtn.onclick = async () => {
+    fabContainer.classList.remove('active'); fabIcon.textContent = 'menu';
+    let e="";e=mainCard.classList.contains("closed")||"データ受信待ち"===statusTextEl.textContent?"学食の混雑状況をチェックしよう！\n":`現在の混雑状況: ${countEl.textContent}人待ち (${statusTextEl.textContent})\n`;const t={title:'快適食堂',text:e,url:window.location.href};if(navigator.share){try{await navigator.share(t)}catch(e){}}else{alert("URLをコピーしました！友達に共有しよう！"),navigator.clipboard.writeText(window.location.href)}
+  };
+  feedbackBtn.onclick = () => { fabContainer.classList.remove('active'); fabIcon.textContent = 'menu'; feedbackModal.classList.add("open"); };
+
+  closeMenu.onclick=()=>menuModal.classList.remove("open");
+  let isMenuBgDown=!1;menuModal.addEventListener('mousedown',e=>{isMenuBgDown=(e.target===menuModal)});menuModal.addEventListener('mouseup',e=>{if(isMenuBgDown&&e.target===menuModal)menuModal.classList.remove("open");isMenuBgDown=!1});
+  closeFeedback.onclick=()=>feedbackModal.classList.remove("open");feedbackModal.onclick=e=>{if(e.target===feedbackModal)feedbackModal.classList.remove("open")};
+  fbSubmit.onclick=async()=>{const e=fbMessage.value.trim();if(!e){alert("内容を入力してください");return}fbSubmit.disabled=!0,fbSubmit.textContent="送信中...";try{await push(ref(db,"feedbacks"),{category:fbCategory.value,message:e,timestamp:Date.now(),userAgent:navigator.userAgent});GAS_URL&&"ここにGASのウェブアプリURLを貼り付け"!==GAS_URL&&fetch(GAS_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/json"},body:JSON.stringify({category:fbCategory.value,message:e})}).catch(e=>console.error(e));alert("ご意見ありがとうございます！送信しました。"),fbMessage.value="",feedbackModal.classList.remove("open")}catch(e){console.error(e),alert("送信に失敗しました。")}finally{fbSubmit.disabled=!1,fbSubmit.innerHTML='送信する <span class="material-icons-round">send</span>'}};
+  if(!isIphone&&"Notification"in window){"default"===Notification.permission&&setTimeout(()=>{notifyModal.classList.add("open")},1e3);notifyYes.onclick=async()=>{await Notification.requestPermission(),notifyModal.classList.remove("open")};notifyNo.onclick=()=>{notifyModal.classList.remove("open")}}
+  
+  function isBusinessOpen(){return!0}
+  function getStatus(e){return e<=0?"free":e<=1?"normal":"busy"}
+  let lastStatus=null,lastDataTimestamp=0,currentTrendMessage="";
+  function triggerNotification(){pseudoNotify.classList.add("show"),setTimeout(()=>{pseudoNotify.classList.remove("show")},4e3),!isIphone&&"Notification"in window&&"granted"===Notification.permission&&new Notification("学食が空いてきました！",{body:"今なら並ばずに行けそうです 🍽",icon:"/favicon.ico"})}
+  function updateUI(e,t){lastDataTimestamp=1e3*t;const a=new Date(lastDataTimestamp),n=String(a.getHours()).padStart(2,'0'),o=String(a.getMinutes()).padStart(2,'0');lastUpdateTextEl.textContent=`最終更新: ${a.getMonth()+1}/${a.getDate()} ${n}:${o}`,checkLiveStatus();if(!isBusinessOpen()){showClosedUI();return}if((Date.now()-lastDataTimestamp)/1e3/60>DATA_TIMEOUT_MINUTES){showStaleDataUI();return}countEl.textContent=e,waitTimeEl.textContent=Math.ceil(e*MINUTES_PER_PERSON),renderVisualQueue(e);const s=getStatus(e);"free"!==lastStatus&&"free"===s&&triggerNotification(),lastStatus=s,mainCard.className="status-card",mainCard.classList.remove("free","busy","closed"),"free"===s?(statusTextEl.textContent="空いています",mainCard.classList.add("free")):"normal"===s?statusTextEl.textContent="ふつう":(statusTextEl.textContent="混雑中",mainCard.classList.add("busy")),currentTrendMessage?waitMessageEl.textContent=currentTrendMessage:"free"===s?waitMessageEl.textContent="今がチャンスです！":"normal"===s?waitMessageEl.textContent="少し並ぶかもしれません":waitMessageEl.textContent="時間に余裕を持って行きましょう"}
+  function showClosedUI(){mainCard.className="status-card closed",statusTextEl.textContent="営業時間外",waitMessageEl.textContent="本日の営業は終了しました",countEl.textContent="--",waitTimeEl.textContent="--",visualQueueEl.innerHTML='<span class="material-icons-round" style="font-size: 48px; color: #cbd5e1;">storefront</span>'}
+  function showStaleDataUI(){mainCard.className="status-card closed",statusTextEl.textContent="データ受信待ち",waitMessageEl.textContent="カメラシステムが停止中です",countEl.textContent="--",waitTimeEl.textContent="--",visualQueueEl.innerHTML='<span class="material-icons-round" style="font-size: 48px; color: #cbd5e1;">cloud_off</span>'}
+  function checkLiveStatus(){const e=Date.now()-lastDataTimestamp;e>6e4?(liveBadgeEl.className="live-badge offline",liveBadgeEl.innerHTML='<span class="material-icons-round" style="font-size: 1rem;">cloud_off</span> OFFLINE'):(liveBadgeEl.className="live-badge online",liveBadgeEl.innerHTML='<div class="live-dot"></div> LIVE'),isBusinessOpen()&&e>6e4*DATA_TIMEOUT_MINUTES&&showStaleDataUI()}
+  setInterval(checkLiveStatus,5e3);
+  function renderVisualQueue(e){visualQueueEl.innerHTML="";const t=Math.min(e,10);for(let a=0;a<t;a++){const e=document.createElement("span");e.className="material-icons-round person-icon",e.textContent="person",e.style.animationDelay=`${.05*a}s`,visualQueueEl.appendChild(e)}if(e>10){const t=document.createElement("span");t.style.fontSize="0.8rem",t.style.color="#999",t.style.alignSelf="center",t.textContent=`+${e-10}`,visualQueueEl.appendChild(t)}}
+  onValue(ref(db,"line_status"),e=>{const t=e.val();t&&(updateUI(t.people,t.timestamp),analyzeTrend())});
+  
+  const ctx=document.getElementById("lunchChart").getContext("2d");let chart,allHistoryData=null;
+  const currentLinePlugin={id:'currentLine',afterDatasetsDraw:e=>{const t=new Date,a=t.getDay(),n=parseInt(daySelector.value);if(a!==n)return;const o=t.getHours(),s=t.getMinutes();if(o<13||o>18)return;const i=e.ctx,r=e.scales.x,{top:l,bottom:c}=e.chartArea,d=`${String(o).padStart(2,'0')}:${String(s).padStart(2,'0')}`,u=r.getPixelForValue(d);"number"==typeof u&&!isNaN(u)&&(i.save(),i.beginPath(),i.moveTo(u,l),i.lineTo(u,c),i.lineWidth=2,i.strokeStyle='#ef4444',i.stroke(),i.fillStyle='#ef4444',i.textAlign='center',i.font='bold 10px Inter',i.fillText('NOW',u,l-5),i.restore())}};
+  
+  function updateChart(){if(!allHistoryData)return;const e=parseInt(daySelector.value),t=new Date,a=Object.values(allHistoryData).filter(a=>{const n=new Date(1e3*a.timestamp);return n.getDay()===e&&isSameDate(n,t)}),n=Object.values(allHistoryData).filter(t=>{return new Date(1e3*t.timestamp).getDay()===e});chart&&(chart.destroy(),chart=null);const o=[];for(let e=13;e<=18;e++)for(let t=0;t<60;t++)o.push(`${String(e).padStart(2,"0")}:${String(t).padStart(2,"0")}`);const s=e=>{const t={};e.forEach(e=>{const a=new Date(1e3*e.timestamp),n=a.getHours(),o=a.getMinutes();if(n>=13&&n<=18){const a=`${String(n).padStart(2,"0")}:${String(o).padStart(2,"0")}`;t[a]||(t[a]=[]),t[a].push(e.people)}});return o.map(e=>{const a=t[e];return a?Math.round(a.reduce((e,t)=>e+t,0)/a.length*10)/10:null})},i=s(a),r=s(n);window.latestAvgValues=r,window.timeLabels=o,chart=new Chart(ctx,{type:"line",data:{labels:o,datasets:[{label:"今日",data:i,borderColor:"#ff8533",backgroundColor:e=>{const t=e.chart.ctx.createLinearGradient(0,0,0,200);return t.addColorStop(0,"rgba(255,133,51,0.2)"),t.addColorStop(1,"rgba(255,133,51,0)"),t},borderWidth:2,pointRadius:3,fill:!0,tension:.4},{label:"平均",data:r,borderColor:"#8D6E63",borderWidth:1.5,pointRadius:1,pointBackgroundColor:"#8D6E63",fill:!1,tension:.4}]},options:{animation:!0,responsive:!0,maintainAspectRatio:!1,interaction:{intersect:!1,mode:'index'},scales:{x:{grid:{display:!1},ticks:{maxTicksLimit:5,color:'#6d5e56'}},y:{display:!1,beginAtZero:!0}},plugins:{legend:{display:!0},zoom:{pan:{enabled:!0,mode:'x'},zoom:{wheel:{enabled:!0},pinch:{enabled:!0},mode:'x'}}}},plugins:[currentLinePlugin]})}
+  
+  function analyzeTrend(){if(!countEl.textContent||isNaN(parseInt(countEl.textContent)))return;const e=parseInt(countEl.textContent),t=window.latestAvgValues,a=window.timeLabels;if(!t||!a)return;const n=new Date,o=String(n.getHours()).padStart(2,'0'),s=String(n.getMinutes()).padStart(2,'0'),i=a.indexOf(`${o}:${s}`);let r="";if(-1!==i){const a=t[i]||0;a>0&&(e<0.7*a?r="✨ 今はいつもより空いてます！":e>1.3*a&&(r="⚠️ いつもより混んでます"));const n=i+15;if(n<t.length){const e=t[n]-a;e<-3?r+=" (あと15分で空く予報 📉)":e>3&&(r+=" (これから混みそうです 📈)")}}r?(waitMessageEl.textContent=r,waitMessageEl.style.color="#D32F2F",waitMessageEl.style.fontWeight="bold"):(waitMessageEl.style.color="",waitMessageEl.style.fontWeight="",r="free"===getStatus(e)?"今がチャンスです！":"normal"===getStatus(e)?"標準的な混雑具合です":"時間に余裕を持って行きましょう",waitMessageEl.textContent=r)}
+  function isSameDate(e,t){return e.getFullYear()===t.getFullYear()&&e.getMonth()===t.getMonth()&&e.getDate()===t.getDate()}
+  daySelector.addEventListener("change",updateChart);let lastChartUpdate=0;onValue(ref(db,"line_history"),e=>{allHistoryData=e.val();const t=Date.now();t-lastChartUpdate>6e4&&(updateChart(),lastChartUpdate=t),analyzeTrend()});
+  
+  const slider=document.getElementById('menuContainer'),menuImg=document.getElementById('menuImage');let isDown=!1,startX,startY,scrollLeft,scrollTop,isDragging=!1;
+  const startDrag=(e,t,a)=>{e.target===menuImg&&(isDown=!0,isDragging=!1,slider.classList.add('active'),startX=t-slider.offsetLeft,startY=a-slider.offsetTop,scrollLeft=slider.scrollLeft,scrollTop=slider.scrollTop)},endDrag=(e,t,a)=>{isDown=!1,slider.classList.remove('active');if(!isDragging){const r=menuImg.getBoundingClientRect(),x=t||(e.changedTouches?e.changedTouches[0].clientX:e.clientX),y=a||(e.changedTouches?e.changedTouches[0].clientY:e.clientY),ratX=(x-r.left)/r.width,ratY=(y-r.top)/r.height;menuImg.classList.toggle('zoomed');if(menuImg.classList.contains('zoomed')){const nW=slider.scrollWidth,nH=slider.scrollHeight;slider.scrollLeft=(nW*ratX)-(slider.clientWidth/2),slider.scrollTop=(nH*ratY)-(slider.clientHeight/2)}}},moveDrag=(e,t,a)=>{if(!isDown)return;e.preventDefault();const n=t-slider.offsetLeft,o=a-slider.offsetTop;(Math.abs(n-startX)>5||Math.abs(o-startY)>5)&&(isDragging=!0),slider.scrollLeft=scrollLeft-(n-startX)*1.5,slider.scrollTop=scrollTop-(o-startY)*1.5};
+  slider.addEventListener('mousedown',e=>{e.preventDefault(),startDrag(e,e.pageX,e.pageY)});slider.addEventListener('mouseleave',()=>{isDown=!1,slider.classList.remove('active')});slider.addEventListener('mouseup',e=>endDrag(e,e.clientX,e.clientY));slider.addEventListener('mousemove',e=>moveDrag(e,e.pageX,e.pageY));
+  slider.addEventListener('touchstart',e=>startDrag(e,e.touches[0].pageX,e.touches[0].pageY));slider.addEventListener('touchend',e=>{e.cancelable&&e.preventDefault(),endDrag(e,e.changedTouches[0].clientX,e.changedTouches[0].clientY)});slider.addEventListener('touchmove',e=>moveDrag(e,e.touches[0].pageX,e.touches[0].pageY));
 </script>
 </body>
 </html>
