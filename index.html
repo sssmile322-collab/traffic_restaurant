@@ -38,8 +38,8 @@
     --surface: #FFFFFF;         
     --surface-sub: #F0EBE5;     
     
-    /* ★新規: すりガラス用の半透明背景（白の透け） */
-    --surface-alpha: rgba(255, 255, 255, 0.75);
+    /* 透明度0.2でクリアなガラス感 */
+    --surface-alpha: rgba(255, 255, 255, 0.2);
 
     --text: #2c2420;            
     --text-sub: #6d5e56;        
@@ -58,21 +58,20 @@
     --primary-dark: #ff8533;
     
     --bg: #1c1917;              
-    --surface: #38302c;         
-    --surface-sub: #4a403a;     
+    --surface: #2d2622;         
+    --surface-sub: #3d3632;     
     
-    /* ★新規: すりガラス用の半透明背景（チョコ色の透け） */
-    --surface-alpha: rgba(56, 48, 44, 0.75);
+    --surface-alpha: rgba(45, 38, 34, 0.2);
 
     --text: #f5f0e6;            
-    --text-sub: #bfb5ad;        
+    --text-sub: #b0a69e;        
     
-    --border: #594f47;          
+    --border: #4d4540;          
     
     --accent-free: #81c784;
     --accent-busy: #e57373;
     
-    --card-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    --card-shadow: 0 4px 20px rgba(0,0,0,0.6);
     --fab-shadow: 0 4px 16px rgba(255, 163, 102, 0.3);
   }
 
@@ -87,7 +86,7 @@
     overscroll-behavior: none; 
     transition: background-color 0.3s, color 0.3s; 
   }
-  canvas { touch-action: none; }
+  canvas { touch-action: pan-y; }
   
   .container { max-width: 480px; margin: 0 auto; padding: 20px; display: flex; flex-direction: column; gap: 24px; }
   
@@ -166,14 +165,11 @@
     border: none;
     transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s;
   }
-  /* メインボタンは押した時少し縮む */
   .fab-main:active { transform: scale(0.9); }
   .fab-main .material-icons-round { font-size: 32px; transition: transform 0.3s; }
   
-  /* メニュー展開時 */
   .fab-container.active .fab-main { transform: rotate(90deg); background: var(--primary); }
   .fab-container.active .fab-main .material-icons-round { transform: rotate(-90deg); }
-  /* 展開時に押した時の複合変形 */
   .fab-container.active .fab-main:active { transform: rotate(90deg) scale(0.9); }
 
   .fab-options {
@@ -200,16 +196,14 @@
   }
   
   .fab-container.active .fab-option { opacity: 1; transform: translateY(0) scale(1); }
-  .fab-container.active .fab-option:nth-child(4) { transition-delay: 0.05s; }
-  .fab-container.active .fab-option:nth-child(3) { transition-delay: 0.1s; } 
-  .fab-container.active .fab-option:nth-child(2) { transition-delay: 0.15s; } 
-  .fab-container.active .fab-option:nth-child(1) { transition-delay: 0.2s; } 
+  .fab-container.active .fab-option:nth-child(5) { transition-delay: 0.05s; }
+  .fab-container.active .fab-option:nth-child(4) { transition-delay: 0.1s; } 
+  .fab-container.active .fab-option:nth-child(3) { transition-delay: 0.15s; } 
+  .fab-container.active .fab-option:nth-child(2) { transition-delay: 0.2s; } 
+  .fab-container.active .fab-option:nth-child(1) { transition-delay: 0.25s; } 
 
-  /* ★修正: すりガラス効果 + 半透明背景 */
   .fab-label {
     background: var(--surface-alpha); /* 半透明色 */
-    backdrop-filter: blur(12px);      /* すりガラス */
-    -webkit-backdrop-filter: blur(12px); /* Safari用 */
     color: var(--text);
     padding: 6px 12px;
     border-radius: 8px;
@@ -218,15 +212,13 @@
     box-shadow: var(--card-shadow);
     white-space: nowrap;
     border: 1px solid var(--border);
+    transform: translateZ(0); 
   }
 
-  /* ★修正: すりガラス効果 + 半透明背景 */
   .fab-mini-btn {
     width: 48px;
     height: 48px;
     background: var(--surface-alpha); /* 半透明色 */
-    backdrop-filter: blur(12px);      /* すりガラス */
-    -webkit-backdrop-filter: blur(12px); /* Safari用 */
     color: var(--primary);
     border-radius: 50%;
     box-shadow: var(--card-shadow);
@@ -235,8 +227,8 @@
     justify-content: center;
     border: 1px solid var(--border);
     transition: background 0.2s;
+    transform: translateZ(0);
   }
-  /* 押した時は少し濃くする（操作感のため） */
   .fab-mini-btn:active { background: var(--surface-sub); }
   /* ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲ */
 
@@ -304,15 +296,15 @@
 <div id="pseudoNotify" class="toast">
   <div class="toast-icon">✨</div>
   <div class="toast-content">
-    <div>空いてきました！</div>
-    <div>今がチャンスです</div>
+    <div id="toastTitle">空いてきました！</div>
+    <div id="toastBody">今がチャンスです</div>
   </div>
 </div>
 
 <div id="notifyModal" class="overlay-base">
   <div class="notify-dialog">
     <h2>通知をオンにしますか？</h2>
-    <p>行列が解消されたタイミングで<br>お知らせを受け取れます。</p>
+    <p>行列が解消されたタイミングで<br>お知らせを受け取れます。<br>(サイト内で通知OFFも可能)</p>
     <div class="btn-group">
       <button class="btn btn-secondary" id="notifyNo">あとで</button>
       <button class="btn btn-primary" id="notifyYes">許可する</button>
@@ -379,6 +371,13 @@
 <div class="fab-container" id="fabContainer">
   <div class="fab-options">
     
+    <button class="fab-option" id="notifyOption">
+      <span class="fab-label" id="notifyLabel">通知設定</span>
+      <div class="fab-mini-btn">
+        <span class="material-icons-round" id="notifyIconFab">notifications</span>
+      </div>
+    </button>
+
     <button class="fab-option" id="themeOption">
       <span class="fab-label">テーマ切替</span>
       <div class="fab-mini-btn">
@@ -462,16 +461,16 @@
   const GAS_URL="https://script.google.com/macros/s/AKfycbxYAdVhS19brD2FfGizWH5jBCUXGSLFTfq60wvLCCxkjptYz7WUpQZ71ay2lFoTtEv16w/exec";
   const app=initializeApp(firebaseConfig),db=getDatabase(app);
   const countEl=document.getElementById("count"),waitTimeEl=document.getElementById("waitTime"),statusTextEl=document.getElementById("statusText"),waitMessageEl=document.getElementById("waitMessage"),visualQueueEl=document.getElementById("visualQueue"),mainCard=document.getElementById("mainCard"),daySelector=document.getElementById("daySelector"),liveBadgeEl=document.getElementById("liveBadge"),lastUpdateTextEl=document.getElementById("lastUpdateText"),noDataOverlay=document.getElementById("noDataOverlay"),menuBtn=document.getElementById("menuBtn"),menuModal=document.getElementById("menuModal"),closeMenu=document.getElementById("closeMenu"),notifyModal=document.getElementById("notifyModal"),notifyYes=document.getElementById("notifyYes"),notifyNo=document.getElementById("notifyNo"),pseudoNotify=document.getElementById("pseudoNotify"),shareBtn=document.getElementById("shareBtn"),feedbackBtn=document.getElementById("feedbackBtn"),feedbackModal=document.getElementById("feedbackModal"),closeFeedback=document.getElementById("closeFeedback"),fbSubmit=document.getElementById("fbSubmit"),fbCategory=document.getElementById("fbCategory"),fbMessage=document.getElementById("fbMessage");
+  const toastTitle=document.getElementById("toastTitle"),toastBody=document.getElementById("toastBody");
   daySelector.value=new Date().getDay();
   
-  /* ▼▼▼ テーマ切り替え初期化（FAB内のアイコン） ▼▼▼ */
+  /* ▼▼▼ テーマ切り替え ▼▼▼ */
   const themeOption = document.getElementById("themeOption");
   const themeIconFab = document.getElementById("themeIconFab");
   
   const savedTheme = localStorage.getItem("theme");
   const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
   
-  // 初期ロード時のテーマ設定
   if (savedTheme === "dark" || (!savedTheme && systemDark)) {
     document.body.classList.add("dark-mode");
     themeIconFab.textContent = "light_mode"; 
@@ -480,20 +479,89 @@
     themeIconFab.textContent = "dark_mode";
   }
 
-  // テーマ切り替え機能（※ここを修正しました：メニューを閉じない）
   themeOption.onclick = () => {
     document.body.classList.toggle("dark-mode");
     const isDark = document.body.classList.contains("dark-mode");
     themeIconFab.textContent = isDark ? "light_mode" : "dark_mode";
     localStorage.setItem("theme", isDark ? "dark" : "light");
-    
-    // グラフの色更新
     if(chart) {
       chart.options.scales.x.ticks.color = getComputedStyle(document.body).getPropertyValue('--text-sub').trim();
       chart.update();
     }
-    
-    // ★メニューを閉じる処理（fabContainer.classList.remove('active')）を削除しました！
+  };
+
+  /* ▼▼▼ 通知設定ボタンロジック（表示反転修正版） ▼▼▼ */
+  const notifyOption = document.getElementById("notifyOption");
+  const notifyIconFab = document.getElementById("notifyIconFab");
+  const notifyLabel = document.getElementById("notifyLabel");
+
+  let isAppNotifyEnabled = localStorage.getItem("app_notify_enabled") !== "false";
+
+  // ★修正: ONの時は「OFFにするボタン」を表示、OFFの時は「ONにするボタン」を表示
+  function updateNotifyButtonUI() {
+    if (Notification.permission === "granted") {
+      if (isAppNotifyEnabled) {
+        // 現在ON -> 押せばOFFになる -> 「通知OFF」ボタン
+        notifyIconFab.textContent = "notifications_off";
+        notifyLabel.textContent = "通知OFF";
+      } else {
+        // 現在OFF -> 押せばONになる -> 「通知ON」ボタン
+        notifyIconFab.textContent = "notifications_active";
+        notifyLabel.textContent = "通知ON";
+      }
+    } else {
+      notifyIconFab.textContent = "notifications";
+      notifyLabel.textContent = "通知設定";
+    }
+  }
+  if (!isIphone && "Notification" in window) {
+    updateNotifyButtonUI();
+  }
+
+  function showToast(title, body) {
+    toastTitle.textContent = title;
+    toastBody.textContent = body;
+    pseudoNotify.classList.add("show");
+    setTimeout(()=>{ pseudoNotify.classList.remove("show"); }, 3000);
+  }
+
+  notifyOption.onclick = () => {
+    fabContainer.classList.remove('active'); 
+    fabIcon.textContent = 'menu';
+
+    if (!("Notification" in window)) {
+      alert("このブラウザは通知に対応していません。");
+      return;
+    }
+
+    if (Notification.permission === "granted") {
+      // 許可済みならON/OFF切り替え
+      isAppNotifyEnabled = !isAppNotifyEnabled;
+      localStorage.setItem("app_notify_enabled", isAppNotifyEnabled);
+      updateNotifyButtonUI();
+      
+      if (isAppNotifyEnabled) {
+        showToast("🔔 通知をONにしました", "混雑が解消されたらお知らせします");
+      } else {
+        showToast("🔕 通知をOFFにしました", "アプリからの通知を停止します(再度変更可能)");
+      }
+
+    } else if (Notification.permission === "denied") {
+      alert("通知がブラウザの設定でブロックされています。\n解除するにはブラウザの設定画面から通知を許可してください。");
+    } else {
+      notifyModal.classList.add("open");
+    }
+  };
+  
+  notifyYes.onclick = async () => {
+    const permission = await Notification.requestPermission();
+    notifyModal.classList.remove("open");
+    if (permission === "granted") {
+      isAppNotifyEnabled = true;
+      localStorage.setItem("app_notify_enabled", "true");
+      updateNotifyButtonUI();
+      new Notification("設定完了", { body: "通知が許可されました！", icon: "/favicon.ico" });
+    }
   };
   /* ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲ */
 
@@ -502,15 +570,13 @@
   const fabContainer = document.getElementById('fabContainer');
   const fabIcon = document.getElementById('fabIcon');
 
-  // メニュー開閉
   fabToggle.onclick = (e) => {
-    e.stopPropagation(); // 親への伝播を止める
+    e.stopPropagation();
     fabContainer.classList.toggle('active');
     const isActive = fabContainer.classList.contains('active');
-    fabIcon.textContent = isActive ? 'close' : 'menu'; // アイコン切り替え
+    fabIcon.textContent = isActive ? 'close' : 'menu';
   };
 
-  // 画面のどこかをクリックしたらメニューを閉じる
   document.addEventListener('click', (e) => {
     if (!fabContainer.contains(e.target)) {
       fabContainer.classList.remove('active');
@@ -518,7 +584,6 @@
     }
   });
 
-  // 各ボタンをクリックしたらメニューを閉じて、本来の動作を実行
   menuBtn.onclick = () => { fabContainer.classList.remove('active'); fabIcon.textContent = 'menu'; menuModal.classList.add("open"); };
   shareBtn.onclick = async () => {
     fabContainer.classList.remove('active'); fabIcon.textContent = 'menu';
@@ -530,12 +595,25 @@
   let isMenuBgDown=!1;menuModal.addEventListener('mousedown',e=>{isMenuBgDown=(e.target===menuModal)});menuModal.addEventListener('mouseup',e=>{if(isMenuBgDown&&e.target===menuModal)menuModal.classList.remove("open");isMenuBgDown=!1});
   closeFeedback.onclick=()=>feedbackModal.classList.remove("open");feedbackModal.onclick=e=>{if(e.target===feedbackModal)feedbackModal.classList.remove("open")};
   fbSubmit.onclick=async()=>{const e=fbMessage.value.trim();if(!e){alert("内容を入力してください");return}fbSubmit.disabled=!0,fbSubmit.textContent="送信中...";try{await push(ref(db,"feedbacks"),{category:fbCategory.value,message:e,timestamp:Date.now(),userAgent:navigator.userAgent});GAS_URL&&"ここにGASのウェブアプリURLを貼り付け"!==GAS_URL&&fetch(GAS_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/json"},body:JSON.stringify({category:fbCategory.value,message:e})}).catch(e=>console.error(e));alert("ご意見ありがとうございます！送信しました。"),fbMessage.value="",feedbackModal.classList.remove("open")}catch(e){console.error(e),alert("送信に失敗しました。")}finally{fbSubmit.disabled=!1,fbSubmit.innerHTML='送信する <span class="material-icons-round">send</span>'}};
-  if(!isIphone&&"Notification"in window){"default"===Notification.permission&&setTimeout(()=>{notifyModal.classList.add("open")},1e3);notifyYes.onclick=async()=>{await Notification.requestPermission(),notifyModal.classList.remove("open")};notifyNo.onclick=()=>{notifyModal.classList.remove("open")}}
+  if(!isIphone&&"Notification"in window){
+    // 初回は自動でモーダルを出さないように変更
+  }
+  notifyNo.onclick=()=>{notifyModal.classList.remove("open")}
   
   function isBusinessOpen(){return!0}
   function getStatus(e){return e<=0?"free":e<=1?"normal":"busy"}
   let lastStatus=null,lastDataTimestamp=0,currentTrendMessage="";
-  function triggerNotification(){pseudoNotify.classList.add("show"),setTimeout(()=>{pseudoNotify.classList.remove("show")},4e3),!isIphone&&"Notification"in window&&"granted"===Notification.permission&&new Notification("学食が空いてきました！",{body:"今なら並ばずに行けそうです 🍽",icon:"/favicon.ico"})}
+  
+  function triggerNotification(){
+    if (!isAppNotifyEnabled) return; 
+
+    showToast("空いてきました！", "今がチャンスです"); 
+    
+    if(!isIphone && "Notification"in window && Notification.permission === "granted") {
+      new Notification("学食が空いてきました！",{body:"今なら並ばずに行けそうです 🍽",icon:"/favicon.ico"});
+    }
+  }
+
   function updateUI(e,t){lastDataTimestamp=1e3*t;const a=new Date(lastDataTimestamp),n=String(a.getHours()).padStart(2,'0'),o=String(a.getMinutes()).padStart(2,'0');lastUpdateTextEl.textContent=`最終更新: ${a.getMonth()+1}/${a.getDate()} ${n}:${o}`,checkLiveStatus();if(!isBusinessOpen()){showClosedUI();return}if((Date.now()-lastDataTimestamp)/1e3/60>DATA_TIMEOUT_MINUTES){showStaleDataUI();return}countEl.textContent=e,waitTimeEl.textContent=Math.ceil(e*MINUTES_PER_PERSON),renderVisualQueue(e);const s=getStatus(e);"free"!==lastStatus&&"free"===s&&triggerNotification(),lastStatus=s,mainCard.className="status-card",mainCard.classList.remove("free","busy","closed"),"free"===s?(statusTextEl.textContent="空いています",mainCard.classList.add("free")):"normal"===s?statusTextEl.textContent="ふつう":(statusTextEl.textContent="混雑中",mainCard.classList.add("busy")),currentTrendMessage?waitMessageEl.textContent=currentTrendMessage:"free"===s?waitMessageEl.textContent="今がチャンスです！":"normal"===s?waitMessageEl.textContent="少し並ぶかもしれません":waitMessageEl.textContent="時間に余裕を持って行きましょう"}
   function showClosedUI(){mainCard.className="status-card closed",statusTextEl.textContent="営業時間外",waitMessageEl.textContent="本日の営業は終了しました",countEl.textContent="--",waitTimeEl.textContent="--",visualQueueEl.innerHTML='<span class="material-icons-round" style="font-size: 48px; color: #cbd5e1;">storefront</span>'}
   function showStaleDataUI(){mainCard.className="status-card closed",statusTextEl.textContent="データ受信待ち",waitMessageEl.textContent="カメラシステムが停止中です",countEl.textContent="--",waitTimeEl.textContent="--",visualQueueEl.innerHTML='<span class="material-icons-round" style="font-size: 48px; color: #cbd5e1;">cloud_off</span>'}
@@ -547,7 +625,7 @@
   const ctx=document.getElementById("lunchChart").getContext("2d");let chart,allHistoryData=null;
   const currentLinePlugin={id:'currentLine',afterDatasetsDraw:e=>{const t=new Date,a=t.getDay(),n=parseInt(daySelector.value);if(a!==n)return;const o=t.getHours(),s=t.getMinutes();if(o<13||o>18)return;const i=e.ctx,r=e.scales.x,{top:l,bottom:c}=e.chartArea,d=`${String(o).padStart(2,'0')}:${String(s).padStart(2,'0')}`,u=r.getPixelForValue(d);"number"==typeof u&&!isNaN(u)&&(i.save(),i.beginPath(),i.moveTo(u,l),i.lineTo(u,c),i.lineWidth=2,i.strokeStyle='#ef4444',i.stroke(),i.fillStyle='#ef4444',i.textAlign='center',i.font='bold 10px Inter',i.fillText('NOW',u,l-5),i.restore())}};
   
-  function updateChart(){if(!allHistoryData)return;const e=parseInt(daySelector.value),t=new Date,a=Object.values(allHistoryData).filter(a=>{const n=new Date(1e3*a.timestamp);return n.getDay()===e&&isSameDate(n,t)}),n=Object.values(allHistoryData).filter(t=>{return new Date(1e3*t.timestamp).getDay()===e});chart&&(chart.destroy(),chart=null);const o=[];for(let e=13;e<=18;e++)for(let t=0;t<60;t++)o.push(`${String(e).padStart(2,"0")}:${String(t).padStart(2,"0")}`);const s=e=>{const t={};e.forEach(e=>{const a=new Date(1e3*e.timestamp),n=a.getHours(),o=a.getMinutes();if(n>=13&&n<=18){const a=`${String(n).padStart(2,"0")}:${String(o).padStart(2,"0")}`;t[a]||(t[a]=[]),t[a].push(e.people)}});return o.map(e=>{const a=t[e];return a?Math.round(a.reduce((e,t)=>e+t,0)/a.length*10)/10:null})},i=s(a),r=s(n);window.latestAvgValues=r,window.timeLabels=o,chart=new Chart(ctx,{type:"line",data:{labels:o,datasets:[{label:"今日",data:i,borderColor:"#ff8533",backgroundColor:e=>{const t=e.chart.ctx.createLinearGradient(0,0,0,200);return t.addColorStop(0,"rgba(255,133,51,0.2)"),t.addColorStop(1,"rgba(255,133,51,0)"),t},borderWidth:2,pointRadius:3,fill:!0,tension:.4},{label:"平均",data:r,borderColor:"#8D6E63",borderWidth:1.5,pointRadius:1,pointBackgroundColor:"#8D6E63",fill:!1,tension:.4}]},options:{animation:!0,responsive:!0,maintainAspectRatio:!1,interaction:{intersect:!1,mode:'index'},scales:{x:{grid:{display:!1},ticks:{maxTicksLimit:5,color:'#6d5e56'}},y:{display:!1,beginAtZero:!0}},plugins:{legend:{display:!0},zoom:{pan:{enabled:!0,mode:'x'},zoom:{wheel:{enabled:!0},pinch:{enabled:!0},mode:'x'}}}},plugins:[currentLinePlugin]})}
+  function updateChart(){if(!allHistoryData)return;const e=parseInt(daySelector.value),t=new Date,a=Object.values(allHistoryData).filter(a=>{const n=new Date(1e3*a.timestamp);return n.getDay()===e&&isSameDate(n,t)}),n=Object.values(allHistoryData).filter(t=>{return new Date(1e3*t.timestamp).getDay()===e});chart&&(chart.destroy(),chart=null);const o=[];for(let e=13;e<=18;e++)for(let t=0;t<60;t++)o.push(`${String(e).padStart(2,"0")}:${String(t).padStart(2,"0")}`);const s=e=>{const t={};e.forEach(e=>{const a=new Date(1e3*e.timestamp),n=a.getHours(),o=a.getMinutes();if(n>=13&&n<=18){const a=`${String(n).padStart(2,"0")}:${String(o).padStart(2,"0")}`;t[a]||(t[a]=[]),t[a].push(e.people)}});return o.map(e=>{const a=t[e];return a?Math.round(a.reduce((e,t)=>e+t,0)/a.length*10)/10:null})},i=s(a),r=s(n);window.latestAvgValues=r,window.timeLabels=o,chart=new Chart(ctx,{type:"line",data:{labels:o,datasets:[{label:"今日",data:i,borderColor:"#ff8533",backgroundColor:e=>{const t=e.chart.ctx.createLinearGradient(0,0,0,200);return t.addColorStop(0,"rgba(255,133,51,0.2)"),t.addColorStop(1,"rgba(255,133,51,0)"),t},borderWidth:2,pointRadius:3,fill:!0,tension:.4},{label:"平均",data:r,borderColor:"#8D6E63",borderWidth:1.5,pointRadius:1,pointBackgroundColor:"#8D6E63",fill:!1,tension:.4}]},options:{animation:!0,responsive:!0,maintainAspectRatio:!1,interaction:{intersect:!1,mode:'index'},scales:{x:{grid:{display:!1},ticks:{maxTicksLimit:5,color:'#6d5e56'}},y:{display:!1,beginAtZero:!0}},plugins:{legend:{display:!0},zoom:{pan:{enabled:!0,mode:'x'},zoom:{wheel:{enabled:!0,modifierKey:'ctrl'},pinch:{enabled:!0},mode:'x'}}}},plugins:[currentLinePlugin]})}
   
   function analyzeTrend(){if(!countEl.textContent||isNaN(parseInt(countEl.textContent)))return;const e=parseInt(countEl.textContent),t=window.latestAvgValues,a=window.timeLabels;if(!t||!a)return;const n=new Date,o=String(n.getHours()).padStart(2,'0'),s=String(n.getMinutes()).padStart(2,'0'),i=a.indexOf(`${o}:${s}`);let r="";if(-1!==i){const a=t[i]||0;a>0&&(e<0.7*a?r="✨ 今はいつもより空いてます！":e>1.3*a&&(r="⚠️ いつもより混んでます"));const n=i+15;if(n<t.length){const e=t[n]-a;e<-3?r+=" (あと15分で空く予報 📉)":e>3&&(r+=" (これから混みそうです 📈)")}}r?(waitMessageEl.textContent=r,waitMessageEl.style.color="#D32F2F",waitMessageEl.style.fontWeight="bold"):(waitMessageEl.style.color="",waitMessageEl.style.fontWeight="",r="free"===getStatus(e)?"今がチャンスです！":"normal"===getStatus(e)?"標準的な混雑具合です":"時間に余裕を持って行きましょう",waitMessageEl.textContent=r)}
   function isSameDate(e,t){return e.getFullYear()===t.getFullYear()&&e.getMonth()===t.getMonth()&&e.getDate()===t.getDate()}
