@@ -38,8 +38,8 @@
     --surface: #FFFFFF;         
     --surface-sub: #F0EBE5;     
     
-    /* 透明度0.2でクリアなガラス感 */
-    --surface-alpha: rgba(255, 255, 255, 0.2);
+    /* 透明度0ですりガラス感 */
+    --surface-alpha: rgba(255, 255, 255, 0);
 
     --text: #2c2420;            
     --text-sub: #6d5e56;        
@@ -61,7 +61,7 @@
     --surface: #2d2622;         
     --surface-sub: #3d3632;     
     
-    --surface-alpha: rgba(45, 38, 34, 0.2);
+    --surface-alpha: rgba(45, 38, 34, 0);
 
     --text: #f5f0e6;            
     --text-sub: #b0a69e;        
@@ -132,12 +132,113 @@
   .graph-section { background: var(--surface); border-radius: 20px; padding: 20px; box-shadow: var(--card-shadow); }
   .graph-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
   .section-title { font-size: 0.9rem; font-weight: 700; margin: 0; color: var(--text-sub); }
-  .day-select { background: var(--bg); border: 1px solid var(--border); padding: 6px 12px; border-radius: 8px; font-size: 0.85rem; color: var(--text); font-weight: 600; cursor: pointer; outline: none; }
+  
+  /* ★修正: シンプルなselectタグ。orange.html準拠 */
+  .day-select { 
+    /* OS標準の見た目をリセット */
+    -webkit-appearance: none;
+    appearance: none;
+
+    background-color: var(--bg); 
+    border: 1px solid var(--border); 
+    border-radius: 8px; 
+    
+    /* 判定エリアを確保 */
+    height: 48px;
+    padding: 0 40px 0 16px; /* 右側に矢印用の余白 */
+    min-width: 120px;
+    
+    /* 文字サイズ16px以上でiOSのズームを防ぐ */
+    font-size: 16px; 
+    font-weight: 600; 
+    color: var(--text); 
+    
+    cursor: pointer; 
+    outline: none;
+    transition: border-color 0.2s;
+
+    /* 矢印アイコンを背景画像として設定 */
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232c2420' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+  }
+  
+  /* ダークモード用矢印 */
+  body.dark-mode .day-select {
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f5f0e6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  }
+  
+  .day-select:active { border-color: var(--primary); }
+
   .chart-container { position: relative; height: 180px; width: 100%; }
   .no-data-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--surface); opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 10; }
   .no-data-overlay.visible { opacity: 1; pointer-events: auto; }
   .no-data-text { color: var(--text-sub); font-size: 0.85rem; font-weight: 600; margin-top: 8px; }
   .no-data-icon { font-size: 48px; color: var(--border); }
+
+  /* ▼▼▼ PWA訴求バナー ▼▼▼ */
+  .pwa-banner {
+    position: fixed;
+    bottom: 24px;
+    left: 20px;
+    right: 90px;
+    background: var(--surface);
+    border: 1px solid var(--primary);
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+    z-index: 200; 
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transform: translateY(150%);
+    transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+  }
+  .pwa-banner.visible {
+    transform: translateY(0);
+  }
+  .pwa-title {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--primary);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .pwa-desc {
+    font-size: 0.8rem;
+    color: var(--text);
+    margin: 0;
+    line-height: 1.5;
+  }
+  .pwa-btn {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    text-align: center;
+  }
+  
+  .pwa-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 44px;
+    height: 44px;
+    background: none;
+    border: none;
+    color: var(--text-sub);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+  }
+  /* ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲ */
 
   /* ▼▼▼ FABメニュー ▼▼▼ */
   .fab-container {
@@ -149,6 +250,9 @@
     flex-direction: column; 
     align-items: flex-end;
     gap: 16px;
+    
+    /* ★修正: ここが重要！箱自体のタップ判定を消して透過させる */
+    pointer-events: none;
   }
 
   .fab-main {
@@ -164,6 +268,9 @@
     cursor: pointer;
     border: none;
     transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s;
+    
+    /* ★修正: ボタン本体は押せるようにする */
+    pointer-events: auto;
   }
   .fab-main:active { transform: scale(0.9); }
   .fab-main .material-icons-round { font-size: 32px; transition: transform 0.3s; }
@@ -179,6 +286,8 @@
     pointer-events: none;
     margin-bottom: 10px;
   }
+  
+  /* メニュー展開時はオプションを押せるように */
   .fab-container.active .fab-options { pointer-events: auto; }
 
   .fab-option {
@@ -203,7 +312,7 @@
   .fab-container.active .fab-option:nth-child(1) { transition-delay: 0.25s; } 
 
   .fab-label {
-    background: var(--surface-alpha); /* 半透明色 */
+    background: var(--surface-alpha);
     color: var(--text);
     padding: 6px 12px;
     border-radius: 8px;
@@ -212,13 +321,15 @@
     box-shadow: var(--card-shadow);
     white-space: nowrap;
     border: 1px solid var(--border);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
     transform: translateZ(0); 
   }
 
   .fab-mini-btn {
     width: 48px;
     height: 48px;
-    background: var(--surface-alpha); /* 半透明色 */
+    background: var(--surface-alpha);
     color: var(--primary);
     border-radius: 50%;
     box-shadow: var(--card-shadow);
@@ -227,6 +338,8 @@
     justify-content: center;
     border: 1px solid var(--border);
     transition: background 0.2s;
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
     transform: translateZ(0);
   }
   .fab-mini-btn:active { background: var(--surface-sub); }
@@ -304,12 +417,25 @@
 <div id="notifyModal" class="overlay-base">
   <div class="notify-dialog">
     <h2>通知をオンにしますか？</h2>
-    <p>行列が解消されたタイミングで<br>お知らせを受け取れます。<br>(サイト内で通知OFFも可能)</p>
+    <p>行列が解消されたタイミングで<br>お知らせを受け取れます。</p>
     <div class="btn-group">
       <button class="btn btn-secondary" id="notifyNo">あとで</button>
       <button class="btn btn-primary" id="notifyYes">許可する</button>
     </div>
   </div>
+</div>
+
+<div id="pwaBanner" class="pwa-banner">
+  <button class="pwa-close" id="pwaClose">
+    <span class="material-icons-round" style="font-size:1.2rem">close</span>
+  </button>
+  <h3 class="pwa-title">
+    <span class="material-icons-round">add_to_home_screen</span> ホーム画面に追加
+  </h3>
+  <p class="pwa-desc" id="pwaDesc">
+    ホーム画面に追加すると、アプリのように使えて通知も受け取れます！
+  </p>
+  <button id="pwaInstallBtn" class="pwa-btn" style="display:none">インストールする</button>
 </div>
 
 <div class="container">
@@ -348,6 +474,7 @@
   <div class="graph-section">
     <div class="graph-header">
       <h2 class="section-title">混雑の傾向グラフ (13:00-18:00)</h2>
+      
       <select id="daySelector" class="day-select">
         <option value="0">日曜日</option>
         <option value="1">月曜日</option>
@@ -357,6 +484,7 @@
         <option value="5">金曜日</option>
         <option value="6">土曜日</option>
       </select>
+      
     </div>
     <div class="chart-container">
       <canvas id="lunchChart"></canvas>
@@ -467,11 +595,9 @@
   /* ▼▼▼ テーマ切り替え ▼▼▼ */
   const themeOption = document.getElementById("themeOption");
   const themeIconFab = document.getElementById("themeIconFab");
-  
   const savedTheme = localStorage.getItem("theme");
-  const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
   
-  if (savedTheme === "dark" || (!savedTheme && systemDark)) {
+  if (savedTheme === "dark") {
     document.body.classList.add("dark-mode");
     themeIconFab.textContent = "light_mode"; 
   } else {
@@ -490,22 +616,19 @@
     }
   };
 
-  /* ▼▼▼ 通知設定ボタンロジック（表示反転修正版） ▼▼▼ */
+  /* ▼▼▼ 通知設定ボタンロジック ▼▼▼ */
   const notifyOption = document.getElementById("notifyOption");
   const notifyIconFab = document.getElementById("notifyIconFab");
   const notifyLabel = document.getElementById("notifyLabel");
 
   let isAppNotifyEnabled = localStorage.getItem("app_notify_enabled") !== "false";
 
-  // ★修正: ONの時は「OFFにするボタン」を表示、OFFの時は「ONにするボタン」を表示
   function updateNotifyButtonUI() {
     if (Notification.permission === "granted") {
       if (isAppNotifyEnabled) {
-        // 現在ON -> 押せばOFFになる -> 「通知OFF」ボタン
         notifyIconFab.textContent = "notifications_off";
         notifyLabel.textContent = "通知OFF";
       } else {
-        // 現在OFF -> 押せばONになる -> 「通知ON」ボタン
         notifyIconFab.textContent = "notifications_active";
         notifyLabel.textContent = "通知ON";
       }
@@ -518,11 +641,15 @@
     updateNotifyButtonUI();
   }
 
+  let toastTimer;
   function showToast(title, body) {
+    if (toastTimer) clearTimeout(toastTimer);
     toastTitle.textContent = title;
     toastBody.textContent = body;
     pseudoNotify.classList.add("show");
-    setTimeout(()=>{ pseudoNotify.classList.remove("show"); }, 3000);
+    toastTimer = setTimeout(()=>{ 
+      pseudoNotify.classList.remove("show"); 
+    }, 3000);
   }
 
   notifyOption.onclick = () => {
@@ -535,17 +662,14 @@
     }
 
     if (Notification.permission === "granted") {
-      // 許可済みならON/OFF切り替え
       isAppNotifyEnabled = !isAppNotifyEnabled;
       localStorage.setItem("app_notify_enabled", isAppNotifyEnabled);
       updateNotifyButtonUI();
-      
       if (isAppNotifyEnabled) {
         showToast("🔔 通知をONにしました", "混雑が解消されたらお知らせします");
       } else {
         showToast("🔕 通知をOFFにしました", "アプリからの通知を停止します(再度変更可能)");
       }
-
     } else if (Notification.permission === "denied") {
       alert("通知がブラウザの設定でブロックされています。\n解除するにはブラウザの設定画面から通知を許可してください。");
     } else {
@@ -562,6 +686,54 @@
       updateNotifyButtonUI();
       new Notification("設定完了", { body: "通知が許可されました！", icon: "/favicon.ico" });
     }
+  };
+
+  /* ▼▼▼ PWAバナー制御 (テスト用にキー変更) ▼▼▼ */
+  const pwaBanner = document.getElementById("pwaBanner");
+  const pwaClose = document.getElementById("pwaClose");
+  const pwaDesc = document.getElementById("pwaDesc");
+  const pwaInstallBtn = document.getElementById("pwaInstallBtn");
+  let deferredPrompt;
+
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+  // ★修正: テストのためキーを'pwa_closed_v5'にして強制リセット
+  const isPwaClosed = localStorage.getItem("pwa_closed_v5"); 
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+  if (!isStandalone && !isPwaClosed && isMobile) { 
+    setTimeout(() => {
+      if (isIphone) {
+        pwaDesc.innerHTML = '画面下の <span class="material-icons-round" style="vertical-align:middle;font-size:1.1em">ios_share</span> から<br>「ホーム画面に追加」してね！';
+        pwaBanner.classList.add("visible");
+      } 
+    }, 3000);
+  }
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    if (!isStandalone && !isPwaClosed && isMobile) {
+      setTimeout(() => {
+        pwaInstallBtn.style.display = "block";
+        pwaBanner.classList.add("visible");
+      }, 3000);
+    }
+  });
+
+  pwaInstallBtn.onclick = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        pwaBanner.classList.remove("visible");
+      }
+      deferredPrompt = null;
+    }
+  };
+
+  pwaClose.onclick = () => {
+    pwaBanner.classList.remove("visible");
+    localStorage.setItem("pwa_closed_v5", "true");
   };
   /* ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲ */
 
@@ -596,7 +768,9 @@
   closeFeedback.onclick=()=>feedbackModal.classList.remove("open");feedbackModal.onclick=e=>{if(e.target===feedbackModal)feedbackModal.classList.remove("open")};
   fbSubmit.onclick=async()=>{const e=fbMessage.value.trim();if(!e){alert("内容を入力してください");return}fbSubmit.disabled=!0,fbSubmit.textContent="送信中...";try{await push(ref(db,"feedbacks"),{category:fbCategory.value,message:e,timestamp:Date.now(),userAgent:navigator.userAgent});GAS_URL&&"ここにGASのウェブアプリURLを貼り付け"!==GAS_URL&&fetch(GAS_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/json"},body:JSON.stringify({category:fbCategory.value,message:e})}).catch(e=>console.error(e));alert("ご意見ありがとうございます！送信しました。"),fbMessage.value="",feedbackModal.classList.remove("open")}catch(e){console.error(e),alert("送信に失敗しました。")}finally{fbSubmit.disabled=!1,fbSubmit.innerHTML='送信する <span class="material-icons-round">send</span>'}};
   if(!isIphone&&"Notification"in window){
-    // 初回は自動でモーダルを出さないように変更
+    if (Notification.permission === "default") {
+      setTimeout(()=>{notifyModal.classList.add("open")}, 1000);
+    }
   }
   notifyNo.onclick=()=>{notifyModal.classList.remove("open")}
   
