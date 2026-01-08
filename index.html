@@ -75,7 +75,42 @@
       display: flex;
       flex-direction: column;
       gap: 24px;
+      transition: max-width 0.3s ease;
     }
+    
+    /* ★修正: コンテンツラッパー（デフォルト：スマホ用縦並び設定） */
+    .content-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 24px; /* ここでスマホ時のカード間の隙間を確保 */
+    }
+    
+    /* PC・タブレット用レイアウト (幅768px以上で発動) */
+    @media (min-width: 768px) {
+      .container {
+        max-width: 1024px;
+      }
+      .content-wrapper {
+        display: grid; /* PCはグリッドで横並び */
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        align-items: stretch;
+      }
+      .status-card, .graph-section {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      .chart-container {
+        height: 240px;
+      }
+      .menu-sheet {
+        max-width: 600px !important;
+        max-height: 95vh !important;
+      }
+    }
+
     header {
       display: flex;
       align-items: center;
@@ -504,40 +539,44 @@
         <div id="liveBadge" class="live-badge offline"><span class="material-icons-round" style="font-size:1rem">cloud_off</span> OFFLINE</div>
       </div>
     </header>
-    <div id="mainCard" class="status-card">
-      <div id="statusText" class="status-text">読み込み中...</div>
-      <div id="waitMessage" class="status-sub">少々お待ちください</div>
-      <div id="visualQueue" class="visual-queue"></div>
-      <div class="metrics">
-        <div class="metric-item">
-          <span class="metric-val"><span id="count">--</span><span style="font-size:0.9rem">人</span></span>
-          <span class="metric-label">現在の行列<button id="aboutBtn" style="background:none;border:none;color:var(--text-sub);cursor:pointer;padding:0;vertical-align:middle;margin-left:4px"><span class="material-icons-round" style="font-size:1rem">help_outline</span></button></span>
+    
+    <div class="content-wrapper">
+      <div id="mainCard" class="status-card">
+        <div id="statusText" class="status-text">読み込み中...</div>
+        <div id="waitMessage" class="status-sub">少々お待ちください</div>
+        <div id="visualQueue" class="visual-queue"></div>
+        <div class="metrics">
+          <div class="metric-item">
+            <span class="metric-val"><span id="count">--</span><span style="font-size:0.9rem">人</span></span>
+            <span class="metric-label">現在の行列<button id="aboutBtn" style="background:none;border:none;color:var(--text-sub);cursor:pointer;padding:0;vertical-align:middle;margin-left:4px"><span class="material-icons-round" style="font-size:1rem">help_outline</span></button></span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-val">~<span id="waitTime">--</span><span style="font-size:0.9rem">分</span></span>
+            <span class="metric-label">推定待ち時間</span>
+          </div>
         </div>
-        <div class="metric-item">
-          <span class="metric-val">~<span id="waitTime">--</span><span style="font-size:0.9rem">分</span></span>
-          <span class="metric-label">推定待ち時間</span>
+        <div id="lastUpdateText" class="last-update">最終更新: --/-- --:--</div>
+      </div>
+      
+      <div class="graph-section">
+        <div class="graph-header">
+          <h2 class="section-title">混雑の傾向グラフ<button id="graphHelpBtn" style="background:none;border:none;color:var(--text-sub);cursor:pointer;padding:0;vertical-align:middle;margin-left:4px"><span class="material-icons-round" style="font-size:1rem">help_outline</span></button></h2>
+          <select id="daySelector" class="day-select">
+            <option value="0">日曜日</option>
+            <option value="1">月曜日</option>
+            <option value="2">火曜日</option>
+            <option value="3">水曜日</option>
+            <option value="4">木曜日</option>
+            <option value="5">金曜日</option>
+            <option value="6">土曜日</option>
+          </select>
         </div>
-      </div>
-      <div id="lastUpdateText" class="last-update">最終更新: --/-- --:--</div>
-    </div>
-    <div class="graph-section">
-      <div class="graph-header">
-        <h2 class="section-title">混雑の傾向グラフ<button id="graphHelpBtn" style="background:none;border:none;color:var(--text-sub);cursor:pointer;padding:0;vertical-align:middle;margin-left:4px"><span class="material-icons-round" style="font-size:1rem">help_outline</span></button></h2>
-        <select id="daySelector" class="day-select">
-          <option value="0">日曜日</option>
-          <option value="1">月曜日</option>
-          <option value="2">火曜日</option>
-          <option value="3">水曜日</option>
-          <option value="4">木曜日</option>
-          <option value="5">金曜日</option>
-          <option value="6">土曜日</option>
-        </select>
-      </div>
-      <div class="chart-container">
-        <canvas id="lunchChart"></canvas>
-        <div id="noDataOverlay" class="no-data-overlay">
-          <span class="material-icons-round no-data-icon">show_chart</span>
-          <div class="no-data-text">データがありません</div>
+        <div class="chart-container">
+          <canvas id="lunchChart"></canvas>
+          <div id="noDataOverlay" class="no-data-overlay">
+            <span class="material-icons-round no-data-icon">show_chart</span>
+            <div class="no-data-text">データがありません</div>
+          </div>
         </div>
       </div>
     </div>
