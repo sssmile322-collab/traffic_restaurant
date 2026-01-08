@@ -13,7 +13,10 @@
 <title>快適食堂 | Smart Restaurant</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#ff8533">
+
+<link rel="icon" href="icon.png" type="image/png">
 <link rel="apple-touch-icon" href="icon.png">
+
 <meta property="og:title" content="快適食堂 | Smart Restaurant">
 <meta property="og:description" content="学食の混雑状況をリアルタイムで確認！空いている時間を狙って行こう。">
 <meta property="og:type" content="website">
@@ -38,8 +41,8 @@
     --surface: #FFFFFF;         
     --surface-sub: #F0EBE5;     
     
-    /* 透明度0ですりガラス感 */
-    --surface-alpha: rgba(255, 255, 255, 0);
+    /* 透明度0.45ですりガラス感 */
+    --surface-alpha: rgba(255, 255, 255, 0.45);
 
     --text: #2c2420;            
     --text-sub: #6d5e56;        
@@ -61,7 +64,7 @@
     --surface: #2d2622;         
     --surface-sub: #3d3632;     
     
-    --surface-alpha: rgba(45, 38, 34, 0);
+    --surface-alpha: rgba(45, 38, 34, 0.45);
 
     --text: #f5f0e6;            
     --text-sub: #b0a69e;        
@@ -305,11 +308,12 @@
   }
   
   .fab-container.active .fab-option { opacity: 1; transform: translateY(0) scale(1); }
-  .fab-container.active .fab-option:nth-child(5) { transition-delay: 0.05s; }
-  .fab-container.active .fab-option:nth-child(4) { transition-delay: 0.1s; } 
-  .fab-container.active .fab-option:nth-child(3) { transition-delay: 0.15s; } 
-  .fab-container.active .fab-option:nth-child(2) { transition-delay: 0.2s; } 
-  .fab-container.active .fab-option:nth-child(1) { transition-delay: 0.25s; } 
+  .fab-container.active .fab-option:nth-child(6) { transition-delay: 0.05s; }
+  .fab-container.active .fab-option:nth-child(5) { transition-delay: 0.1s; } 
+  .fab-container.active .fab-option:nth-child(4) { transition-delay: 0.15s; } 
+  .fab-container.active .fab-option:nth-child(3) { transition-delay: 0.2s; } 
+  .fab-container.active .fab-option:nth-child(2) { transition-delay: 0.25s; } 
+  .fab-container.active .fab-option:nth-child(1) { transition-delay: 0.3s; } 
 
   .fab-label {
     background: var(--surface-alpha);
@@ -513,6 +517,13 @@
       </div>
     </button>
 
+    <button class="fab-option" id="installOption">
+      <span class="fab-label">アプリを入手</span>
+      <div class="fab-mini-btn">
+        <span class="material-icons-round">download</span>
+      </div>
+    </button>
+
     <button class="fab-option" id="menuBtn">
       <span class="fab-label">本日のメニュー</span>
       <div class="fab-mini-btn">
@@ -688,37 +699,71 @@
     }
   };
 
-  /* ▼▼▼ PWAバナー制御 (テスト用にキー変更) ▼▼▼ */
+  /* ▼▼▼ PWAバナー制御 (Firefox対応・インストール完了対応版) ▼▼▼ */
   const pwaBanner = document.getElementById("pwaBanner");
   const pwaClose = document.getElementById("pwaClose");
   const pwaDesc = document.getElementById("pwaDesc");
   const pwaInstallBtn = document.getElementById("pwaInstallBtn");
+  const installOption = document.getElementById("installOption"); 
   let deferredPrompt;
 
   const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-  // ★修正: テストのためキーを'pwa_closed_v5'にして強制リセット
-  const isPwaClosed = localStorage.getItem("pwa_closed_v5"); 
+  const isPwaClosed = localStorage.getItem("pwa_closed_v4"); 
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  const isFirefox = /firefox/i.test(navigator.userAgent);
 
+  if (isStandalone) {
+    installOption.style.display = 'none';
+  }
+
+  // 自動表示ロジック（一度閉じた人は出さない）
   if (!isStandalone && !isPwaClosed && isMobile) { 
     setTimeout(() => {
       if (isIphone) {
         pwaDesc.innerHTML = '画面下の <span class="material-icons-round" style="vertical-align:middle;font-size:1.1em">ios_share</span> から<br>「ホーム画面に追加」してね！';
         pwaBanner.classList.add("visible");
-      } 
+      } else if (isFirefox) {
+        // ★修正: Firefox用の案内
+        pwaDesc.innerHTML = 'ブラウザメニュー <span class="material-icons-round" style="vertical-align:middle;font-size:1.1em">more_vert</span> から<br>「インストール」を選んでね！';
+        pwaBanner.classList.add("visible");
+      }
     }, 3000);
   }
 
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
-    if (!isStandalone && !isPwaClosed && isMobile) {
+    if (!isStandalone && !isPwaClosed && isMobile && !isFirefox) {
       setTimeout(() => {
         pwaInstallBtn.style.display = "block";
         pwaBanner.classList.add("visible");
       }, 3000);
     }
   });
+
+  // メニューの「アプリを入手」ボタン処理
+  installOption.onclick = () => {
+    fabContainer.classList.remove('active');
+    fabIcon.textContent = 'menu';
+
+    if (isStandalone) {
+      alert("すでにアプリとしてインストールされています。");
+      return;
+    }
+
+    if (isIphone) {
+      pwaDesc.innerHTML = '画面下の <span class="material-icons-round" style="vertical-align:middle;font-size:1.1em">ios_share</span> から<br>「ホーム画面に追加」してね！';
+      pwaBanner.classList.add("visible");
+    } else if (isFirefox) {
+      // ★修正: Firefoxならアラートで案内
+      alert("Firefoxをお使いですね！\n\n画面右下のメニューボタン（︙）を押して、「インストール」または「ホーム画面に追加」を選択してください。");
+    } else if (deferredPrompt) {
+      pwaInstallBtn.style.display = "block";
+      pwaBanner.classList.add("visible");
+    } else {
+      alert("お使いのブラウザはアプリのインストールに対応していないか、または既にインストール済みです。\nブラウザのメニューから「ホーム画面に追加」を探してみてください。");
+    }
+  };
 
   pwaInstallBtn.onclick = async () => {
     if (deferredPrompt) {
@@ -728,12 +773,13 @@
         pwaBanner.classList.remove("visible");
       }
       deferredPrompt = null;
+      localStorage.setItem("pwa_closed_v4", "true");
     }
   };
 
   pwaClose.onclick = () => {
     pwaBanner.classList.remove("visible");
-    localStorage.setItem("pwa_closed_v5", "true");
+    localStorage.setItem("pwa_closed_v4", "true");
   };
   /* ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲ */
 
@@ -768,6 +814,9 @@
   closeFeedback.onclick=()=>feedbackModal.classList.remove("open");feedbackModal.onclick=e=>{if(e.target===feedbackModal)feedbackModal.classList.remove("open")};
   fbSubmit.onclick=async()=>{const e=fbMessage.value.trim();if(!e){alert("内容を入力してください");return}fbSubmit.disabled=!0,fbSubmit.textContent="送信中...";try{await push(ref(db,"feedbacks"),{category:fbCategory.value,message:e,timestamp:Date.now(),userAgent:navigator.userAgent});GAS_URL&&"ここにGASのウェブアプリURLを貼り付け"!==GAS_URL&&fetch(GAS_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/json"},body:JSON.stringify({category:fbCategory.value,message:e})}).catch(e=>console.error(e));alert("ご意見ありがとうございます！送信しました。"),fbMessage.value="",feedbackModal.classList.remove("open")}catch(e){console.error(e),alert("送信に失敗しました。")}finally{fbSubmit.disabled=!1,fbSubmit.innerHTML='送信する <span class="material-icons-round">send</span>'}};
   if(!isIphone&&"Notification"in window){
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js');
+    }
     if (Notification.permission === "default") {
       setTimeout(()=>{notifyModal.classList.add("open")}, 1000);
     }
