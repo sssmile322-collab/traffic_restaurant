@@ -78,20 +78,18 @@
       transition: max-width 0.3s ease;
     }
     
-    /* ★修正: コンテンツラッパー（デフォルト：スマホ用縦並び設定） */
     .content-wrapper {
       display: flex;
       flex-direction: column;
-      gap: 24px; /* ここでスマホ時のカード間の隙間を確保 */
+      gap: 24px;
     }
     
-    /* PC・タブレット用レイアウト (幅768px以上で発動) */
     @media (min-width: 768px) {
       .container {
         max-width: 1024px;
       }
       .content-wrapper {
-        display: grid; /* PCはグリッドで横並び */
+        display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 24px;
         align-items: stretch;
@@ -523,7 +521,7 @@
       <button class="sidebar-item" id="shareBtn"><span class="material-icons-round">share</span> シェア</button>
       <button class="sidebar-item" id="feedbackBtn"><span class="material-icons-round">chat_bubble_outline</span> ご意見</button>
     </div>
-    <div class="sidebar-footer">&copy; 2024 Smart Restaurant</div>
+    <div class="sidebar-footer">&copy; 2025 Smart Restaurant</div>
   </nav>
   <div class="container">
     <header>
@@ -539,7 +537,6 @@
         <div id="liveBadge" class="live-badge offline"><span class="material-icons-round" style="font-size:1rem">cloud_off</span> OFFLINE</div>
       </div>
     </header>
-    
     <div class="content-wrapper">
       <div id="mainCard" class="status-card">
         <div id="statusText" class="status-text">読み込み中...</div>
@@ -557,7 +554,6 @@
         </div>
         <div id="lastUpdateText" class="last-update">最終更新: --/-- --:--</div>
       </div>
-      
       <div class="graph-section">
         <div class="graph-header">
           <h2 class="section-title">混雑の傾向グラフ<button id="graphHelpBtn" style="background:none;border:none;color:var(--text-sub);cursor:pointer;padding:0;vertical-align:middle;margin-left:4px"><span class="material-icons-round" style="font-size:1rem">help_outline</span></button></h2>
@@ -592,7 +588,7 @@
           <label class="form-label">種類</label>
           <select id="fbCategory" class="form-select">
             <option value="food">🍽 食事について（具体的にメニュー名など）</option>
-            <option value="service">📱 サービスについて（快適食堂）</option>
+            <option value="service">📱 サービスの誤差について（待ち時間、人数等）</option>
             <option value="other">💬 その他</option>
           </select>
         </div>
@@ -873,7 +869,16 @@
           animation: !0, responsive: !0, maintainAspectRatio: !1, interaction: { intersect: !1, mode: 'index' },
           scales: {
             x: { grid: { display: !1 }, ticks: { maxTicksLimit: 5, color: getComputedStyle(document.body).getPropertyValue('--text-sub').trim() } },
-            y: { display: !0, beginAtZero: !0, grid: { color: getComputedStyle(document.body).getPropertyValue('--border').trim() }, ticks: { color: getComputedStyle(document.body).getPropertyValue('--text-sub').trim(), callback: function (e) { return e + '人' } } }
+            y: { 
+              display: !0, 
+              beginAtZero: !0, 
+              grid: { color: getComputedStyle(document.body).getPropertyValue('--border').trim() }, 
+              ticks: { 
+                stepSize: 1, 
+                color: getComputedStyle(document.body).getPropertyValue('--text-sub').trim(), 
+                callback: function (e) { return e + '人' } 
+              } 
+            }
           },
           plugins: {
             legend: { display: !0 },
