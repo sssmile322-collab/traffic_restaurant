@@ -20,42 +20,54 @@
   <meta property="og:image" content="https://traffic-restaurant.web.app/icon.png">
   <meta name="twitter:card" content="summary">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Sans+JP:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js"></script>
   <style>
+    /* =========================================
+       CSS変数 (デザイン維持)
+       ========================================= */
     :root {
       --primary: #ff8533;
       --primary-dark: #e67326;
-      --bg: #F9F7F2;
+      --gold-text: #F57C00;
+      --gold-glow: 0 2px 12px rgba(255, 160, 0, 0.6);
+      --bg-color: #F9F7F2;
+      --bg-gradient: radial-gradient(circle at 50% 0%, #fffbf5 0%, #F9F7F2 100%);
       --surface: #FFFFFF;
       --surface-sub: #F0EBE5;
-      --surface-alpha: rgba(255, 255, 255, 0.85);
+      --surface-alpha: rgba(255, 255, 255, 0.90);
       --text: #2c2420;
       --text-sub: #6d5e56;
       --border: #e6e0d8;
       --accent-free: #388E3C;
       --accent-busy: #D32F2F;
-      --card-shadow: 0 4px 20px rgba(62, 39, 35, 0.08);
-      --sidebar-shadow: 4px 0 24px rgba(62, 39, 35, 0.15);
+      --card-shadow: 0 10px 30px -5px rgba(62, 39, 35, 0.06), 0 4px 10px -2px rgba(62, 39, 35, 0.04);
+      --sidebar-shadow: 10px 0 40px rgba(62, 39, 35, 0.1);
+      --link-blue: #1E88E5;
     }
     body.dark-mode {
       --primary: #ffa366;
       --primary-dark: #ff8533;
+      --gold-text: #FFD54F;
+      --gold-glow: 0 0 10px rgba(255, 213, 79, 0.6), 0 0 20px rgba(255, 160, 0, 0.4);
       --bg: #1c1917;
+      --bg-gradient: radial-gradient(circle at 50% 0%, #2a2522 0%, #1c1917 100%);
       --surface: #2d2622;
       --surface-sub: #3d3632;
-      --surface-alpha: rgba(45, 38, 34, 0.85);
+      --surface-alpha: rgba(45, 38, 34, 0.90);
       --text: #f5f0e6;
       --text-sub: #b0a69e;
       --border: #4d4540;
       --accent-free: #81c784;
       --accent-busy: #e57373;
-      --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
-      --sidebar-shadow: 4px 0 24px rgba(0, 0, 0, 0.5);
+      --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5), 0 4px 10px -2px rgba(0, 0, 0, 0.3);
+      --sidebar-shadow: 10px 0 40px rgba(0, 0, 0, 0.6);
+      --link-blue: #64B5F6;
     }
+
     * { box-sizing: border-box; }
     body {
       margin: 0;
@@ -68,6 +80,7 @@
       transition: background-color 0.3s, color 0.3s;
     }
     canvas { touch-action: pan-y; }
+
     .container {
       max-width: 480px;
       margin: 0 auto;
@@ -77,17 +90,13 @@
       gap: 24px;
       transition: max-width 0.3s ease;
     }
-    
     .content-wrapper {
       display: flex;
       flex-direction: column;
       gap: 24px;
     }
-    
     @media (min-width: 768px) {
-      .container {
-        max-width: 1024px;
-      }
+      .container { max-width: 1024px; }
       .content-wrapper {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -100,9 +109,7 @@
         flex-direction: column;
         justify-content: center;
       }
-      .chart-container {
-        height: 240px;
-      }
+      .chart-container { height: 240px; }
       .menu-sheet {
         max-width: 600px !important;
         max-height: 95vh !important;
@@ -143,17 +150,21 @@
       cursor: pointer;
       white-space: nowrap;
       z-index: 5;
+      background: none;
+      border: none;
+      padding: 0;
     }
     .brand-icon { font-size: 2rem; color: var(--primary); }
-    .brand-text { display: flex; flex-direction: column; line-height: 1.1; }
+    .brand-text { display: flex; flex-direction: column; line-height: 1.1; text-align: left; }
     .brand-main { font-size: 1.25rem; font-weight: 800; color: var(--text); }
-    .brand-sub { font-size: 0.75rem; font-weight: 600; color: var(--text-sub); letter-spacing: 0.02em; }
+    .brand-sub { font-size: 0.75rem; font-weight: 700; color: var(--gold-text); text-shadow: var(--gold-glow); letter-spacing: 0.02em; }
     .header-controls {
       display: flex;
       align-items: center;
       gap: 12px;
       z-index: 10;
     }
+
     .live-badge {
       font-size: 0.7rem;
       padding: 6px 10px;
@@ -173,7 +184,9 @@
       border-radius: 50%;
       animation: pulse 1.5s infinite;
     }
+    .badge-icon { font-size: 1rem; }
     @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+
     .status-card {
       width: 100%;
       background: var(--surface);
@@ -193,6 +206,7 @@
     .status-card.closed .status-text { color: var(--text-sub); }
     .status-card.closed .metric-val { color: var(--text-sub); opacity: 0.5; }
     .status-card.closed .person-icon { color: var(--border) !important; }
+
     .visual-queue { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin: 24px 0; min-height: 40px; }
     .person-icon {
       font-family: 'Material Icons Round';
@@ -203,15 +217,22 @@
       animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
     }
     .person-icon.active { color: var(--primary); }
+    .person-icon-empty { font-size: 48px; color: #cbd5e1; }
+    .queue-overflow-text { font-size: 0.8rem; color: #999; align-self: center; }
     @keyframes popIn { to { opacity: 1; transform: scale(1); } }
+
     .metrics { display: flex; justify-content: space-around; margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border); }
     .metric-item { display: flex; flex-direction: column; gap: 4px; }
     .metric-val { font-size: 1.4rem; font-weight: 800; }
-    .metric-label { font-size: 0.75rem; color: var(--text-sub); font-weight: 600; }
+    .metric-val-unit { font-size: 0.9rem; }
+    .metric-label { font-size: 0.75rem; color: var(--text-sub); font-weight: 600; display: flex; align-items: center; justify-content: center; }
+    .help-btn { background: none; border: none; color: var(--link-blue); cursor: pointer; padding: 0; vertical-align: middle; margin-left: 4px; display: inline-flex; align-items: center; }
+    .help-icon { font-size: 1rem; }
     .last-update { margin-top: 16px; font-size: 0.7rem; color: var(--text-sub); text-align: right; opacity: 0.8; }
+
     .graph-section { background: var(--surface); border-radius: 20px; padding: 20px; box-shadow: var(--card-shadow); }
     .graph-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-    .section-title { font-size: 0.9rem; font-weight: 700; margin: 0; color: var(--text-sub); }
+    .section-title { font-size: 0.9rem; font-weight: 700; margin: 0; color: var(--text-sub); display: flex; align-items: center; }
     .day-select {
       -webkit-appearance: none;
       appearance: none;
@@ -253,6 +274,7 @@
     .no-data-overlay.visible { opacity: 1; pointer-events: auto; }
     .no-data-text { color: var(--text-sub); font-size: 0.85rem; font-weight: 600; margin-top: 8px; }
     .no-data-icon { font-size: 48px; color: var(--border); }
+
     .sidebar-overlay {
       position: fixed;
       inset: 0;
@@ -316,6 +338,7 @@
       color: var(--text-sub);
       border-top: 1px solid var(--border);
     }
+
     .overlay-base {
       position: fixed;
       inset: 0;
@@ -328,8 +351,9 @@
       display: flex;
     }
     .overlay-base.open { opacity: 1; pointer-events: auto; }
-    #menuModal, #feedbackModal { justify-content: center; align-items: flex-end; }
-    #aboutModal, #graphHelpModal { justify-content: center; align-items: center; }
+    .modal-bottom-align { justify-content: center; align-items: flex-end; }
+    .modal-center-align { justify-content: center; align-items: center; }
+
     .menu-sheet {
       background: var(--surface);
       width: 100%;
@@ -348,7 +372,19 @@
     }
     #menuModal.open .menu-sheet, #feedbackModal.open .menu-sheet { transform: translateY(0); }
     .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .modal-title { margin: 0; font-size: 1.1rem; }
     .close-btn { background: var(--surface-sub); color: var(--text); border: none; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; cursor: pointer; }
+    
+    .notify-dialog.modal-text-content { text-align: left; }
+    .modal-desc { font-size: 0.9rem; color: var(--text); line-height: 1.7; margin: 0; }
+    .modal-desc + .modal-desc { margin-top: 12px; }
+    .modal-note-list { font-size: 0.85rem; color: var(--text-sub); background: var(--surface-sub); padding: 12px 12px 12px 28px; border-radius: 8px; margin-top: 12px; }
+    .modal-note-center { font-size: 0.85rem; color: var(--text-sub); margin-top: 12px; text-align: center; }
+    .menu-instruction { font-size: 0.8rem; color: var(--text-sub); text-align: center; margin: 0 0 10px 0; }
+    .menu-instruction-icon { font-size: 0.9rem; vertical-align: middle; }
+    .menu-form-wrapper { padding-bottom: 20px; }
+    .menu-error-msg { text-align: center; color: #888; margin-top: 20px; }
+
     .menu-viewer {
       flex: 1;
       overflow: auto;
@@ -370,6 +406,7 @@
     .menu-viewer:active { cursor: grabbing; }
     .menu-viewer img { width: 100%; height: auto; border-radius: 8px; display: block; -webkit-user-drag: none; transform-origin: top center; }
     .menu-viewer img.zoomed { width: 300%; max-width: none; margin: 0 auto; }
+
     .form-group { margin-bottom: 20px; }
     .form-label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; color: var(--text-sub); }
     .form-select, .form-textarea { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-family: inherit; font-size: 1rem; resize: none; outline: none; transition: border-color 0.2s; }
@@ -378,6 +415,8 @@
     .submit-btn { width: 100%; padding: 16px; background: var(--primary); color: #fff; border: none; border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
     .submit-btn:hover { background: var(--primary-dark); }
     .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* 通知設定モーダル */
     #notifyModal { justify-content: center; align-items: center; }
     .notify-dialog {
       background: var(--surface);
@@ -390,10 +429,53 @@
     }
     .notify-dialog h2 { margin: 0 0 12px; font-size: 1.1rem; }
     .notify-dialog p { font-size: 0.9rem; color: var(--text-sub); margin-bottom: 20px; line-height: 1.5; }
-    .btn-group { display: flex; gap: 12px; }
-    .btn { flex: 1; padding: 12px; border: none; border-radius: 12px; font-weight: 700; font-size: 0.9rem; cursor: pointer; }
+    .btn-group { display: flex; gap: 12px; justify-content: center; }
+    .btn { flex: 1; padding: 12px; border: none; border-radius: 12px; font-weight: 700; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; }
     .btn-primary { background: var(--primary); color: #fff; }
     .btn-secondary { background: var(--surface-sub); color: var(--text); }
+
+    /* ★新規: スライダー用のスタイル */
+    .slider-container {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 8px;
+    }
+    .slider {
+      flex: 1;
+      height: 8px;
+      border-radius: 4px;
+      background: var(--surface-sub);
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--primary);
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .slider::-moz-range-thumb {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--primary);
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .slider-value {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--primary);
+      min-width: 50px;
+      text-align: right;
+    }
+
     .toast {
       position: fixed;
       top: 20px;
@@ -415,6 +497,7 @@
     .toast-icon { font-size: 1.5rem; }
     .toast-content div:first-child { font-weight: 700; font-size: 0.9rem; color: var(--text); }
     .toast-content div:last-child { font-size: 0.8rem; color: var(--text-sub); }
+
     .pwa-banner {
       position: fixed;
       bottom: 24px;
@@ -437,6 +520,7 @@
     .pwa-banner.visible { transform: translateY(0); }
     .pwa-title { font-size: 0.95rem; font-weight: 800; color: var(--primary); margin: 0; display: flex; align-items: center; gap: 6px; }
     .pwa-desc { font-size: 0.8rem; color: var(--text); margin: 0; line-height: 1.5; }
+    .pwa-icon-inline { vertical-align: middle; font-size: 1.1em; }
     .pwa-btn { background: var(--primary); color: #fff; border: none; padding: 10px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; cursor: pointer; text-align: center; }
     .pwa-close {
       position: absolute;
@@ -453,6 +537,7 @@
       place-items: center;
       transition: background 0.2s;
     }
+    .pwa-close-icon { font-size: 1.2rem; }
     .pwa-close:hover { background: rgba(0, 0, 0, 0.1); }
   </style>
 </head>
@@ -464,49 +549,90 @@
       <div id="toastBody">今がチャンスです</div>
     </div>
   </div>
-  <div id="notifyModal" class="overlay-base">
+
+  <div id="notifyModal" class="overlay-base modal-center-align">
     <div class="notify-dialog">
-      <h2>通知をオンにしますか？</h2>
-      <p>行列が解消されたタイミングで<br>お知らせを受け取れます。</p>
-      <div class="btn-group">
-        <button class="btn btn-secondary" id="notifyNo">あとで</button>
-        <button class="btn btn-primary" id="notifyYes">許可する</button>
+      <h2>通知設定</h2>
+      
+      <div id="notifyPermissionRequest" style="display:none;">
+        <p>行列が解消されたタイミングで<br>お知らせを受け取れます。</p>
+        <div class="btn-group">
+          <button class="btn btn-secondary" id="notifyNo">あとで</button>
+          <button class="btn btn-primary" id="notifyYes">許可する</button>
+        </div>
+      </div>
+
+      <div id="notifySettingsForm">
+        <div class="form-group" style="text-align:left; margin-bottom:12px;">
+          <label class="form-label">何人以下になったら通知しますか？</label>
+          <div class="slider-container">
+            <input type="range" id="notifyThresholdSlider" min="0" max="10" step="1" class="slider">
+            <div class="slider-value"><span id="notifyThresholdValue">3</span>人</div>
+          </div>
+          <p class="modal-note-center" style="margin-top:0;">※ 現在の行列: <span id="currentCountDisplay" style="font-weight:bold;">--</span>人</p>
+        </div>
+        <div class="btn-group">
+          <button class="btn btn-secondary" id="notifyCloseSettings">閉じる</button>
+          <button class="btn btn-primary" id="notifySaveSettings">設定を保存</button>
+        </div>
+        <div style="text-align:center; margin-top:16px;">
+          <button id="notifyDisable" style="background:none; border:none; color:var(--text-sub); font-size:0.85rem; text-decoration:underline; cursor:pointer;">通知をOFFにする</button>
+        </div>
       </div>
     </div>
   </div>
-  <div class="overlay-base" id="aboutModal">
-    <div class="notify-dialog" style="text-align:left">
-      <div class="modal-header" style="margin-bottom:12px">
-        <h3 style="margin:0;font-size:1.1rem">測定システムについて</h3>
+
+  <div class="overlay-base modal-center-align" id="aboutModal">
+    <div class="notify-dialog modal-text-content">
+      <div class="modal-header">
+        <h3 class="modal-title">測定システムについて</h3>
         <button class="close-btn" id="closeAbout"><span class="material-icons-round">close</span></button>
       </div>
-      <p style="font-size:0.9rem;color:var(--text);line-height:1.7">現在の待ち人数は、設置されたカメラの映像を<strong>AI（人工知能）がリアルタイムで解析</strong>し、自動で表示しています。</p>
-      <p style="font-size:0.9rem;color:var(--text);line-height:1.7;margin-top:12px">可能な限り正確な値を算出するよう調整しておりますが、混雑時は、以下のような要因により誤差が生じる場合があります。</p>
-      <ul style="font-size:0.85rem;color:var(--text-sub);background:var(--surface-sub);padding:12px 12px 12px 28px;border-radius:8px;margin-top:12px">
+      <p class="modal-desc">現在の待ち人数は、設置されたカメラの映像を<strong>AI（人工知能）がリアルタイムで解析</strong>し、自動で表示しています。</p>
+      <p class="modal-desc">可能な限り正確な値を算出するよう調整しておりますが、混雑時は、以下のような要因により誤差が生じる場合があります。</p>
+      <ul class="modal-note-list">
         <li>混雑時、人が重なって映っている場合</li>
         <li>季節、天気によって光の量の変化する影響</li>
         <li>一般食に並んでいる方をカウントしてしまう場合</li>
         <li>とても混雑しており、認識の限界の場合</li>
       </ul>
-      <p style="font-size:0.85rem;color:var(--text-sub);margin-top:12px;text-align:center">※ 混雑時に表示される人数は「目安」としてご利用ください。</p>
+      <p class="modal-note-center">※ 混雑時に表示される人数は「目安」としてご利用ください。</p>
     </div>
   </div>
-  <div class="overlay-base" id="graphHelpModal">
-    <div class="notify-dialog" style="text-align:left">
-      <div class="modal-header" style="margin-bottom:12px">
-        <h3 style="margin:0;font-size:1.1rem">グラフの数値について</h3>
+
+  <div class="overlay-base modal-center-align" id="graphHelpModal">
+    <div class="notify-dialog modal-text-content">
+      <div class="modal-header">
+        <h3 class="modal-title">グラフの数値について</h3>
         <button class="close-btn" id="closeGraphHelp"><span class="material-icons-round">close</span></button>
       </div>
-      <p style="font-size:0.9rem;color:var(--text);line-height:1.6">当システムの混雑人数は、カメラが10秒に1度検知したデータをAIが<strong>1分間ごとに平均値を算出</strong>することで、誤差の減少を試みています。</p>
-      <p style="font-size:0.9rem;color:var(--text);line-height:1.6">そのため、<strong>「1.5人」のように小数が表示される場合があります</strong>が、これは計算上の平均値です。</p>
+      <p class="modal-desc">当システムの混雑人数は、カメラが10秒に1度検知したデータをAIが<strong>1分間ごとに平均値を算出</strong>することで、誤差の減少を試みています。</p>
+      <p class="modal-desc">そのため、<strong>「1.5人」のように小数が表示される場合があります</strong>が、これは計算上の平均値です。</p>
     </div>
   </div>
+
+  <div class="overlay-base modal-center-align" id="waitHelpModal">
+    <div class="notify-dialog modal-text-content">
+      <div class="modal-header">
+        <h3 class="modal-title">待ち時間について</h3>
+        <button class="close-btn" id="closeWaitHelp"><span class="material-icons-round">close</span></button>
+      </div>
+      <p class="modal-desc">この時間は、現在の行列人数から算出した<strong>計算上の目安</strong>です。</p>
+      <ul class="modal-note-list">
+        <li>1人あたり約test秒で進むと仮定して計算しています</li>
+        <li>レストランに入る速度は人それぞれな為、実際はこれより長くなる場合があります</li>
+      </ul>
+      <p class="modal-note-center">※ 多少のブレが想定される為、余裕を持ってご利用ください。</p>
+    </div>
+  </div>
+
   <div id="pwaBanner" class="pwa-banner">
-    <button class="pwa-close" id="pwaClose"><span class="material-icons-round" style="font-size:1.2rem">close</span></button>
+    <button class="pwa-close" id="pwaClose"><span class="material-icons-round pwa-close-icon">close</span></button>
     <h3 class="pwa-title"><span class="material-icons-round">add_to_home_screen</span> ホーム画面に追加</h3>
     <p class="pwa-desc" id="pwaDesc">ホーム画面に追加すると、アプリのように使えて通知も受け取れます！</p>
     <button id="pwaInstallBtn" class="pwa-btn" style="display:none">インストールする</button>
   </div>
+
   <div id="sidebarOverlay" class="sidebar-overlay"></div>
   <nav id="appSidebar" class="sidebar">
     <div class="sidebar-header">
@@ -523,40 +649,51 @@
     </div>
     <div class="sidebar-footer">&copy; 2025 Smart Restaurant</div>
   </nav>
+
   <div class="container">
     <header>
       <button id="menuToggle" class="menu-toggle-btn"><span class="material-icons-round">menu</span></button>
-      <div class="brand" onclick="window.location.reload()">
+      <button class="brand" onclick="window.location.reload()">
         <span class="material-icons-round brand-icon">restaurant_menu</span>
         <div class="brand-text">
           <span class="brand-main">快適食堂</span>
           <span class="brand-sub">Smart Restaurant</span>
         </div>
-      </div>
+      </button>
       <div class="header-controls">
-        <div id="liveBadge" class="live-badge offline"><span class="material-icons-round" style="font-size:1rem">cloud_off</span> OFFLINE</div>
+        <div id="liveBadge" class="live-badge offline"><span class="material-icons-round badge-icon">cloud_off</span> OFFLINE</div>
       </div>
     </header>
+    
     <div class="content-wrapper">
       <div id="mainCard" class="status-card">
         <div id="statusText" class="status-text">読み込み中...</div>
         <div id="waitMessage" class="status-sub">少々お待ちください</div>
+        
         <div id="visualQueue" class="visual-queue"></div>
+        
         <div class="metrics">
           <div class="metric-item">
-            <span class="metric-val"><span id="count">--</span><span style="font-size:0.9rem">人</span></span>
-            <span class="metric-label">現在の行列<button id="aboutBtn" style="background:none;border:none;color:var(--text-sub);cursor:pointer;padding:0;vertical-align:middle;margin-left:4px"><span class="material-icons-round" style="font-size:1rem">help_outline</span></button></span>
+            <span class="metric-val"><span id="count">--</span><span class="metric-val-unit">人</span></span>
+            <span class="metric-label">現在の行列
+              <button id="aboutBtn" class="help-btn"><span class="material-icons-round help-icon">help_outline</span></button>
+            </span>
           </div>
           <div class="metric-item">
-            <span class="metric-val">~<span id="waitTime">--</span><span style="font-size:0.9rem">分</span></span>
-            <span class="metric-label">推定待ち時間</span>
+            <span class="metric-val">~<span id="waitTime">--</span><span class="metric-val-unit">分</span></span>
+            <span class="metric-label">推定待ち時間
+              <button id="waitHelpBtn" class="help-btn"><span class="material-icons-round help-icon">help_outline</span></button>
+            </span>
           </div>
         </div>
         <div id="lastUpdateText" class="last-update">最終更新: --/-- --:--</div>
       </div>
+      
       <div class="graph-section">
         <div class="graph-header">
-          <h2 class="section-title">混雑の傾向グラフ<button id="graphHelpBtn" style="background:none;border:none;color:var(--text-sub);cursor:pointer;padding:0;vertical-align:middle;margin-left:4px"><span class="material-icons-round" style="font-size:1rem">help_outline</span></button></h2>
+          <h2 class="section-title">混雑の傾向グラフ
+            <button id="graphHelpBtn" class="help-btn"><span class="material-icons-round help-icon">help_outline</span></button>
+          </h2>
           <select id="daySelector" class="day-select">
             <option value="0">日曜日</option>
             <option value="1">月曜日</option>
@@ -577,13 +714,14 @@
       </div>
     </div>
   </div>
-  <div class="overlay-base" id="feedbackModal">
+
+  <div class="overlay-base modal-bottom-align" id="feedbackModal">
     <div class="menu-sheet">
       <div class="modal-header">
-        <h2 style="margin:0;font-size:1.1rem">ご意見・ご要望</h2>
+        <h2 class="modal-title">ご意見・ご要望</h2>
         <button class="close-btn" id="closeFeedback"><span class="material-icons-round">close</span></button>
       </div>
-      <div style="padding-bottom:20px">
+      <div class="menu-form-wrapper">
         <div class="form-group">
           <label class="form-label">種類</label>
           <select id="fbCategory" class="form-select">
@@ -600,38 +738,71 @@
       </div>
     </div>
   </div>
-  <div class="overlay-base" id="menuModal">
+
+  <div class="overlay-base modal-bottom-align" id="menuModal">
     <div class="menu-sheet">
       <div class="modal-header">
-        <h2 style="margin:0;font-size:1.1rem">メニュー表</h2>
+        <h2 class="modal-title">メニュー表</h2>
         <button class="close-btn" id="closeMenu"><span class="material-icons-round">close</span></button>
       </div>
-      <p style="font-size:0.8rem;color:var(--text-sub);text-align:center;margin:0 0 10px 0"><span class="material-icons-round" style="font-size:0.9rem;vertical-align:middle">touch_app</span> タップで拡大 / ドラッグで移動</p>
+      <p class="menu-instruction"><span class="material-icons-round menu-instruction-icon">touch_app</span> タップで拡大 / ドラッグで移動</p>
       <div class="menu-viewer" id="menuContainer">
-        <img id="menuImage" draggable="false" src="menu_img.png" alt="本日のメニュー" onerror="this.style.display='none';this.parentElement.innerHTML='<p style=\'text-align:center;color:#888;margin-top:20px\'>メニュー画像が見つかりません</p>'" />
+        <img id="menuImage" draggable="false" src="menu_img.png" alt="本日のメニュー" onerror="this.style.display='none';this.parentElement.innerHTML='<p class=\'menu-error-msg\'>メニュー画像が見つかりません</p>'" />
       </div>
     </div>
   </div>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getDatabase, ref, onValue, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    
+    // ▼ Firebaseの設定
     const firebaseConfig = { databaseURL: "https://traffic-restaurant-default-rtdb.firebaseio.com/" };
-    const MINUTES_PER_PERSON = 0.3, isIphone = /iPhone|iPad|iPod/i.test(navigator.userAgent), DATA_TIMEOUT_MINUTES = 1;
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbxYAdVhS19brD2FfGizWH5jBCUXGSLFTfq60wvLCCxkjptYz7WUpQZ71ay2lFoTtEv16w/exec";
     const app = initializeApp(firebaseConfig), db = getDatabase(app);
+
+    // ▼ 定数設定
+    const MINUTES_PER_PERSON = 0.3; // 1人あたりの待ち時間（分）
+    const isIphone = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const DATA_TIMEOUT_MINUTES = 1; // データが古いとみなす時間（分）
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbxYAdVhS19brD2FfGizWH5jBCUXGSLFTfq60wvLCCxkjptYz7WUpQZ71ay2lFoTtEv16w/exec"; // GASのURL
+
+    // ▼ DOM要素の取得
     const countEl = document.getElementById("count"), waitTimeEl = document.getElementById("waitTime"), statusTextEl = document.getElementById("statusText"), waitMessageEl = document.getElementById("waitMessage"), visualQueueEl = document.getElementById("visualQueue"), mainCard = document.getElementById("mainCard"), daySelector = document.getElementById("daySelector"), liveBadgeEl = document.getElementById("liveBadge"), lastUpdateTextEl = document.getElementById("lastUpdateText"), noDataOverlay = document.getElementById("noDataOverlay"), menuBtn = document.getElementById("menuBtn"), menuModal = document.getElementById("menuModal"), closeMenu = document.getElementById("closeMenu"), notifyModal = document.getElementById("notifyModal"), notifyYes = document.getElementById("notifyYes"), notifyNo = document.getElementById("notifyNo"), pseudoNotify = document.getElementById("pseudoNotify"), shareBtn = document.getElementById("shareBtn"), feedbackBtn = document.getElementById("feedbackBtn"), feedbackModal = document.getElementById("feedbackModal"), closeFeedback = document.getElementById("closeFeedback"), fbSubmit = document.getElementById("fbSubmit"), fbCategory = document.getElementById("fbCategory"), fbMessage = document.getElementById("fbMessage");
+    
+    // 通知モーダル関連要素
+    const notifyPermissionRequest = document.getElementById("notifyPermissionRequest");
+    const notifySettingsForm = document.getElementById("notifySettingsForm");
+    const notifyThresholdSlider = document.getElementById("notifyThresholdSlider");
+    const notifyThresholdValue = document.getElementById("notifyThresholdValue");
+    const notifyCloseSettings = document.getElementById("notifyCloseSettings");
+    const notifySaveSettings = document.getElementById("notifySaveSettings");
+    const currentCountDisplay = document.getElementById("currentCountDisplay");
+    // ★新規: 通知OFFボタン
+    const notifyDisable = document.getElementById("notifyDisable");
+
+    const waitHelpBtn = document.getElementById("waitHelpBtn"), waitHelpModal = document.getElementById("waitHelpModal"), closeWaitHelp = document.getElementById("closeWaitHelp");
     const toastTitle = document.getElementById("toastTitle"), toastBody = document.getElementById("toastBody");
     const aboutBtn = document.getElementById("aboutBtn"), aboutModal = document.getElementById("aboutModal"), closeAbout = document.getElementById("closeAbout");
     const graphHelpBtn = document.getElementById("graphHelpBtn"), graphHelpModal = document.getElementById("graphHelpModal"), closeGraphHelp = document.getElementById("closeGraphHelp");
+
+    // ▼ 曜日の初期設定
     daySelector.value = new Date().getDay();
+
+    // ▼ モーダル開閉ロジック
     aboutBtn.onclick = () => aboutModal.classList.add("open");
     closeAbout.onclick = () => aboutModal.classList.remove("open");
     aboutModal.onclick = e => { if (e.target === aboutModal) aboutModal.classList.remove("open") };
     graphHelpBtn.onclick = () => graphHelpModal.classList.add("open");
     closeGraphHelp.onclick = () => graphHelpModal.classList.remove("open");
     graphHelpModal.onclick = e => { if (e.target === graphHelpModal) graphHelpModal.classList.remove("open") };
+    waitHelpBtn.onclick = () => waitHelpModal.classList.add("open");
+    closeWaitHelp.onclick = () => waitHelpModal.classList.remove("open");
+    waitHelpModal.onclick = e => { if (e.target === waitHelpModal) waitHelpModal.classList.remove("open") };
+
+    // ▼ テーマ切り替えロジック
     const themeOption = document.getElementById("themeOption"), themeIconMenu = document.getElementById("themeIconMenu"), savedTheme = localStorage.getItem("theme");
     if (savedTheme === "dark") { document.body.classList.add("dark-mode"); themeIconMenu.textContent = "light_mode"; } else { document.body.classList.remove("dark-mode"); themeIconMenu.textContent = "dark_mode"; }
+    
     themeOption.onclick = () => {
       document.body.classList.toggle("dark-mode");
       const isDark = document.body.classList.contains("dark-mode");
@@ -647,19 +818,30 @@
       }
       closeSidebar();
     };
+
+    // ▼ サイドバー開閉ロジック
     const menuToggle = document.getElementById("menuToggle"), appSidebar = document.getElementById("appSidebar"), sidebarOverlay = document.getElementById("sidebarOverlay"), sidebarCloseBtn = document.getElementById("sidebarCloseBtn");
     function openSidebar() { appSidebar.classList.add("open"); sidebarOverlay.classList.add("visible"); }
     function closeSidebar() { appSidebar.classList.remove("open"); sidebarOverlay.classList.remove("visible"); }
     menuToggle.onclick = openSidebar; sidebarCloseBtn.onclick = closeSidebar; sidebarOverlay.onclick = closeSidebar;
+
+    // ▼ 通知設定ロジック (カスタマイズ機能統合)
     const notifyOption = document.getElementById("notifyOption"), notifyIconMenu = document.getElementById("notifyIconMenu"), notifyLabelMenu = document.getElementById("notifyLabelMenu");
-    let isAppNotifyEnabled = localStorage.getItem("app_notify_enabled") !== "false";
+    
+    // 設定値の読み込み (デフォルトは3人、ON/OFFフラグ、通知済みフラグ)
+    let isAppNotifyEnabled = localStorage.getItem("app_notify_enabled") === "true"; // デフォルトはfalse(undefined)
+    let notifyThreshold = parseInt(localStorage.getItem("notify_threshold") || "3");
+    let hasNotified = localStorage.getItem("has_notified") === "true";
+    let currentPeopleCount = 0; // 現在の人数を保持する変数
+
     function updateNotifyButtonUI() {
       if (Notification.permission === "granted") {
-        if (isAppNotifyEnabled) { notifyIconMenu.textContent = "notifications_off"; notifyLabelMenu.textContent = "通知OFF"; }
-        else { notifyIconMenu.textContent = "notifications_active"; notifyLabelMenu.textContent = "通知ON"; }
+        if (isAppNotifyEnabled) { notifyIconMenu.textContent = "notifications_active"; notifyLabelMenu.textContent = "通知設定"; }
+        else { notifyIconMenu.textContent = "notifications_off"; notifyLabelMenu.textContent = "通知設定"; }
       } else { notifyIconMenu.textContent = "notifications"; notifyLabelMenu.textContent = "通知設定"; }
     }
     if (!isIphone && "Notification" in window) updateNotifyButtonUI();
+
     let toastTimer;
     function showToast(title, body) {
       if (toastTimer) clearTimeout(toastTimer);
@@ -667,57 +849,121 @@
       pseudoNotify.classList.add("show");
       toastTimer = setTimeout(() => { pseudoNotify.classList.remove("show"); }, 3000);
     }
+
+    // 通知メニュークリック時の処理
     notifyOption.onclick = () => {
       closeSidebar();
       if (!("Notification" in window)) { alert("このブラウザは通知に対応していません。"); return; }
+      
+      // モーダルを開く
+      notifyModal.classList.add("open");
+      
+      // 現在の設定値をUIに反映
+      notifyThresholdSlider.value = notifyThreshold;
+      notifyThresholdValue.textContent = notifyThreshold;
+      currentCountDisplay.textContent = currentPeopleCount;
+      
+      // ★通知OFFボタンの表示制御（ONなら表示、OFFなら隠す）
+      notifyDisable.style.display = isAppNotifyEnabled ? "inline-block" : "none";
+
       if (Notification.permission === "granted") {
-        isAppNotifyEnabled = !isAppNotifyEnabled;
-        localStorage.setItem("app_notify_enabled", isAppNotifyEnabled);
-        updateNotifyButtonUI();
-        if (isAppNotifyEnabled) showToast("🔔 通知をONにしました", "混雑が解消されたらお知らせします");
-        else showToast("🔕 通知をOFFにしました", "アプリからの通知を停止します(再度変更可能)");
-      } else if (Notification.permission === "denied") {
-        alert("通知がブラウザの設定でブロックされています。\n解除するにはブラウザの設定画面から通知を許可してください。");
-      } else { notifyModal.classList.add("open"); }
-    };
-    notifyYes.onclick = async () => {
-      const permission = await Notification.requestPermission();
-      notifyModal.classList.remove("open");
-      if (permission === "granted") {
-        isAppNotifyEnabled = true; localStorage.setItem("app_notify_enabled", "true"); updateNotifyButtonUI();
-        showToast("設定完了", "通知が許可されました！");
-        try { new Notification("設定完了", { body: "通知が許可されました！", icon: "/favicon.ico" }); } catch (e) {}
+        // 許可済みの場合は設定フォームを表示
+        notifyPermissionRequest.style.display = "none";
+        notifySettingsForm.style.display = "block";
+      } else {
+        // 未許可の場合は許可ボタンを表示
+        notifyPermissionRequest.style.display = "block";
+        notifySettingsForm.style.display = "none";
       }
     };
+    
+    // 許可ボタンクリック
+    notifyYes.onclick = async () => {
+      const permission = await Notification.requestPermission();
+      if (permission === "granted") {
+        notifyPermissionRequest.style.display = "none";
+        notifySettingsForm.style.display = "block";
+        isAppNotifyEnabled = true; 
+        localStorage.setItem("app_notify_enabled", "true"); 
+        updateNotifyButtonUI();
+        notifyDisable.style.display = "inline-block"; // 許可したらOFFボタンも表示
+      } else {
+        notifyModal.classList.remove("open");
+        alert("通知がブロックされました。ブラウザの設定から許可してください。");
+      }
+    };
+
+    // 「あとで」ボタン
+    notifyNo.onclick = () => { notifyModal.classList.remove("open"); };
+
+    // スライダー操作時
+    notifyThresholdSlider.addEventListener('input', (e) => {
+      notifyThresholdValue.textContent = e.target.value;
+    });
+
+    // 設定保存ボタン
+    notifySaveSettings.onclick = () => {
+      notifyThreshold = parseInt(notifyThresholdSlider.value);
+      localStorage.setItem("notify_threshold", notifyThreshold);
+      
+      // 設定を変更したら通知ONにする
+      isAppNotifyEnabled = true;
+      localStorage.setItem("app_notify_enabled", "true");
+      
+      // 閾値が変わったので通知フラグをリセット
+      hasNotified = false;
+      localStorage.setItem("has_notified", "false");
+
+      updateNotifyButtonUI();
+      notifyModal.classList.remove("open");
+      showToast("設定を保存しました", `${notifyThreshold}人以下でお知らせします`);
+    };
+
+    // ★新規: 通知OFFボタン処理
+    notifyDisable.onclick = () => {
+      isAppNotifyEnabled = false;
+      localStorage.setItem("app_notify_enabled", "false");
+      updateNotifyButtonUI();
+      notifyModal.classList.remove("open");
+      showToast("通知をOFFにしました", "またいつでも再開できます");
+    };
+
+    // 閉じるボタン
+    notifyCloseSettings.onclick = () => { notifyModal.classList.remove("open"); };
+
+    // ▼ PWAインストールバナー制御
     const pwaBanner = document.getElementById("pwaBanner"), pwaClose = document.getElementById("pwaClose"), pwaDesc = document.getElementById("pwaDesc"), pwaInstallBtn = document.getElementById("pwaInstallBtn"), installOption = document.getElementById("installOption");
     let deferredPrompt;
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
     const isPwaClosed = localStorage.getItem("pwa_closed_v5");
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     const isFirefox = /firefox/i.test(navigator.userAgent);
+
     if (isStandalone) { installOption.style.display = 'none'; }
     if (!isStandalone && !isPwaClosed && isMobile) {
       setTimeout(() => {
         if (isIphone) {
-          pwaDesc.innerHTML = '画面下の <span class="material-icons-round" style="vertical-align:middle;font-size:1.1em">ios_share</span> から<br>「ホーム画面に追加」してね！';
+          pwaDesc.innerHTML = '画面下の <span class="material-icons-round pwa-icon-inline">ios_share</span> から<br>「ホーム画面に追加」してね！';
           pwaBanner.classList.add("visible");
         } else if (isFirefox) {
-          pwaDesc.innerHTML = 'ブラウザメニュー <span class="material-icons-round" style="vertical-align:middle;font-size:1.1em">more_vert</span> から<br>「インストール」を選んでね！';
+          pwaDesc.innerHTML = 'ブラウザメニュー <span class="material-icons-round pwa-icon-inline">more_vert</span> から<br>「インストール」を選んでね！';
           pwaBanner.classList.add("visible");
         }
       }, 3000);
     }
+
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault(); deferredPrompt = e;
       if (!isStandalone && !isPwaClosed && isMobile && !isFirefox) {
         setTimeout(() => { pwaInstallBtn.style.display = "block"; pwaBanner.classList.add("visible"); }, 3000);
       }
     });
+
     installOption.onclick = () => {
       closeSidebar();
       if (isStandalone) { alert("すでにアプリとして起動しています。"); return; }
       if (isIphone) {
-        pwaDesc.innerHTML = '画面下の <span class="material-icons-round" style="vertical-align:middle;font-size:1.1em">ios_share</span> から<br>「ホーム画面に追加」してね！';
+        pwaDesc.innerHTML = '画面下の <span class="material-icons-round style="vertical-align:middle;font-size:1.1em">ios_share</span> から<br>「ホーム画面に追加」してね！';
         pwaBanner.classList.add("visible");
       } else if (isFirefox) {
         alert("Firefoxをお使いですね！\n\nURLの左にある鍵マークをドラッグ&ドロップでデスクトップにショートカットを作成できます！");
@@ -727,6 +973,7 @@
         alert("インストール画面が出ない場合\n\nホーム画面のアイコンを削除しても、スマホの中に「アプリのデータ」が残っているため、ボタンが反応しない場合があります。\n\n解決策\n1.スマホの「設定」やタスクバーの「検索ボックス」から『快適食堂』を探して、完全にアンインストールする。\n2.再度「アプリを入手」を押し、インストールする。");
       }
     };
+
     pwaInstallBtn.onclick = async () => {
       if (deferredPrompt) {
         deferredPrompt.prompt();
@@ -736,6 +983,8 @@
       }
     };
     pwaClose.onclick = () => { pwaBanner.classList.remove("visible"); localStorage.setItem("pwa_closed_v5", "true"); };
+
+    // ▼ メニュー・シェア・フィードバック
     menuBtn.onclick = () => { closeSidebar(); menuModal.classList.add("open"); };
     shareBtn.onclick = async () => {
       closeSidebar();
@@ -762,22 +1011,51 @@
         alert("ご意見ありがとうございます！送信しました。"); fbMessage.value = ""; feedbackModal.classList.remove("open");
       } catch (e) { console.error(e); alert("送信に失敗しました。"); } finally { fbSubmit.disabled = !1; fbSubmit.innerHTML = '送信する <span class="material-icons-round">send</span>' }
     };
+
     if (!isIphone && "Notification" in window) {
       if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
-      if (Notification.permission === "default") setTimeout(() => { notifyModal.classList.add("open") }, 1000);
     }
-    notifyNo.onclick = () => { notifyModal.classList.remove("open") }
-    function isBusinessOpen() { return !0 }
-    function getStatus(e) { return e <= 0 ? "free" : e <= 1 ? "normal" : "busy" }
+
+    // ▼ データ更新・UIロジック
+    function isBusinessOpen() { return !0 } 
+    function getStatus(e) { return e <= 0 ? "free" : e <= 1 ? "normal" : "busy" } 
     let lastStatus = null, lastDataTimestamp = 0, currentTrendMessage = "";
-    function triggerNotification() {
+    
+    // ★修正: 通知トリガーロジック (カスタマイズ対応)
+    function checkAndTriggerNotification(newCount) {
       if (!isAppNotifyEnabled) return;
-      showToast("空いてきました！", "今がチャンスです");
-      if (!isIphone && "Notification" in window && Notification.permission === "granted") {
-        new Notification("学食が空いてきました！", { body: "今なら並ばずに行けそうです 🍽", icon: "/favicon.ico" });
+
+      // 条件1: 人数が閾値以下である
+      const isBelowThreshold = newCount <= notifyThreshold;
+      
+      // 条件2: まだ通知していない (またはリセットされている)
+      const notYetNotified = !hasNotified;
+
+      if (isBelowThreshold && notYetNotified) {
+        showToast("空いてきました！", `現在${newCount}人です。今がチャンスです`);
+        
+        if (!isIphone && "Notification" in window && Notification.permission === "granted") {
+          new Notification("学食が空いてきました！", { 
+            body: `現在の待ち人数: ${newCount}人\n設定した${notifyThreshold}人以下になりました`, 
+            icon: "/favicon.ico",
+            tag: 'queue-notification'
+          });
+        }
+        
+        // 通知済みフラグを立てる
+        hasNotified = true;
+        localStorage.setItem("has_notified", "true");
+      }
+
+      // 重要: 人数が閾値を超えたらフラグをリセット (再び混雑したら、次空いた時にまた通知する)
+      if (newCount > notifyThreshold) {
+        hasNotified = false;
+        localStorage.setItem("has_notified", "false");
       }
     }
+
     function updateUI(e, t) {
+      currentPeopleCount = e; // 現在人数を更新（設定画面表示用）
       lastDataTimestamp = 1e3 * t;
       const a = new Date(lastDataTimestamp), n = String(a.getHours()).padStart(2, '0'), o = String(a.getMinutes()).padStart(2, '0');
       lastUpdateTextEl.textContent = `最終更新: ${a.getMonth() + 1}/${a.getDate()} ${n}:${o}`;
@@ -785,44 +1063,55 @@
       if (!isBusinessOpen()) { showClosedUI(); return }
       if ((Date.now() - lastDataTimestamp) / 1e3 / 60 > DATA_TIMEOUT_MINUTES) { showStaleDataUI(); return }
       countEl.textContent = e; waitTimeEl.textContent = Math.ceil(e * MINUTES_PER_PERSON); renderVisualQueue(e);
+      
+      // ★修正: 新しい通知ロジックを呼び出し
+      checkAndTriggerNotification(e);
+      
       const s = getStatus(e);
-      if ("free" !== lastStatus && "free" === s) triggerNotification();
-      lastStatus = s;
       mainCard.className = "status-card"; mainCard.classList.remove("free", "busy", "closed");
-      if ("free" === s) { statusTextEl.textContent = "空いています"; mainCard.classList.add("free"); }
-      else if ("normal" === s) statusTextEl.textContent = "ふつう";
-      else { statusTextEl.textContent = "混雑中"; mainCard.classList.add("busy"); }
+      if ("free" === s) { statusTextEl.textContent = "空いています"; mainCard.classList.add("free"); waitMessageEl.textContent = "今がチャンスです！"; }
+      else if ("normal" === s) { statusTextEl.textContent = "ふつう"; waitMessageEl.textContent = "少し並ぶかもしれません"; }
+      else { statusTextEl.textContent = "混雑中"; mainCard.classList.add("busy"); waitMessageEl.textContent = "時間に余裕を持って行きましょう"; }
       if (currentTrendMessage) waitMessageEl.textContent = currentTrendMessage;
       else if ("free" === s) waitMessageEl.textContent = "今がチャンスです！";
       else if ("normal" === s) waitMessageEl.textContent = "少し並ぶかもしれません";
       else waitMessageEl.textContent = "時間に余裕を持って行きましょう";
     }
+
     function showClosedUI() {
       mainCard.className = "status-card closed"; statusTextEl.textContent = "営業時間外"; waitMessageEl.textContent = "本日の営業は終了しました";
-      countEl.textContent = "--"; waitTimeEl.textContent = "--"; visualQueueEl.innerHTML = '<span class="material-icons-round" style="font-size: 48px; color: #cbd5e1;">storefront</span>'
+      countEl.textContent = "--"; waitTimeEl.textContent = "--"; visualQueueEl.innerHTML = '<span class="material-icons-round person-icon-empty">storefront</span>'
     }
     function showStaleDataUI() {
       mainCard.className = "status-card closed"; statusTextEl.textContent = "データ受信待ち"; waitMessageEl.textContent = "カメラシステムが停止中です";
-      countEl.textContent = "--"; waitTimeEl.textContent = "--"; visualQueueEl.innerHTML = '<span class="material-icons-round" style="font-size: 48px; color: #cbd5e1;">cloud_off</span>'
+      countEl.textContent = "--"; waitTimeEl.textContent = "--"; visualQueueEl.innerHTML = '<span class="material-icons-round person-icon-empty">cloud_off</span>'
     }
     function checkLiveStatus() {
       const e = Date.now() - lastDataTimestamp;
-      if (e > 6e4) { liveBadgeEl.className = "live-badge offline"; liveBadgeEl.innerHTML = '<span class="material-icons-round" style="font-size: 1rem;">cloud_off</span> OFFLINE' }
+      if (e > 6e4) { liveBadgeEl.className = "live-badge offline"; liveBadgeEl.innerHTML = '<span class="material-icons-round badge-icon">cloud_off</span> OFFLINE' }
       else { liveBadgeEl.className = "live-badge online"; liveBadgeEl.innerHTML = '<div class="live-dot"></div> LIVE' }
       if (isBusinessOpen() && e > 6e4 * DATA_TIMEOUT_MINUTES) showStaleDataUI()
     }
     setInterval(checkLiveStatus, 5e3);
+
+    // 人型アイコンの描画
     function renderVisualQueue(e) {
       visualQueueEl.innerHTML = "";
       const t = Math.min(e, 10);
       for (let a = 0; a < t; a++) {
         const e = document.createElement("span"); e.className = "material-icons-round person-icon"; e.textContent = "person"; e.style.animationDelay = `${.05 * a}s`; visualQueueEl.appendChild(e)
       }
-      if (e > 10) { const t = document.createElement("span"); t.style.fontSize = "0.8rem"; t.style.color = "#999"; t.style.alignSelf = "center"; t.textContent = `+${e - 10}`; visualQueueEl.appendChild(t) }
+      if (e > 10) { const t = document.createElement("span"); t.className = "queue-overflow-text"; t.textContent = `+${e - 10}`; visualQueueEl.appendChild(t) }
     }
-    onValue(ref(db, "line_status"), e => { const t = e.val(); if (t) { updateUI(t.people, t.timestamp); analyzeTrend() } });
+
+    // Firebaseデータの監視
+    onValue(ref(db, "line_status"), e => { const t = e.val(); if (t) { updateUI(t.people, t.timestamp); } });
+
+    // ▼ グラフ描画ロジック (Chart.js)
     const ctx = document.getElementById("lunchChart").getContext("2d");
     let chart, allHistoryData = null;
+    
+    // 現在時刻に縦線を引くプラグイン
     const currentLinePlugin = {
       id: 'currentLine',
       afterDatasetsDraw: e => {
@@ -836,6 +1125,7 @@
         }
       }
     };
+
     function updateChart() {
       if (!allHistoryData) return;
       const e = parseInt(daySelector.value), t = new Date,
@@ -844,6 +1134,7 @@
       if (chart) { chart.destroy(); chart = null }
       const o = [];
       for (let e = 13; e <= 18; e++)for (let t = 0; t < 60; t++)o.push(`${String(e).padStart(2, "0")}:${String(t).padStart(2, "0")}`);
+      
       const s = e => {
         const t = {};
         e.forEach(e => {
@@ -852,7 +1143,9 @@
         });
         return o.map(e => { const a = t[e]; return a ? Math.round(a.reduce((e, t) => e + t, 0) / a.length * 10) / 10 : null })
       }, i = s(a), r = s(n);
+      
       window.latestAvgValues = r; window.timeLabels = o;
+      
       chart = new Chart(ctx, {
         type: "line",
         data: {
@@ -874,7 +1167,7 @@
               beginAtZero: !0, 
               grid: { color: getComputedStyle(document.body).getPropertyValue('--border').trim() }, 
               ticks: { 
-                stepSize: 1, 
+                stepSize: 1, // 整数のみ表示
                 color: getComputedStyle(document.body).getPropertyValue('--text-sub').trim(), 
                 callback: function (e) { return e + '人' } 
               } 
@@ -898,36 +1191,21 @@
         plugins: [currentLinePlugin]
       })
     }
-    function analyzeTrend() {
-      if (!countEl.textContent || isNaN(parseInt(countEl.textContent))) return;
-      const e = parseInt(countEl.textContent), t = window.latestAvgValues, a = window.timeLabels;
-      if (!t || !a) return;
-      const n = new Date, o = String(n.getHours()).padStart(2, '0'), s = String(n.getMinutes()).padStart(2, '0'), i = a.indexOf(`${o}:${s}`);
-      let r = "";
-      if (-1 !== i) {
-        const a = t[i] || 0;
-        if (a > 0) { if (e < 0.7 * a) r = "✨ 今はいつもより空いてます！"; else if (e > 1.3 * a) r = "⚠️ いつもより混んでます" }
-        const n = i + 15;
-        if (n < t.length) { const e = t[n] - a; if (e < -3) r += " (あと15分で空く予報 📉)"; else if (e > 3) r += " (これから混みそうです 📈)" }
-      }
-      if (r) { waitMessageEl.textContent = r; waitMessageEl.style.color = "#D32F2F"; waitMessageEl.style.fontWeight = "bold" }
-      else {
-        waitMessageEl.style.color = ""; waitMessageEl.style.fontWeight = "";
-        r = "free" === getStatus(e) ? "今がチャンスです！" : "normal" === getStatus(e) ? "標準的な混雑具合です" : "時間に余裕を持って行きましょう";
-        waitMessageEl.textContent = r
-      }
-    }
+    
     function isSameDate(e, t) { return e.getFullYear() === t.getFullYear() && e.getMonth() === t.getMonth() && e.getDate() === t.getDate() }
+    
     daySelector.addEventListener("change", updateChart);
     let lastChartUpdate = 0;
     onValue(ref(db, "line_history"), e => {
       allHistoryData = e.val();
       const t = Date.now();
       if (t - lastChartUpdate > 6e4) { updateChart(); lastChartUpdate = t }
-      analyzeTrend()
     });
+
+    // ▼ メニュー画像のドラッグ＆ズーム機能
     const slider = document.getElementById('menuContainer'), menuImg = document.getElementById('menuImage');
     let isDown = !1, startX, startY, scrollLeft, scrollTop, isDragging = !1;
+    
     const startDrag = (e, t, a) => {
       if (e.target === menuImg) {
         isDown = !0; isDragging = !1; slider.classList.add('active');
@@ -956,6 +1234,7 @@
       slider.scrollLeft = scrollLeft - (n - startX) * 1.5;
       slider.scrollTop = scrollTop - (o - startY) * 1.5
     };
+    
     slider.addEventListener('mousedown', e => { e.preventDefault(); startDrag(e, e.pageX, e.pageY) });
     slider.addEventListener('mouseleave', () => { isDown = !1; slider.classList.remove('active') });
     slider.addEventListener('mouseup', e => endDrag(e, e.clientX, e.clientY));
