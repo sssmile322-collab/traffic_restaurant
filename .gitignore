@@ -1,0 +1,21 @@
+# ---------------------------------
+# 巨大なデータセットや重いファイルは
+# GitHubに上げない！（PCに残ればOK）
+# ---------------------------------
+my_dataset/
+*.pt
+*.onnx
+
+# Pythonの仮想環境など
+venv/
+env/
+__pycache__/
+
+# 重要な鍵ファイル
+*.json
+!manifest.json
+!firebase.json
+.firebaserc
+
+# Macのゴミファイル（あれば）
+.DS_Store
