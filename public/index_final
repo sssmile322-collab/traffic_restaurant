@@ -192,39 +192,8 @@
     .pwa-close { position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; background: rgba(0, 0, 0, 0.05); border-radius: 50%; border: none; color: var(--text-sub); cursor: pointer; display: grid; place-items: center; transition: background 0.2s; }
     .pwa-close-icon { font-size: 1.2rem; }
     .pwa-close:hover { background: rgba(0, 0, 0, 0.1); }
-    /* ▼▼▼ 追加：試験運用中の表示用スタイル ▼▼▼ */
 
-/* A. ロゴ横のBETAバッジ */
-.beta-badge {
-  background: var(--accent-busy); /* 赤色 */
-  color: white;
-  font-size: 0.6rem;
-  padding: 2px 6px;
-  border-radius: 4px;
-  margin-left: 6px;
-  vertical-align: middle;
-  font-weight: 800;
-  letter-spacing: 0.05em;
-  transform: translateY(-2px);
-  display: inline-block;
-}
 
-/* B. カード内の注意書きボックス */
-.test-alert {
-  background: #FFF3E0; /* 薄いオレンジ */
-  border: 1px solid #FFE0B2;
-  color: #E65100;
-  font-size: 0.8rem;
-  font-weight: 700;
-  padding: 8px;
-  border-radius: 8px;
-  margin: 12px 0 8px 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-}
-/* ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲ */
   </style>
 </head>
 <body>
@@ -348,7 +317,7 @@
       <button class="brand" onclick="window.location.reload()">
         <span class="material-icons-round brand-icon">restaurant_menu</span>
         <div class="brand-text">
-          <span class="brand-main">快適食堂 <span class="beta-badge">TEST</span></span>
+          <span class="brand-main">快適食堂 </span>
           <span class="brand-sub">Smart Restaurant</span>
         </div>
       </button>
@@ -361,10 +330,6 @@
       <div id="mainCard" class="status-card">
         <div id="statusText" class="status-text">読み込み中...</div>
         
-        <div class="test-alert">
-          <span class="material-icons-round" style="font-size:1.1em">info</span>
-          現在、試験運用中です
-        </div>
         <div id="waitMessage" class="status-sub">少々お待ちください</div>
         
         <div id="visualQueue" class="visual-queue"></div>
