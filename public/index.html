@@ -761,7 +761,7 @@
         if (a !== n) return;
         const o = t.getHours(), s = t.getMinutes();
         const currentMin = o * 60 + s;
-        if (currentMin < 11 * 60 + 30 || currentMin > 13 * 60 + 30) return;
+        if (currentMin < 11 * 60 + 30 || currentMin > 19 * 60 + 30) return;
         const i = e.ctx, r = e.scales.x, { top: l, bottom: c } = e.chartArea, d = `${String(o).padStart(2, '0')}:${String(s).padStart(2, '0')}`, u = r.getPixelForValue(d);
         if ("number" == typeof u && !isNaN(u)) {
           i.save(); i.beginPath(); i.moveTo(u, l); i.lineTo(u, c); i.lineWidth = 2; i.strokeStyle = '#ef4444'; i.stroke(); i.fillStyle = '#ef4444'; i.textAlign = 'center'; i.font = 'bold 10px Inter'; i.fillText('NOW', u, l - 5); i.restore()
@@ -776,22 +776,26 @@
         n = Object.values(allHistoryData).filter(t => { return new Date(1e3 * t.timestamp).getDay() === e });
       if (chart) { chart.destroy(); chart = null }
       
-      // ▼ 横軸ラベルの生成（11:30〜13:30）
+     // ▼ 横軸ラベルの生成（11:30〜19:30）
       const o = [];
-       // 11時 (30分〜59分)
+      
+      // 11時 (30分〜59分)
       for (let t = 30; t < 60; t++) o.push(`11:${String(t).padStart(2, "0")}`);
-      // 12時 (00分〜59分)
-      for (let t = 0; t < 60; t++) o.push(`12:${String(t).padStart(2, "0")}`);
-      // 13時 (00分〜30分)
-      for (let t = 0; t <= 30; t++) o.push(`13:${String(t).padStart(2, "0")}`);
-
+      
+      // 12時〜18時 (毎時00分〜59分) ※ここを一気に回します
+      for (let h = 12; h <= 18; h++) {
+          for (let t = 0; t < 60; t++) o.push(`${h}:${String(t).padStart(2, "0")}`);
+      }
+      
+      // 19時 (00分〜30分)
+      for (let t = 0; t <= 30; t++) o.push(`19:${String(t).padStart(2, "0")}`);
       const s = e => {
         const t = {};
         e.forEach(e => {
           const a = new Date(1e3 * e.timestamp), n = a.getHours(), o = a.getMinutes();
-          // ▼ 時間フィルタリング（11:30〜13:30）
-          const timeVal = n * 60 + o; // 分単位に変換して比較
-          if (timeVal >= 11 * 60 + 30 && timeVal <= 13 * 60 + 30) { 
+          // ▼ 時間フィルタリング（11:30〜19:30）
+          const timeVal = n * 60 + o; 
+          if (timeVal >= 11 * 60 + 30 && timeVal <= 19 * 60 + 30) {  // ← ここを変更
           const a = `${String(n).padStart(2, "0")}:${String(o).padStart(2, "0")}`; 
           if (!t[a]) t[a] = []; t[a].push(e.people) 
 }
