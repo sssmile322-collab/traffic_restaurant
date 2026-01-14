@@ -272,7 +272,7 @@
       </div>
       <p class="modal-desc">この時間は、現在の行列人数から算出した<strong>計算上の目安</strong>です。</p>
       <ul class="modal-note-list">
-        <li>1人あたり約test秒で進むと仮定して計算しています</li>
+        <li>1人あたり約20秒で進むと仮定して計算しています</li>
         <li>レストランに入る速度は人それぞれな為、実際はこれより長くなる場合があります</li>
       </ul>
       <p class="modal-note-center">※ 多少のブレが想定される為、余裕を持ってご利用ください。</p>
@@ -599,7 +599,7 @@
       closeSidebar();
       if (isStandalone) { alert("すでにアプリとして起動しています。"); return; }
       if (isIphone) {
-        pwaDesc.innerHTML = '画面下の <span class="material-icons-round style="vertical-align:middle;font-size:1.1em">ios_share</span> から<br>「ホーム画面に追加」してね！';
+        pwaDesc.innerHTML = '画面下の <span class="material-icons-round" style="vertical-align:middle;font-size:1.1em">ios_share</span> から<br>「ホーム画面に追加」してね！';
         pwaBanner.classList.add("visible");
       } else if (isFirefox) {
         alert("Firefoxをお使いですね！\n\nURLの左にある鍵マークをドラッグ&ドロップでデスクトップにショートカットを作成できます！");
@@ -776,29 +776,25 @@
         n = Object.values(allHistoryData).filter(t => { return new Date(1e3 * t.timestamp).getDay() === e });
       if (chart) { chart.destroy(); chart = null }
       
-     // ▼ 横軸ラベルの生成（11:30〜19:30）
+      // ▼ 横軸ラベルの生成（11:30〜19:30）
       const o = [];
-      
-      // 11時 (30分〜59分)
       for (let t = 30; t < 60; t++) o.push(`11:${String(t).padStart(2, "0")}`);
-      
-      // 12時〜18時 (毎時00分〜59分) ※ここを一気に回します
       for (let h = 12; h <= 18; h++) {
           for (let t = 0; t < 60; t++) o.push(`${h}:${String(t).padStart(2, "0")}`);
       }
-      
-      // 19時 (00分〜30分)
       for (let t = 0; t <= 30; t++) o.push(`19:${String(t).padStart(2, "0")}`);
+
       const s = e => {
         const t = {};
         e.forEach(e => {
           const a = new Date(1e3 * e.timestamp), n = a.getHours(), o = a.getMinutes();
           // ▼ 時間フィルタリング（11:30〜19:30）
           const timeVal = n * 60 + o; 
-          if (timeVal >= 11 * 60 + 30 && timeVal <= 19 * 60 + 30) {  // ← ここを変更
-          const a = `${String(n).padStart(2, "0")}:${String(o).padStart(2, "0")}`; 
-          if (!t[a]) t[a] = []; t[a].push(e.people) 
-}
+          if (timeVal >= 11 * 60 + 30 && timeVal <= 19 * 60 + 30) {
+            const label = `${String(n).padStart(2, "0")}:${String(o).padStart(2, "0")}`; 
+            if (!t[label]) t[label] = []; 
+            t[label].push(e.people);
+          }
         });
         return o.map(e => { const a = t[e]; return a ? Math.round(a.reduce((e, t) => e + t, 0) / a.length * 10) / 10 : null })
       }, i = s(a), r = s(n);
