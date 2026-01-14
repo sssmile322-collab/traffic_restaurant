@@ -26,9 +26,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js"></script>
   <style>
-    /* =========================================
-       CSS変数 (デザイン維持)
-       ========================================= */
     :root {
       --primary: #ff8533;
       --primary-dark: #e67326;
@@ -63,141 +60,39 @@
       --border: #4d4540;
       --accent-free: #81c784;
       --accent-busy: #e57373;
-      --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5), 0 4px 10px -2px rgba(0, 0, 0, 0.3);
-      --sidebar-shadow: 10px 0 40px rgba(0, 0, 0, 0.6);
+      --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+      --sidebar-shadow: 4px 0 24px rgba(0, 0, 0, 0.5);
       --link-blue: #64B5F6;
     }
-
     * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: 'Inter', 'Noto Sans JP', sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      -webkit-tap-highlight-color: transparent;
-      padding-bottom: 40px;
-      overscroll-behavior: none;
-      transition: background-color 0.3s, color 0.3s;
-    }
+    body { margin: 0; font-family: 'Inter', 'Noto Sans JP', sans-serif; background-color: var(--bg); color: var(--text); -webkit-tap-highlight-color: transparent; padding-bottom: 40px; overscroll-behavior: none; transition: background-color 0.3s, color 0.3s; }
     canvas { touch-action: pan-y; }
-
-    .container {
-      max-width: 480px;
-      margin: 0 auto;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-      transition: max-width 0.3s ease;
-    }
-    .content-wrapper {
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-    }
+    .container { max-width: 480px; margin: 0 auto; padding: 20px; display: flex; flex-direction: column; gap: 24px; transition: max-width 0.3s ease; }
+    .content-wrapper { display: flex; flex-direction: column; gap: 24px; }
     @media (min-width: 768px) {
       .container { max-width: 1024px; }
-      .content-wrapper {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 24px;
-        align-items: stretch;
-      }
-      .status-card, .graph-section {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-      }
+      .content-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: stretch; }
+      .status-card, .graph-section { height: 100%; display: flex; flex-direction: column; justify-content: center; }
       .chart-container { height: 240px; }
-      .menu-sheet {
-        max-width: 600px !important;
-        max-height: 95vh !important;
-      }
+      .menu-sheet { max-width: 600px !important; max-height: 95vh !important; }
     }
-
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 0;
-      position: relative;
-      height: 60px;
-    }
-    .menu-toggle-btn {
-      background: none;
-      border: none;
-      color: var(--text);
-      cursor: pointer;
-      padding: 8px;
-      margin-right: 8px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.2s;
-      z-index: 10;
-    }
+    header { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; position: relative; height: 60px; }
+    .menu-toggle-btn { background: none; border: none; color: var(--text); cursor: pointer; padding: 8px; margin-right: 8px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background 0.2s; z-index: 10; }
     .menu-toggle-btn:active { background: var(--surface-sub); }
     .menu-toggle-btn .material-icons-round { font-size: 28px; }
-    .brand {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-      white-space: nowrap;
-      z-index: 5;
-      background: none;
-      border: none;
-      padding: 0;
-    }
+    .brand { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 8px; cursor: pointer; white-space: nowrap; z-index: 5; background: none; border: none; padding: 0; }
     .brand-icon { font-size: 2rem; color: var(--primary); }
     .brand-text { display: flex; flex-direction: column; line-height: 1.1; text-align: left; }
     .brand-main { font-size: 1.25rem; font-weight: 800; color: var(--text); }
     .brand-sub { font-size: 0.75rem; font-weight: 700; color: var(--gold-text); text-shadow: var(--gold-glow); letter-spacing: 0.02em; }
-    .header-controls {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      z-index: 10;
-    }
-
-    .live-badge {
-      font-size: 0.7rem;
-      padding: 6px 10px;
-      border-radius: 99px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.3s ease;
-    }
+    .header-controls { display: flex; align-items: center; gap: 12px; z-index: 10; }
+    .live-badge { font-size: 0.7rem; padding: 6px 10px; border-radius: 99px; font-weight: 700; display: flex; align-items: center; gap: 6px; transition: all 0.3s ease; }
     .live-badge.online { background: rgba(255, 107, 107, 0.15); color: var(--accent-busy); }
     .live-badge.offline { background: var(--surface-sub); color: var(--text-sub); }
-    .live-dot {
-      width: 6px;
-      height: 6px;
-      background: currentColor;
-      border-radius: 50%;
-      animation: pulse 1.5s infinite;
-    }
+    .live-dot { width: 6px; height: 6px; background: currentColor; border-radius: 50%; animation: pulse 1.5s infinite; }
     .badge-icon { font-size: 1rem; }
     @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
-
-    .status-card {
-      width: 100%;
-      background: var(--surface);
-      border-radius: 24px;
-      padding: 32px 24px;
-      text-align: center;
-      box-shadow: var(--card-shadow);
-      transition: all 0.3s ease;
-      border: 1px solid transparent;
-      margin: 0;
-    }
+    .status-card { width: 100%; background: var(--surface); border-radius: 24px; padding: 32px 24px; text-align: center; box-shadow: var(--card-shadow); transition: all 0.3s ease; border: 1px solid transparent; margin: 0; }
     .status-text { font-size: 2rem; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.02em; }
     .status-sub { color: var(--text-sub); font-size: 0.9rem; font-weight: 600; min-height: 1.4em; }
     .status-card.busy .status-text { color: var(--accent-busy); }
@@ -206,21 +101,12 @@
     .status-card.closed .status-text { color: var(--text-sub); }
     .status-card.closed .metric-val { color: var(--text-sub); opacity: 0.5; }
     .status-card.closed .person-icon { color: var(--border) !important; }
-
     .visual-queue { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin: 24px 0; min-height: 40px; }
-    .person-icon {
-      font-family: 'Material Icons Round';
-      font-size: 32px;
-      color: var(--text-sub);
-      opacity: 0;
-      transform: scale(0.5);
-      animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-    }
+    .person-icon { font-family: 'Material Icons Round'; font-size: 32px; color: var(--text-sub); opacity: 0; transform: scale(0.5); animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
     .person-icon.active { color: var(--primary); }
     .person-icon-empty { font-size: 48px; color: #cbd5e1; }
     .queue-overflow-text { font-size: 0.8rem; color: #999; align-self: center; }
     @keyframes popIn { to { opacity: 1; transform: scale(1); } }
-
     .metrics { display: flex; justify-content: space-around; margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border); }
     .metric-item { display: flex; flex-direction: column; gap: 4px; }
     .metric-val { font-size: 1.4rem; font-weight: 800; }
@@ -229,152 +115,37 @@
     .help-btn { background: none; border: none; color: var(--link-blue); cursor: pointer; padding: 0; vertical-align: middle; margin-left: 4px; display: inline-flex; align-items: center; }
     .help-icon { font-size: 1rem; }
     .last-update { margin-top: 16px; font-size: 0.7rem; color: var(--text-sub); text-align: right; opacity: 0.8; }
-
     .graph-section { background: var(--surface); border-radius: 20px; padding: 20px; box-shadow: var(--card-shadow); }
     .graph-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
     .section-title { font-size: 0.9rem; font-weight: 700; margin: 0; color: var(--text-sub); display: flex; align-items: center; }
-    .day-select {
-      -webkit-appearance: none;
-      appearance: none;
-      background-color: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      height: 48px;
-      padding: 0 40px 0 16px;
-      min-width: 120px;
-      font-size: 16px;
-      font-weight: 600;
-      color: var(--text);
-      cursor: pointer;
-      outline: none;
-      transition: border-color 0.2s;
-      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232c2420' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-      background-repeat: no-repeat;
-      background-position: right 12px center;
-      background-size: 16px;
-    }
-    body.dark-mode .day-select {
-      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f5f0e6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-    }
+    .day-select { -webkit-appearance: none; appearance: none; background-color: var(--bg); border: 1px solid var(--border); border-radius: 8px; height: 48px; padding: 0 40px 0 16px; min-width: 120px; font-size: 16px; font-weight: 600; color: var(--text); cursor: pointer; outline: none; transition: border-color 0.2s; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232c2420' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 12px center; background-size: 16px; }
+    body.dark-mode .day-select { background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f5f0e6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); }
     .day-select:active { border-color: var(--primary); }
     .chart-container { position: relative; height: 180px; width: 100%; }
-    .no-data-overlay {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: var(--surface);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s;
-      z-index: 10;
-    }
+    .no-data-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--surface); opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 10; }
     .no-data-overlay.visible { opacity: 1; pointer-events: auto; }
     .no-data-text { color: var(--text-sub); font-size: 0.85rem; font-weight: 600; margin-top: 8px; }
     .no-data-icon { font-size: 48px; color: var(--border); }
-
-    .sidebar-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.4);
-      z-index: 900;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-      backdrop-filter: blur(2px);
-    }
+    .sidebar-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.4); z-index: 900; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; backdrop-filter: blur(2px); }
     .sidebar-overlay.visible { opacity: 1; pointer-events: auto; }
-    .sidebar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      bottom: 0;
-      width: 280px;
-      max-width: 80%;
-      background: var(--surface-alpha);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      box-shadow: var(--sidebar-shadow);
-      z-index: 1000;
-      transform: translateX(-100%);
-      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-      display: flex;
-      flex-direction: column;
-      border-right: 1px solid var(--border);
-    }
+    .sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: 280px; max-width: 80%; background: var(--surface-alpha); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); box-shadow: var(--sidebar-shadow); z-index: 1000; transform: translateX(-100%); transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; border-right: 1px solid var(--border); }
     .sidebar.open { transform: translateX(0); }
-    .sidebar-header {
-      padding: 24px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid var(--border);
-    }
+    .sidebar-header { padding: 24px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
     .sidebar-title { font-size: 1.2rem; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 8px; }
     .sidebar-content { flex: 1; overflow-y: auto; padding: 16px 0; }
-    .sidebar-item {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      padding: 16px 24px;
-      background: none;
-      border: none;
-      width: 100%;
-      text-align: left;
-      color: var(--text);
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
+    .sidebar-item { display: flex; align-items: center; gap: 16px; padding: 16px 24px; background: none; border: none; width: 100%; text-align: left; color: var(--text); font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
     .sidebar-item:active { background: var(--surface-sub); }
     .sidebar-item .material-icons-round { color: var(--text-sub); font-size: 1.5rem; }
-    .sidebar-footer {
-      padding: 20px;
-      text-align: center;
-      font-size: 0.75rem;
-      color: var(--text-sub);
-      border-top: 1px solid var(--border);
-    }
-
-    .overlay-base {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(4px);
-      z-index: 1200;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s;
-      display: flex;
-    }
+    .sidebar-footer { padding: 20px; text-align: center; font-size: 0.75rem; color: var(--text-sub); border-top: 1px solid var(--border); }
+    .overlay-base { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); z-index: 1200; opacity: 0; pointer-events: none; transition: opacity 0.3s; display: flex; }
     .overlay-base.open { opacity: 1; pointer-events: auto; }
     .modal-bottom-align { justify-content: center; align-items: flex-end; }
     .modal-center-align { justify-content: center; align-items: center; }
-
-    .menu-sheet {
-      background: var(--surface);
-      width: 100%;
-      max-width: 500px;
-      height: auto;
-      max-height: 85vh;
-      border-radius: 24px 24px 0 0;
-      padding: 24px;
-      transform: translateY(100%);
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      display: flex;
-      flex-direction: column;
-      border: 1px solid var(--border);
-      border-bottom: none;
-      box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.2);
-    }
+    .menu-sheet { background: var(--surface); width: 100%; max-width: 500px; height: auto; max-height: 85vh; border-radius: 24px 24px 0 0; padding: 24px; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; border: 1px solid var(--border); border-bottom: none; box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.2); }
     #menuModal.open .menu-sheet, #feedbackModal.open .menu-sheet { transform: translateY(0); }
     .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
     .modal-title { margin: 0; font-size: 1.1rem; }
     .close-btn { background: var(--surface-sub); color: var(--text); border: none; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; cursor: pointer; }
-    
     .notify-dialog.modal-text-content { text-align: left; }
     .modal-desc { font-size: 0.9rem; color: var(--text); line-height: 1.7; margin: 0; }
     .modal-desc + .modal-desc { margin-top: 12px; }
@@ -384,159 +155,41 @@
     .menu-instruction-icon { font-size: 0.9rem; vertical-align: middle; }
     .menu-form-wrapper { padding-bottom: 20px; }
     .menu-error-msg { text-align: center; color: #888; margin-top: 20px; }
-
-    .menu-viewer {
-      flex: 1;
-      overflow: auto;
-      display: block;
-      text-align: center;
-      background: var(--surface-sub);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 16px;
-      margin-top: 10px;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-      cursor: grab;
-      overscroll-behavior: contain;
-      touch-action: none;
-      user-select: none;
-    }
-    .menu-viewer::-webkit-scrollbar { display: none; }
-    .menu-viewer:active { cursor: grabbing; }
-    .menu-viewer img { width: 100%; height: auto; border-radius: 8px; display: block; -webkit-user-drag: none; transform-origin: top center; }
-    .menu-viewer img.zoomed { width: 300%; max-width: none; margin: 0 auto; }
-
+    .menu-viewer { flex: 1; overflow: auto; display: block; text-align: center; background: var(--surface-sub); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-top: 10px; scrollbar-width: none; -ms-overflow-style: none; cursor: grab; overscroll-behavior: contain; touch-action: none; user-select: none; }
+    .menu-viewer::-webkit-scrollbar { display: none; } .menu-viewer:active { cursor: grabbing; }
+    .menu-viewer img { width: 100%; height: auto; border-radius: 8px; display: block; -webkit-user-drag: none; transform-origin: top center; } .menu-viewer img.zoomed { width: 300%; max-width: none; margin: 0 auto; }
     .form-group { margin-bottom: 20px; }
     .form-label { display: block; font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; color: var(--text-sub); }
     .form-select, .form-textarea { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-family: inherit; font-size: 1rem; resize: none; outline: none; transition: border-color 0.2s; }
     .form-select:focus, .form-textarea:focus { border-color: var(--primary); }
     .form-textarea { height: 120px; }
     .submit-btn { width: 100%; padding: 16px; background: var(--primary); color: #fff; border: none; border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-    .submit-btn:hover { background: var(--primary-dark); }
-    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-    /* 通知設定モーダル */
+    .submit-btn:hover { background: var(--primary-dark); } .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
     #notifyModal { justify-content: center; align-items: center; }
-    .notify-dialog {
-      background: var(--surface);
-      width: 90%;
-      max-width: 440px;
-      padding: 24px;
-      border-radius: 20px;
-      text-align: center;
-      box-shadow: var(--card-shadow);
-    }
+    .notify-dialog { background: var(--surface); width: 90%; max-width: 440px; padding: 24px; border-radius: 20px; text-align: center; box-shadow: var(--card-shadow); }
     .notify-dialog h2 { margin: 0 0 12px; font-size: 1.1rem; }
     .notify-dialog p { font-size: 0.9rem; color: var(--text-sub); margin-bottom: 20px; line-height: 1.5; }
     .btn-group { display: flex; gap: 12px; justify-content: center; }
     .btn { flex: 1; padding: 12px; border: none; border-radius: 12px; font-weight: 700; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; }
     .btn-primary { background: var(--primary); color: #fff; }
     .btn-secondary { background: var(--surface-sub); color: var(--text); }
-
-    /* ★新規: スライダー用のスタイル */
-    .slider-container {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 8px;
-    }
-    .slider {
-      flex: 1;
-      height: 8px;
-      border-radius: 4px;
-      background: var(--surface-sub);
-      outline: none;
-      -webkit-appearance: none;
-      appearance: none;
-    }
-    .slider::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      background: var(--primary);
-      cursor: pointer;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-    }
-    .slider::-moz-range-thumb {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      background: var(--primary);
-      cursor: pointer;
-      border: none;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-    }
-    .slider-value {
-      font-size: 1.2rem;
-      font-weight: 800;
-      color: var(--primary);
-      min-width: 50px;
-      text-align: right;
-    }
-
-    .toast {
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%) translateY(-150%);
-      background: var(--surface);
-      padding: 16px 24px;
-      border-radius: 16px;
-      box-shadow: var(--card-shadow);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      z-index: 1500;
-      transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
-      min-width: 280px;
-      border: 1px solid var(--border);
-    }
+    .slider-container { display: flex; align-items: center; gap: 16px; margin-bottom: 8px; }
+    .slider { flex: 1; height: 8px; border-radius: 4px; background: var(--surface-sub); outline: none; -webkit-appearance: none; appearance: none; }
+    .slider::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; border-radius: 50%; background: var(--primary); cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+    .slider::-moz-range-thumb { width: 24px; height: 24px; border-radius: 50%; background: var(--primary); cursor: pointer; border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+    .slider-value { font-size: 1.2rem; font-weight: 800; color: var(--primary); min-width: 50px; text-align: right; }
+    .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-150%); background: var(--surface); padding: 16px 24px; border-radius: 16px; box-shadow: var(--card-shadow); display: flex; align-items: center; gap: 12px; z-index: 1500; transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1); min-width: 280px; border: 1px solid var(--border); }
     .toast.show { transform: translateX(-50%) translateY(0); }
     .toast-icon { font-size: 1.5rem; }
     .toast-content div:first-child { font-weight: 700; font-size: 0.9rem; color: var(--text); }
     .toast-content div:last-child { font-size: 0.8rem; color: var(--text-sub); }
-
-    .pwa-banner {
-      position: fixed;
-      bottom: 24px;
-      left: 20px;
-      width: calc(100% - 40px);
-      max-width: 360px;
-      right: auto;
-      background: var(--surface);
-      border: 1px solid var(--primary);
-      border-radius: 16px;
-      padding: 16px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-      z-index: 200;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      transform: translateY(150%);
-      transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
-    }
+    .pwa-banner { position: fixed; bottom: 24px; left: 20px; width: calc(100% - 40px); max-width: 360px; right: auto; background: var(--surface); border: 1px solid var(--primary); border-radius: 16px; padding: 16px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15); z-index: 200; display: flex; flex-direction: column; gap: 12px; transform: translateY(150%); transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1); }
     .pwa-banner.visible { transform: translateY(0); }
     .pwa-title { font-size: 0.95rem; font-weight: 800; color: var(--primary); margin: 0; display: flex; align-items: center; gap: 6px; }
     .pwa-desc { font-size: 0.8rem; color: var(--text); margin: 0; line-height: 1.5; }
     .pwa-icon-inline { vertical-align: middle; font-size: 1.1em; }
     .pwa-btn { background: var(--primary); color: #fff; border: none; padding: 10px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; cursor: pointer; text-align: center; }
-    .pwa-close {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      width: 32px;
-      height: 32px;
-      background: rgba(0, 0, 0, 0.05);
-      border-radius: 50%;
-      border: none;
-      color: var(--text-sub);
-      cursor: pointer;
-      display: grid;
-      place-items: center;
-      transition: background 0.2s;
-    }
+    .pwa-close { position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; background: rgba(0, 0, 0, 0.05); border-radius: 50%; border: none; color: var(--text-sub); cursor: pointer; display: grid; place-items: center; transition: background 0.2s; }
     .pwa-close-icon { font-size: 1.2rem; }
     .pwa-close:hover { background: rgba(0, 0, 0, 0.1); }
   </style>
@@ -764,7 +417,9 @@
     const MINUTES_PER_PERSON = 0.3; // 1人あたりの待ち時間（分）
     const isIphone = /iPhone|iPad|iPod/i.test(navigator.userAgent);
     const DATA_TIMEOUT_MINUTES = 1; // データが古いとみなす時間（分）
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbxYAdVhS19brD2FfGizWH5jBCUXGSLFTfq60wvLCCxkjptYz7WUpQZ71ay2lFoTtEv16w/exec"; // GASのURL
+    
+    // ▼ 【重要】ここにステップ1で作った「ウェブアプリのURL」を貼る（引用符 " " の中に！）
+    const GAS_URL = "https://script.google.com/macros/s/AKfycby54dIirU9G6XZMk7My3Soxl32I1LpoGK-FKJpf2VGr7pFN4dhCXBK3UkmxrXNPAE3aMA/exec"; 
 
     // ▼ DOM要素の取得
     const countEl = document.getElementById("count"), waitTimeEl = document.getElementById("waitTime"), statusTextEl = document.getElementById("statusText"), waitMessageEl = document.getElementById("waitMessage"), visualQueueEl = document.getElementById("visualQueue"), mainCard = document.getElementById("mainCard"), daySelector = document.getElementById("daySelector"), liveBadgeEl = document.getElementById("liveBadge"), lastUpdateTextEl = document.getElementById("lastUpdateText"), noDataOverlay = document.getElementById("noDataOverlay"), menuBtn = document.getElementById("menuBtn"), menuModal = document.getElementById("menuModal"), closeMenu = document.getElementById("closeMenu"), notifyModal = document.getElementById("notifyModal"), notifyYes = document.getElementById("notifyYes"), notifyNo = document.getElementById("notifyNo"), pseudoNotify = document.getElementById("pseudoNotify"), shareBtn = document.getElementById("shareBtn"), feedbackBtn = document.getElementById("feedbackBtn"), feedbackModal = document.getElementById("feedbackModal"), closeFeedback = document.getElementById("closeFeedback"), fbSubmit = document.getElementById("fbSubmit"), fbCategory = document.getElementById("fbCategory"), fbMessage = document.getElementById("fbMessage");
@@ -777,7 +432,6 @@
     const notifyCloseSettings = document.getElementById("notifyCloseSettings");
     const notifySaveSettings = document.getElementById("notifySaveSettings");
     const currentCountDisplay = document.getElementById("currentCountDisplay");
-    // ★新規: 通知OFFボタン
     const notifyDisable = document.getElementById("notifyDisable");
 
     const waitHelpBtn = document.getElementById("waitHelpBtn"), waitHelpModal = document.getElementById("waitHelpModal"), closeWaitHelp = document.getElementById("closeWaitHelp");
@@ -825,19 +479,18 @@
     function closeSidebar() { appSidebar.classList.remove("open"); sidebarOverlay.classList.remove("visible"); }
     menuToggle.onclick = openSidebar; sidebarCloseBtn.onclick = closeSidebar; sidebarOverlay.onclick = closeSidebar;
 
-    // ▼ 通知設定ロジック (カスタマイズ機能統合)
+    // ▼ 通知設定ロジック
     const notifyOption = document.getElementById("notifyOption"), notifyIconMenu = document.getElementById("notifyIconMenu"), notifyLabelMenu = document.getElementById("notifyLabelMenu");
     
-    // 設定値の読み込み (デフォルトは3人、ON/OFFフラグ、通知済みフラグ)
-    let isAppNotifyEnabled = localStorage.getItem("app_notify_enabled") === "true"; // デフォルトはfalse(undefined)
+    let isAppNotifyEnabled = localStorage.getItem("app_notify_enabled") === "true";
     let notifyThreshold = parseInt(localStorage.getItem("notify_threshold") || "3");
     let hasNotified = localStorage.getItem("has_notified") === "true";
-    let currentPeopleCount = 0; // 現在の人数を保持する変数
+    let currentPeopleCount = 0;
 
     function updateNotifyButtonUI() {
       if (Notification.permission === "granted") {
-        if (isAppNotifyEnabled) { notifyIconMenu.textContent = "notifications_active"; notifyLabelMenu.textContent = "通知設定"; }
-        else { notifyIconMenu.textContent = "notifications_off"; notifyLabelMenu.textContent = "通知設定"; }
+        if (isAppNotifyEnabled) { notifyIconMenu.textContent = "notifications_active"; notifyLabelMenu.textContent = "通知設定 (ON)"; }
+        else { notifyIconMenu.textContent = "notifications_off"; notifyLabelMenu.textContent = "通知設定 (OFF)"; }
       } else { notifyIconMenu.textContent = "notifications"; notifyLabelMenu.textContent = "通知設定"; }
     }
     if (!isIphone && "Notification" in window) updateNotifyButtonUI();
@@ -850,34 +503,24 @@
       toastTimer = setTimeout(() => { pseudoNotify.classList.remove("show"); }, 3000);
     }
 
-    // 通知メニュークリック時の処理
     notifyOption.onclick = () => {
       closeSidebar();
       if (!("Notification" in window)) { alert("このブラウザは通知に対応していません。"); return; }
-      
-      // モーダルを開く
       notifyModal.classList.add("open");
-      
-      // 現在の設定値をUIに反映
       notifyThresholdSlider.value = notifyThreshold;
       notifyThresholdValue.textContent = notifyThreshold;
       currentCountDisplay.textContent = currentPeopleCount;
-      
-      // ★通知OFFボタンの表示制御（ONなら表示、OFFなら隠す）
       notifyDisable.style.display = isAppNotifyEnabled ? "inline-block" : "none";
 
       if (Notification.permission === "granted") {
-        // 許可済みの場合は設定フォームを表示
         notifyPermissionRequest.style.display = "none";
         notifySettingsForm.style.display = "block";
       } else {
-        // 未許可の場合は許可ボタンを表示
         notifyPermissionRequest.style.display = "block";
         notifySettingsForm.style.display = "none";
       }
     };
     
-    // 許可ボタンクリック
     notifyYes.onclick = async () => {
       const permission = await Notification.requestPermission();
       if (permission === "granted") {
@@ -886,40 +529,34 @@
         isAppNotifyEnabled = true; 
         localStorage.setItem("app_notify_enabled", "true"); 
         updateNotifyButtonUI();
-        notifyDisable.style.display = "inline-block"; // 許可したらOFFボタンも表示
+        notifyDisable.style.display = "inline-block";
+        showToast("設定完了", "通知が許可されました！");
+        try { new Notification("設定完了", { body: "これが通知のサンプルです🔔", icon: "/favicon.ico" }); } catch (e) {}
       } else {
         notifyModal.classList.remove("open");
         alert("通知がブロックされました。ブラウザの設定から許可してください。");
       }
     };
 
-    // 「あとで」ボタン
     notifyNo.onclick = () => { notifyModal.classList.remove("open"); };
 
-    // スライダー操作時
     notifyThresholdSlider.addEventListener('input', (e) => {
       notifyThresholdValue.textContent = e.target.value;
     });
 
-    // 設定保存ボタン
     notifySaveSettings.onclick = () => {
       notifyThreshold = parseInt(notifyThresholdSlider.value);
       localStorage.setItem("notify_threshold", notifyThreshold);
-      
-      // 設定を変更したら通知ONにする
       isAppNotifyEnabled = true;
       localStorage.setItem("app_notify_enabled", "true");
-      
-      // 閾値が変わったので通知フラグをリセット
       hasNotified = false;
       localStorage.setItem("has_notified", "false");
-
       updateNotifyButtonUI();
       notifyModal.classList.remove("open");
       showToast("設定を保存しました", `${notifyThreshold}人以下でお知らせします`);
+      checkAndTriggerNotification(currentPeopleCount);
     };
 
-    // ★新規: 通知OFFボタン処理
     notifyDisable.onclick = () => {
       isAppNotifyEnabled = false;
       localStorage.setItem("app_notify_enabled", "false");
@@ -928,14 +565,13 @@
       showToast("通知をOFFにしました", "またいつでも再開できます");
     };
 
-    // 閉じるボタン
     notifyCloseSettings.onclick = () => { notifyModal.classList.remove("open"); };
 
-    // ▼ PWAインストールバナー制御
+    // ▼ PWAインストールバナー
     const pwaBanner = document.getElementById("pwaBanner"), pwaClose = document.getElementById("pwaClose"), pwaDesc = document.getElementById("pwaDesc"), pwaInstallBtn = document.getElementById("pwaInstallBtn"), installOption = document.getElementById("installOption");
     let deferredPrompt;
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-    const isPwaClosed = localStorage.getItem("pwa_closed_v5");
+    const isPwaClosed = localStorage.getItem("pwa_closed_v7");
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     const isFirefox = /firefox/i.test(navigator.userAgent);
 
@@ -979,12 +615,11 @@
         deferredPrompt.prompt();
         const { outcome } = await deferredPrompt.userChoice;
         if (outcome === 'accepted') { pwaBanner.classList.remove("visible"); }
-        deferredPrompt = null; localStorage.setItem("pwa_closed_v5", "true");
+        deferredPrompt = null; localStorage.setItem("pwa_closed_v7", "true");
       }
     };
-    pwaClose.onclick = () => { pwaBanner.classList.remove("visible"); localStorage.setItem("pwa_closed_v5", "true"); };
+    pwaClose.onclick = () => { pwaBanner.classList.remove("visible"); localStorage.setItem("pwa_closed_v7", "true"); };
 
-    // ▼ メニュー・シェア・フィードバック
     menuBtn.onclick = () => { closeSidebar(); menuModal.classList.add("open"); };
     shareBtn.onclick = async () => {
       closeSidebar();
@@ -1001,14 +636,28 @@
     menuModal.addEventListener('mouseup', e => { if (isMenuBgDown && e.target === menuModal) menuModal.classList.remove("open"); isMenuBgDown = !1; });
     closeFeedback.onclick = () => feedbackModal.classList.remove("open");
     feedbackModal.onclick = e => { if (e.target === feedbackModal) feedbackModal.classList.remove("open") };
+    
+    // ▼ フィードバック送信処理（GAS連携対応）
     fbSubmit.onclick = async () => {
       const e = fbMessage.value.trim();
       if (!e) { alert("内容を入力してください"); return; }
       fbSubmit.disabled = !0; fbSubmit.textContent = "送信中...";
       try {
         await push(ref(db, "feedbacks"), { category: fbCategory.value, message: e, timestamp: Date.now(), userAgent: navigator.userAgent });
-        GAS_URL && "https://script.google.com/macros/s/AKfycbxYAdVhS19brD2FfGizWH5jBCUXGSLFTfq60wvLCCxkjptYz7WUpQZ71ay2lFoTtEv16w/exec" !== GAS_URL && fetch(GAS_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ category: fbCategory.value, message: e }) }).catch(e => console.error(e));
-        alert("ご意見ありがとうございます！送信しました。"); fbMessage.value = ""; feedbackModal.classList.remove("open");
+        
+        // GAS_URLが設定されている場合のみ送信
+        if (GAS_URL) {
+          fetch(GAS_URL, { 
+            method: "POST", 
+            mode: "no-cors", 
+            headers: { "Content-Type": "application/json" }, 
+            body: JSON.stringify({ category: fbCategory.value, message: e }) 
+          }).catch(e => console.error(e));
+        }
+
+        alert("ご意見ありがとうございます！送信しました。"); 
+        fbMessage.value = ""; 
+        feedbackModal.classList.remove("open");
       } catch (e) { console.error(e); alert("送信に失敗しました。"); } finally { fbSubmit.disabled = !1; fbSubmit.innerHTML = '送信する <span class="material-icons-round">send</span>' }
     };
 
@@ -1018,36 +667,28 @@
 
     // ▼ データ更新・UIロジック
     function isBusinessOpen() { return !0 } 
-    function getStatus(e) { return e <= 0 ? "free" : e <= 1 ? "normal" : "busy" } 
+    function getStatus(e) { return e <= 5 ? "free" : e <= 9 ? "normal" : "busy" } 
     let lastStatus = null, lastDataTimestamp = 0, currentTrendMessage = "";
     
-    // ★修正: 通知トリガーロジック (カスタマイズ対応)
+    // ★通知ロジック (カスタマイズ対応)
     function checkAndTriggerNotification(newCount) {
       if (!isAppNotifyEnabled) return;
-
-      // 条件1: 人数が閾値以下である
       const isBelowThreshold = newCount <= notifyThreshold;
-      
-      // 条件2: まだ通知していない (またはリセットされている)
       const notYetNotified = !hasNotified;
 
       if (isBelowThreshold && notYetNotified) {
         showToast("空いてきました！", `現在${newCount}人です。今がチャンスです`);
-        
-        if (!isIphone && "Notification" in window && Notification.permission === "granted") {
+        if (Notification.permission === "granted") {
           new Notification("学食が空いてきました！", { 
             body: `現在の待ち人数: ${newCount}人\n設定した${notifyThreshold}人以下になりました`, 
             icon: "/favicon.ico",
-            tag: 'queue-notification'
+            tag: 'queue-notification',
+            renotify: true
           });
         }
-        
-        // 通知済みフラグを立てる
         hasNotified = true;
         localStorage.setItem("has_notified", "true");
       }
-
-      // 重要: 人数が閾値を超えたらフラグをリセット (再び混雑したら、次空いた時にまた通知する)
       if (newCount > notifyThreshold) {
         hasNotified = false;
         localStorage.setItem("has_notified", "false");
@@ -1055,7 +696,7 @@
     }
 
     function updateUI(e, t) {
-      currentPeopleCount = e; // 現在人数を更新（設定画面表示用）
+      currentPeopleCount = e;
       lastDataTimestamp = 1e3 * t;
       const a = new Date(lastDataTimestamp), n = String(a.getHours()).padStart(2, '0'), o = String(a.getMinutes()).padStart(2, '0');
       lastUpdateTextEl.textContent = `最終更新: ${a.getMonth() + 1}/${a.getDate()} ${n}:${o}`;
@@ -1063,15 +704,14 @@
       if (!isBusinessOpen()) { showClosedUI(); return }
       if ((Date.now() - lastDataTimestamp) / 1e3 / 60 > DATA_TIMEOUT_MINUTES) { showStaleDataUI(); return }
       countEl.textContent = e; waitTimeEl.textContent = Math.ceil(e * MINUTES_PER_PERSON); renderVisualQueue(e);
-      
-      // ★修正: 新しい通知ロジックを呼び出し
       checkAndTriggerNotification(e);
       
       const s = getStatus(e);
       mainCard.className = "status-card"; mainCard.classList.remove("free", "busy", "closed");
-      if ("free" === s) { statusTextEl.textContent = "空いています"; mainCard.classList.add("free"); waitMessageEl.textContent = "今がチャンスです！"; }
-      else if ("normal" === s) { statusTextEl.textContent = "ふつう"; waitMessageEl.textContent = "少し並ぶかもしれません"; }
-      else { statusTextEl.textContent = "混雑中"; mainCard.classList.add("busy"); waitMessageEl.textContent = "時間に余裕を持って行きましょう"; }
+      if ("free" === s) { statusTextEl.textContent = "空いています"; mainCard.classList.add("free"); }
+      else if ("normal" === s) { statusTextEl.textContent = "ふつう"; }
+      else { statusTextEl.textContent = "混雑中"; mainCard.classList.add("busy"); }
+      
       if (currentTrendMessage) waitMessageEl.textContent = currentTrendMessage;
       else if ("free" === s) waitMessageEl.textContent = "今がチャンスです！";
       else if ("normal" === s) waitMessageEl.textContent = "少し並ぶかもしれません";
@@ -1094,7 +734,6 @@
     }
     setInterval(checkLiveStatus, 5e3);
 
-    // 人型アイコンの描画
     function renderVisualQueue(e) {
       visualQueueEl.innerHTML = "";
       const t = Math.min(e, 10);
@@ -1104,21 +743,25 @@
       if (e > 10) { const t = document.createElement("span"); t.className = "queue-overflow-text"; t.textContent = `+${e - 10}`; visualQueueEl.appendChild(t) }
     }
 
-    // Firebaseデータの監視
-    onValue(ref(db, "line_status"), e => { const t = e.val(); if (t) { updateUI(t.people, t.timestamp); } });
+    onValue(ref(db, "line_status"), e => { 
+      const t = e.val(); 
+      if (t) { 
+        updateUI(t.people, t.timestamp); 
+        analyzeTrend();
+      } 
+    });
 
-    // ▼ グラフ描画ロジック (Chart.js)
     const ctx = document.getElementById("lunchChart").getContext("2d");
     let chart, allHistoryData = null;
     
-    // 現在時刻に縦線を引くプラグイン
     const currentLinePlugin = {
       id: 'currentLine',
       afterDatasetsDraw: e => {
         const t = new Date, a = t.getDay(), n = parseInt(daySelector.value);
         if (a !== n) return;
         const o = t.getHours(), s = t.getMinutes();
-        if (o < 13 || o > 18) return;
+        const currentMin = o * 60 + s;
+        if (currentMin < 11 * 60 + 30 || currentMin > 13 * 60 + 30) return;
         const i = e.ctx, r = e.scales.x, { top: l, bottom: c } = e.chartArea, d = `${String(o).padStart(2, '0')}:${String(s).padStart(2, '0')}`, u = r.getPixelForValue(d);
         if ("number" == typeof u && !isNaN(u)) {
           i.save(); i.beginPath(); i.moveTo(u, l); i.lineTo(u, c); i.lineWidth = 2; i.strokeStyle = '#ef4444'; i.stroke(); i.fillStyle = '#ef4444'; i.textAlign = 'center'; i.font = 'bold 10px Inter'; i.fillText('NOW', u, l - 5); i.restore()
@@ -1132,14 +775,26 @@
         a = Object.values(allHistoryData).filter(a => { const n = new Date(1e3 * a.timestamp); return n.getDay() === e && isSameDate(n, t) }),
         n = Object.values(allHistoryData).filter(t => { return new Date(1e3 * t.timestamp).getDay() === e });
       if (chart) { chart.destroy(); chart = null }
-      const o = [];
-      for (let e = 13; e <= 18; e++)for (let t = 0; t < 60; t++)o.push(`${String(e).padStart(2, "0")}:${String(t).padStart(2, "0")}`);
       
+      // ▼ 横軸ラベルの生成（11:30〜13:30）
+      const o = [];
+       // 11時 (30分〜59分)
+      for (let t = 30; t < 60; t++) o.push(`11:${String(t).padStart(2, "0")}`);
+      // 12時 (00分〜59分)
+      for (let t = 0; t < 60; t++) o.push(`12:${String(t).padStart(2, "0")}`);
+      // 13時 (00分〜30分)
+      for (let t = 0; t <= 30; t++) o.push(`13:${String(t).padStart(2, "0")}`);
+
       const s = e => {
         const t = {};
         e.forEach(e => {
           const a = new Date(1e3 * e.timestamp), n = a.getHours(), o = a.getMinutes();
-          if (n >= 13 && n <= 18) { const a = `${String(n).padStart(2, "0")}:${String(o).padStart(2, "0")}`; if (!t[a]) t[a] = []; t[a].push(e.people) }
+          // ▼ 時間フィルタリング（11:30〜13:30）
+          const timeVal = n * 60 + o; // 分単位に変換して比較
+          if (timeVal >= 11 * 60 + 30 && timeVal <= 13 * 60 + 30) { 
+          const a = `${String(n).padStart(2, "0")}:${String(o).padStart(2, "0")}`; 
+          if (!t[a]) t[a] = []; t[a].push(e.people) 
+}
         });
         return o.map(e => { const a = t[e]; return a ? Math.round(a.reduce((e, t) => e + t, 0) / a.length * 10) / 10 : null })
       }, i = s(a), r = s(n);
@@ -1167,7 +822,7 @@
               beginAtZero: !0, 
               grid: { color: getComputedStyle(document.body).getPropertyValue('--border').trim() }, 
               ticks: { 
-                stepSize: 1, // 整数のみ表示
+                stepSize: 1, 
                 color: getComputedStyle(document.body).getPropertyValue('--text-sub').trim(), 
                 callback: function (e) { return e + '人' } 
               } 
@@ -1192,6 +847,26 @@
       })
     }
     
+    function analyzeTrend() {
+      if (!countEl.textContent || isNaN(parseInt(countEl.textContent))) return;
+      const e = parseInt(countEl.textContent), t = window.latestAvgValues, a = window.timeLabels;
+      if (!t || !a) return;
+      const n = new Date, o = String(n.getHours()).padStart(2, '0'), s = String(n.getMinutes()).padStart(2, '0'), i = a.indexOf(`${o}:${s}`);
+      let r = "";
+      if (-1 !== i) {
+        const a = t[i] || 0;
+        if (a > 0) { if (e < 0.7 * a) r = "✨ 今はいつもより空いてます！"; else if (e > 1.3 * a) r = "⚠️ いつもより混んでます" }
+        const n = i + 15;
+        if (n < t.length) { const e = t[n] - a; if (e < -3) r += " (あと15分で空く予報 📉)"; else if (e > 3) r += " (これから混みそうです 📈)" }
+      }
+      if (r) { waitMessageEl.textContent = r; waitMessageEl.style.color = "#D32F2F"; waitMessageEl.style.fontWeight = "bold" }
+      else {
+        waitMessageEl.style.color = ""; waitMessageEl.style.fontWeight = "";
+        r = "free" === getStatus(e) ? "今がチャンスです！" : "normal" === getStatus(e) ? "標準的な混雑具合です" : "時間に余裕を持って行きましょう";
+        waitMessageEl.textContent = r
+      }
+    }
+    
     function isSameDate(e, t) { return e.getFullYear() === t.getFullYear() && e.getMonth() === t.getMonth() && e.getDate() === t.getDate() }
     
     daySelector.addEventListener("change", updateChart);
@@ -1200,9 +875,9 @@
       allHistoryData = e.val();
       const t = Date.now();
       if (t - lastChartUpdate > 6e4) { updateChart(); lastChartUpdate = t }
+      analyzeTrend();
     });
 
-    // ▼ メニュー画像のドラッグ＆ズーム機能
     const slider = document.getElementById('menuContainer'), menuImg = document.getElementById('menuImage');
     let isDown = !1, startX, startY, scrollLeft, scrollTop, isDragging = !1;
     
