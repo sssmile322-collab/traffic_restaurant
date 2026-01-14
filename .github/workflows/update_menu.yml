@@ -1,0 +1,40 @@
+name: Update Menu Image
+
+on:
+  schedule:
+    # 日本時間 朝8:00 (UTC 23:00)
+    - cron: '0 23 * * *'
+  workflow_dispatch:
+
+jobs:
+  update-menu:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: リポジトリをチェックアウト
+        uses: actions/checkout@v3
+
+      - name: Pythonのセットアップ
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: 必要なツール(Poppler)をインストール
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y poppler-utils
+
+      - name: Pythonライブラリをインストール
+        run: |
+          pip install requests pdf2image
+
+      - name: メニュー更新スクリプトを実行
+        run: python menu_scraper.py
+
+      - name: Firebase CLIをインストール
+        run: npm install -g firebase-tools
+
+      - name: Firebaseへデプロイ
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+        run: firebase deploy --only hosting --non-interactive --token "$FIREBASE_TOKEN"
