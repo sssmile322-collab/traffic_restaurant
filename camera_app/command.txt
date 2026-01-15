@@ -1,0 +1,39 @@
+# 1. 全員に呼びかける（2番〜20番を探す）
+2..20 | % { ping -n 1 -w 50 "172.20.10.$_" }
+
+# 2. 返事があったリストを見る
+arp -a
+
+#3 それっぽいIPから接続
+ssh ryo@172.20.10.xx
+# パスワード: ryo
+
+#4 動いてるプログラム停止
+pkill -f line_monitor.py
+
+#5 エラーログ確認
+cat ~/Desktop/log.txt
+
+#6 仮想空間に入る(実行準備)
+pkill -f line_monitor.py
+source ~/Desktop/myenv/bin/activate
+
+#7 実行
+python ~/Desktop/line_monitor.py
+
+#8 yolov8n削除
+rm ~/Desktop/yolov8n.pt
+
+#9 カメラの認識確認
+ls /dev/video*
+
+#10,11 自動起動設定の変更
+
+#10 設定ファイルを開く
+crontab -e
+
+#11 実行するための一行
+@reboot sleep 60 && cd /home/ryo/Desktop && /home/ryo/Desktop/myenv/bin/python line_monitor.py >> /home/ryo/Desktop/log.txt 2>&1
+
+#12 電源の切り方
+sudo poweroff
